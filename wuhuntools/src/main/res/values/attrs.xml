@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- loadDialog -->
+    <declare-styleable name="ProgressWheel">
+        <attr name="matProg_progressIndeterminate" format="boolean" />
+        <attr name="matProg_barColor" format="color" />
+        <attr name="matProg_rimColor" format="color" />
+        <attr name="matProg_rimWidth" format="dimension" />
+        <attr name="matProg_spinSpeed" format="float" />
+        <attr name="matProg_barSpinCycleTime" format="integer" />
+        <attr name="matProg_circleRadius" format="dimension" />
+        <attr name="matProg_fillRadius" format="boolean" />
+        <attr name="matProg_barWidth" format="dimension" />
+        <attr name="matProg_linearProgress" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="WuhunRecyclerView">
+        <!--RecyclerView的类型-->
+        <attr name="rv_type" format="integer">
+            <enum name="grid" value="0"/>
+            <enum name="stagger" value="1"/>
+        </attr>
+
+        <!--RecyclerView的方向-->
+        <attr name="rv_orientation">
+            <enum name="vertical" value="0"/>
+            <enum name="horizontal" value="1"/>
+        </attr>
+
+        <!--网格或瀑布流的列数-->
+        <attr name="rv_column" format="integer"/>
+
+        <!--下划线高度/宽度-->
+        <attr name="rv_divider_size" format="dimension"/>
+        <!--下划线颜色-->
+        <attr name="rv_divider_color" format="color"/>
+        <!--下划线图片-->
+        <attr name="rv_divider_drawable" format="reference"/>
+
+        <!--是否开启默认动画-->
+        <attr name="rv_default_animator_open" format="boolean"/>
+    </declare-styleable>
+</resources>

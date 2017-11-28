@@ -1,0 +1,15 @@
+
+
+
+
+排序：
+public class Friend  implements Comparable<Friend> {
+    ……………………
+    @Override
+    public int compareTo(@NonNull Friend friend) {
+        return this.getNoteName().compareTo(friend.getNoteName());
+    }
+}
+Collections.sort(list); // “#” 排在上面
+
+

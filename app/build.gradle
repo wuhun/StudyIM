@@ -1,0 +1,47 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "studyim.cn.edu.cafa.studyim"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDir(['src/main/jniLibs'])
+        }
+    }
+}
+
+repositories { flatDir { dirs 'aars' } }
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.supportVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation "junit:junit:$rootProject.ext.junitVersion"
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    implementation project(':wuhuntools')
+    implementation project(':IMLib')
+    implementation(name: 'HMS-SDK-2.4.0.300', ext: 'aar')
+
+    implementation "com.jakewharton:butterknife:$rootProject.ext.butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterKnifeVersion"
+
+    implementation "com.lzy.net:okgo:$rootProject.ext.okgoVersion"
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation "com.android.support:design:$rootProject.ext.supportVersion"
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+}

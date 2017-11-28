@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:id="@+id/ll_all_body"
+    android:background="@mipmap/main_bg" >
+
+    <!--<include layout="@layout/head_title_bar" />-->
+    <RelativeLayout
+        android:id="@+id/rl_contact_head"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:gravity="center_vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/head_bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@android:color/transparent"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/body_tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:text="通讯录"/>
+        <!--<ImageView-->
+            <!--android:id="@+id/body_img_add"-->
+            <!--android:layout_width="@dimen/dp_40"-->
+            <!--android:layout_height="@dimen/dp_40"-->
+            <!--android:padding="8dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:src="@drawable/mansage"/>-->
+        <ImageView
+            android:id="@+id/body_img_add"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:padding="8dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/mansage"/>
+    </RelativeLayout>
+
+    <!-- 通讯录 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView
+            android:id="@+id/rv_contacts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:rv_divider_color="@color/line"
+            app:rv_divider_size="1px"/>
+
+        <studyim.cn.edu.cafa.studyim.ui.QuickIndexBar
+            android:id="@+id/qib"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:layout_alignParentRight="true"/>
+
+        <!--字母对话框-->
+        <TextView
+            android:id="@+id/tvLetter"
+            android:layout_width="150px"
+            android:layout_height="150px"
+            android:layout_centerInParent="true"
+            android:background="@drawable/contact_letter_bg"
+            android:gravity="center"
+            android:text="A"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+    </RelativeLayout>
+</android.support.v7.widget.LinearLayoutCompat>

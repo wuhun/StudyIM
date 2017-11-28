@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="a">#FD4C5B</color>
+    <color name="red">#FF4C5B</color>
+    <color name="b">#353A3E</color>
+    <color name="main_theme_color">#0195ff</color>
+    <color name="line">#D2D2D2</color>
+</resources>
