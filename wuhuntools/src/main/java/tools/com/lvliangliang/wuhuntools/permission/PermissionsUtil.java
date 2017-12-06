@@ -58,7 +58,7 @@ public class PermissionsUtil {
             } else {
                 listener.permissionDenied(permission);
             }
-            Log.e(TAG, "API level : " + Build.VERSION.SDK_INT + "不需要申请动态权限!");
+//            Log.e(TAG, "API level : " + Build.VERSION.SDK_INT + "不需要申请动态权限!");
             return;
         }
 

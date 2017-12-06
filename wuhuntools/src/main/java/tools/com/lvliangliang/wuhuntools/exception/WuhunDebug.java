@@ -1,7 +1,5 @@
 package tools.com.lvliangliang.wuhuntools.exception;
 
-import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
-
 /**
  * ================================================
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
@@ -32,7 +30,7 @@ public class WuhunDebug {
 
     public static void debug(String str){
         if(isDebug) {
-            WuhunToast.normal(str).show();
+//            WuhunToast.normal(str).show();
             TestLog.i("********debug↓********\n"+str+"\n********debug↑********");
         }
     }

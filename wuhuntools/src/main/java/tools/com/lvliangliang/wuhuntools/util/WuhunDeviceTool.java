@@ -45,6 +45,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static android.Manifest.permission.READ_PHONE_STATE;
+
 /**
  * ================================================
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
@@ -422,7 +424,7 @@ public class WuhunDeviceTool {
             TelephonyManager tm = (TelephonyManager) context
                     .getSystemService(Context.TELEPHONY_SERVICE);
             String device_id = null;
-            if (checkPermission(context, Manifest.permission.READ_PHONE_STATE)) {
+            if (checkPermission(context, READ_PHONE_STATE)) {
                 device_id = getIMEI(context);
             }
             String mac = null;

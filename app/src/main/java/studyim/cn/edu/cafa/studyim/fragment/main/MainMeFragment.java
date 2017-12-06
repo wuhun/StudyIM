@@ -18,6 +18,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.activity.login.LoginActivity;
+import studyim.cn.edu.cafa.studyim.activity.main.MainActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import studyim.cn.edu.cafa.studyim.model.MeSettingsModel;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
@@ -26,7 +28,10 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
 import tools.com.lvliangliang.wuhuntools.net.X5WebView;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
+
+import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
 /**
  * ================================================
@@ -110,9 +115,17 @@ public class MainMeFragment extends BaseFragment {
         public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
             if (settingsData != null && settingsData.size()>0) {
                 String url = settingsData.get(position).getUrl();
-                if (!WuhunDataTool.isNullString(url)) {
+                if (!WuhunDataTool.isNullString(url) && url.startsWith("http://")) {
                     mWebView.loadUrl(url);
                     dlLayout.closeDrawers();
+                }else if(url.equals(TONG_BU)) {
+                    // TODO: 2017/11/28 服务器获取设置json并添加到缓存 - 解析显示
+                    WuhunToast.normal("同步预留位置").show();
+                }else if(url.equals(EXIT_APP)) {
+                    MainActivity main = (MainActivity) MainMeFragment.this.mActivity;
+                    jumpToActivity(LoginActivity.class);
+                    getSPUtil().setTokens("");
+                    main.closeActivity();
                 }
             }
         }
@@ -128,6 +141,9 @@ public class MainMeFragment extends BaseFragment {
         settingAdapter.setOnItemClickListener(settingItemClicik);
     }
 
+    private static final String TONG_BU = "load_setting";
+    private static final String EXIT_APP = "exit_app";
+
     @Override
     protected void initData() {
         mWebView.loadUrl(XS_HOME);
@@ -135,9 +151,10 @@ public class MainMeFragment extends BaseFragment {
         settingsData.add(new MeSettingsModel(R.drawable.sideicon, "我的", "http://www.cafa.com.cn/wapcafa/xs_wd_h.htm" ));
         settingsData.add(new MeSettingsModel(R.drawable.sideicon, "修改密码", "http://www.cafa.com.cn/wapcafa/xs_wd_h.htm" ));
         settingsData.add(new MeSettingsModel(R.drawable.sideicon, "设置", "http://www.cafa.com.cn/wapcafa/h_about.htm" ));
-        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "老师", "http://www.cafa.com.cn/wapcafa/h_zx.htm" ));
         settingsData.add(new MeSettingsModel(R.drawable.sideicon, "朋友", "http://www.cafa.com.cn/wapcafa/h_zp.htm" ));
-        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "同步", "http://www.baidu.com" ));
+
+        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "同步", TONG_BU ));
+        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "退出登录", EXIT_APP ));
 
 //        settingAdapter.refresh(settingsData);
     }

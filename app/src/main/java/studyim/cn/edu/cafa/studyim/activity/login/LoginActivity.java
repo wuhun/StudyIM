@@ -1,8 +1,11 @@
 package studyim.cn.edu.cafa.studyim.activity.login;
 
+import android.Manifest;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,13 +14,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.model.Response;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.activity.main.MainActivity;
 import studyim.cn.edu.cafa.studyim.app.MyApplication;
@@ -26,12 +30,15 @@ import studyim.cn.edu.cafa.studyim.model.LoginUserModel;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
+import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
+import tools.com.lvliangliang.wuhuntools.permission.PermissionsUtil;
 import tools.com.lvliangliang.wuhuntools.ui.ClearWriteEditText;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDeviceTool;
-import tools.com.lvliangliang.wuhuntools.widget.WuhunDrawTools;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.loadDialog.LoadDialog;
 
+import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
+import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 import static tools.com.lvliangliang.wuhuntools.WuhunTools.getContext;
 
 public class LoginActivity extends BaseActivity {
@@ -55,14 +62,17 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.tv_browse)
     TextView tvBrowse;
 
-    private Gson gson;
-
     private String username;
     private String password;
+
+    private Context mContext;
+//    private Gson gson;
+    private LoadDialog ld;
 
     private static int LOGIN_SUCCESS = 0x01;
     private static int LOGIN_FAIL = 0x02;
     private static int LOGIN_ERROR = 0x03;
+    private static int BROWSE = 0x04;//预览
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +84,14 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initView() {
-        gson = new Gson();
-        WuhunDrawTools.DrawTextViewUnderline(tvLoginRegister);
-        WuhunDrawTools.DrawTextViewUnderline(tvLoginQueryPwd);
+//        gson = new Gson();
+        mContext = this;
+//        WuhunDrawTools.DrawTextViewUnderline(tvLoginRegister);
+//        WuhunDrawTools.DrawTextViewUnderline(tvLoginQueryPwd);
+        etLoginNum.setText(getSPUtil().getUsername());
     }
 
-    @OnClick({R.id.btn_login_sign, R.id.tv_login_query_pwd, R.id.tv_login_register, R.id.tv_browse})
+    @OnClick({R.id.btn_login_sign, R.id.tv_login_query_pwd, R.id.tv_login_register,R.id.tv_browse})
     public void onClick(View view) {
         if (!WuhunNetTools.isAvailable(getContext())) {
             WuhunToast.error("网络无法访问，请检查网络连接").show();
@@ -99,7 +111,8 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.tv_browse:
 //                WuhunToast.info("游客方式浏览").show();
-                jumpToActivity(MainActivity.class);
+                showLoadDialog();
+                handler.sendEmptyMessageDelayed(BROWSE, 500);
                 break;
             default:
                 WuhunToast.info("没有找到内容");
@@ -107,11 +120,28 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    private String imei;
+
     private void goToMain() {
+//        准备参数
         username = etLoginNum.getText().toString().trim();
         password = etLoginPwd.getText().toString().trim();
-        String imei = WuhunDeviceTool.getIMEI(LoginActivity.this);
 
+        if (PermissionsUtil.hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
+            imei = WuhunDeviceTool.getIMEI(LoginActivity.this);
+        } else {
+            PermissionsUtil.requestPermission(this, new PermissionListener() {
+                @Override
+                public void permissionGranted(@NonNull String[] permissions) {
+                    imei = WuhunDeviceTool.getIMEI(LoginActivity.this);
+                }
+
+                @Override
+                public void permissionDenied(@NonNull String[] permissions) {}
+            }, new String[]{Manifest.permission.READ_PHONE_STATE});
+        }
+
+//      非空校验
         if (TextUtils.isEmpty(username)) {
             WuhunToast.normal("请输入学号或手机号").show();
             etLoginNum.setShakeAnimation();
@@ -122,36 +152,49 @@ public class LoginActivity extends BaseActivity {
             etLoginPwd.setShakeAnimation();
             return;
         }
+//        加载数据
         LoadDialog.show(LoginActivity.this);
         // TODO: 2017/11/9 网络请求
         if (MyApplication.isDebug) {
             handler.sendEmptyMessageDelayed(LOGIN_SUCCESS, 1000);
         } else {
-            HttpUtil.login(username, password, imei, new StringCallback() {
+            HttpUtil.login(username, password, imei, new Callback() {
                 @Override
-                public void onSuccess(Response<String> response) {
-                    String result = response.body().toString();
-                    LoginUserModel loginModel = gson.fromJson(result, LoginUserModel.class);
-                    if (null == loginModel)
-                        handler.sendEmptyMessage(LOGIN_ERROR);
-                    if (loginModel.getCode() == 1) {//成功
-                        WuhunDebug.debug("=>"+ result);
-                        Message msg = handler.obtainMessage();
-                        msg.obj = loginModel;
-                        msg.what = LOGIN_SUCCESS;
-                        handler.sendMessage(msg);
-                    } else {
-                        Message msg = handler.obtainMessage();
-                        msg.obj = loginModel;
-                        msg.what = LOGIN_FAIL;
-                        handler.sendMessage(msg);
-                    }
+                public void onFailure(Call call, IOException e) {
+                    handler.sendEmptyMessage(LOGIN_ERROR);
                 }
 
                 @Override
-                public void onError(Response<String> response) {
-                    super.onError(response);
-                    WuhunToast.normal("error").show();
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String result = response.body().string();
+                        LoginUserModel loginModel = getGson().fromJson(result, LoginUserModel.class);
+                        if (null == loginModel){
+                            handler.sendEmptyMessage(LOGIN_ERROR);
+                            return;
+                        }
+
+                        if (loginModel.getCode() == 1) {//成功
+                            WuhunDebug.debug("登录成功=>"+ result);
+                            getSPUtil().setUSERID(loginModel.getResult().getUserId());
+                            getSPUtil().setTokens(loginModel.getResult().getTokens());
+                            getSPUtil().setRctoken(loginModel.getResult().getToken());
+                            getSPUtil().setUsername(etLoginNum.getText().toString());
+
+                            WuhunDebug.debug("==>" + getSPUtil().getUsername());
+                            Message msg = handler.obtainMessage();
+                            msg.obj = loginModel;
+                            msg.what = LOGIN_SUCCESS;
+                            handler.sendMessage(msg);
+                        } else {
+                            Message msg = handler.obtainMessage();
+                            msg.obj = loginModel;
+                            msg.what = LOGIN_FAIL;
+                            handler.sendMessage(msg);
+                        }
+                    } else {
+                        handler.sendEmptyMessage(LOGIN_ERROR);
+                    }
                 }
             });
         }
@@ -162,21 +205,40 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == LOGIN_SUCCESS) {
-                // TODO: 2017/11/20 缓存token
-                LoadDialog.dismiss(LoginActivity.this);
+                LoadDialog.dismiss(mContext);
                 jumpToActivity(MainActivity.class);
                 LoginActivity.this.finish();
             } else if (msg.what == LOGIN_FAIL) {
                 LoginUserModel model = ((LoginUserModel) msg.obj);
-                if (null != model.getMsg())
+                if (null != model.getMsg()) {
                     WuhunToast.normal(model.getMsg()).show();
+                } else {
+                    WuhunToast.normal("用户名或密码错误").show();
+                }
             } else if (msg.what == LOGIN_ERROR) {
-                WuhunToast.normal("服务器内部错误，请联系管理员").show();
+                WuhunToast.normal(getResources().getString(R.string.Login)).show();
+            }else if(msg.what == BROWSE) {
+                jumpToActivity(MainActivity.class);
             }
             LoadDialog.dismiss(LoginActivity.this);
             super.handleMessage(msg);
         }
     };
+
+    private void showLoadDialog(){
+        ld = new LoadDialog(mContext, false, "正在加载中……");
+        ld.show();
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(ld!=null && ld.isShowing()){
+            ld.dismiss();
+            ld = null;
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -196,4 +258,5 @@ public class LoginActivity extends BaseActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 }

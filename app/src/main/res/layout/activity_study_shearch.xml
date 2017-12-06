@@ -8,6 +8,7 @@
     android:orientation="vertical"
     android:background="@color/gray5"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="studyim.cn.edu.cafa.studyim.activity.main.StudyShearchActivity">
 
     <LinearLayout
@@ -16,19 +17,38 @@
         android:orientation="horizontal"
         android:background="@color/white"
         android:gravity="center_vertical">
-        <EditText
-            android:id="@+id/et_search_content"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="4dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginBottom="6dp"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
             android:background="@drawable/et_border_bg_selector"
-            android:drawableLeft="@drawable/searchs"
-            android:textSize="14sp"
-            android:hint="请输入"/>
+            android:gravity="center_vertical"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="6dp">
+            <ImageView
+                android:id="@+id/icon_img_search"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/searchs"/>
+            <Spinner
+                android:id="@+id/spinner_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+            <!--android:entries="@array/spingarr"-->
+            <EditText
+                android:id="@+id/et_search_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:background="@null"
+                android:textSize="14sp"
+                android:lines="1"
+                android:ellipsize="end"
+                android:hint="请输入"/>
+        </LinearLayout>
         <TextView
             android:id="@+id/btn_search"
             android:layout_width="wrap_content"
@@ -39,12 +59,33 @@
             android:textStyle="bold"
             android:textColor="@color/red2"/>
     </LinearLayout>
+    <View style="@style/Line" />
+
+    <tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView
+        android:id="@+id/rv_user_info_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:rv_divider_color="@color/line"
+        app:rv_divider_size="1px"/>
+
+    <TextView
+        android:id="@+id/tv_user_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:gravity="center"
+        android:background="@color/white"
+        android:text="该用户不存在"
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:id="@+id/ll_default_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
         <TextView
             android:id="@+id/tv_search_hint"
             android:layout_width="wrap_content"

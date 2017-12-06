@@ -45,7 +45,7 @@
             <!--android:layout_alignParentRight="true"-->
             <!--android:src="@drawable/mansage"/>-->
         <ImageView
-            android:id="@+id/body_img_add"
+            android:id="@+id/img_add_friend"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
             android:padding="8dp"

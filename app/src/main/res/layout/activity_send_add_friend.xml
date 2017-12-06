@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="studyim.cn.edu.cafa.studyim.activity.other.SendAddFriendActivity">
+
+    <include layout="@layout/head_title_bar" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="您需要发送验证申请，等待对方通过"
+        android:textColor="@color/gray2"
+        android:textSize="12sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <EditText
+            android:id="@+id/et_applymas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="注备信息"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:drawableBottom="@drawable/et_bottom_green"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:gravity="bottom"
+            android:textSize="14sp"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/ibClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:background="@null"
+            android:src="@mipmap/ic_delete"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="注备名："
+        android:textColor="@color/gray2"
+        android:textSize="12sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <EditText
+            android:id="@+id/et_applyname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="注备名"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:drawableBottom="@drawable/et_bottom_green"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:gravity="bottom"
+            android:textSize="14sp"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:background="@null"
+            android:src="@mipmap/ic_delete"/>
+    </RelativeLayout>
+
+</android.support.v7.widget.LinearLayoutCompat>

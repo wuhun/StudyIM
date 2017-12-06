@@ -151,7 +151,7 @@ public class WuhunToast {
     //string
     @CheckResult
     public static Toast warning(@NonNull String message, boolean withIcon, Drawable icon) {
-        return custom(getContext(), message, DEFAULT_TEXT_COLOR, true, icon, true, WARNING_COLOR);
+        return custom(getContext(), message, DEFAULT_TEXT_COLOR, withIcon, icon, true, WARNING_COLOR);
     }
 
     //resId

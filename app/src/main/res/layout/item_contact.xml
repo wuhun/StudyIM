@@ -30,7 +30,7 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/ivHeader"
+            android:id="@+id/img_avater_item"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="centerCrop"

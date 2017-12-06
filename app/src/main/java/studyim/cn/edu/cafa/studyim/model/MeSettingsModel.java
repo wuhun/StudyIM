@@ -17,8 +17,7 @@ public class MeSettingsModel {
     private String title;
     private String url;
 
-    public MeSettingsModel() {
-    }
+    public MeSettingsModel() {}
 
     public MeSettingsModel(String img, String title, String url) {
         this.img = img;
@@ -70,7 +69,6 @@ public class MeSettingsModel {
                 "img='" + img + '\'' +
                 ", reserceId=" + reserceId +
                 ", title='" + title + '\'' +
-                ", url='" + url + '\'' +
-                '}';
+                ", url='" + url + '\'' + '}';
     }
 }

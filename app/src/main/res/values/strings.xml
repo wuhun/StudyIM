@@ -6,7 +6,13 @@
     <string name="Login">登录</string>
     <string name="regist"><u>注册</u></string>
     <string name="forgot_pwd">忘记密码</string>
+
+    <string name="request_error">请求失去响应，请检测当前网络环境</string>
+    <string name="request_fail">登录超时,请退出重新登录</string>
+
     <string name="title_activity_study_shearch">StudyShearchActivity</string>
+    <string name="positive">确定</string>
+    <string name="negative">取消</string>
 
 
 </resources>

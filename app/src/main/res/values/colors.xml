@@ -96,7 +96,6 @@
     <color name="olive">#808000</color><!--橄榄色 -->
     <color name="chartreuse">#7fff00</color><!--黄绿色 -->
     <color name="greenyellow">#adff2f</color><!--黄绿色 -->
-    <color name="green">#008000</color><!--绿色 -->
     <color name="darkgreen">#006400</color><!--暗绿色 -->
     <color name="darkolivegreen">#556b2f</color><!--暗橄榄绿 -->
     <color name="olivedrab">#6b8e23</color><!--深绿褐色 -->
@@ -165,15 +164,28 @@
     <color name="gray1">#7e7e7e</color>
     <color name="gray2">#969696</color>
     <color name="gray3">#c8969696</color>
-    <color name="gray4">#F5F5F5</color>
-    <color name="gray5">#EBEBEB</color>
+    <color name="gray4">#ededed</color>
+    <color name="gray5">#dfdfdf</color>
     <color name="gray6">#FBFBFB</color>
     <color name="gray7">#999999</color>
     <color name="gray8">#D9D9D9</color>
     <color name="gray9">#DBDFE0</color>
 
+    <!-- 按钮颜色 -->
+    <color name="green">#008000</color><!--绿色 -->
+    <color name="btn_green">#1AAD16</color>
+    <color name="btn_green_hover">#179914</color>
+    <color name="et_green_bottom">#A3DEA3</color>
+
+
+    <!-- 文字颜色 -->
+    <color name="tag_text_color">#313131</color>
+
     <color name="et_border">#DDDDDD</color>
+    <!--遮盖层颜色-->
+    <color name="mask">#32000000</color>
 
     <color name="red2">#FF224D</color>
+
 
 </resources>

@@ -11,7 +11,8 @@ package studyim.cn.edu.cafa.studyim.common;
  */
 public class Constant {
 
-//    public static final String indexUrl = "http://124.127.38.215/";
+    public static final String HOME_URL = "http://124.127.38.214/";
+    //    public static final String indexUrl = "http://124.127.38.215/";
     public static final String indexUrl = "http://124.127.38.214/ios/";
 
 }

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="studyim.cn.edu.cafa.studyim.activity.other.SetUserRemarkName">
+
+    <include layout="@layout/head_title_bar"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20px"
+        android:layout_marginTop="40px"
+        android:text="注备："
+        android:textColor="@color/gray2"
+        android:textSize="14sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40px">
+
+        <EditText
+            android:id="@+id/etAlias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:background="@null"
+            android:drawablePadding="20px"
+            android:gravity="bottom"
+            android:hint=""
+            android:textColorHint="@color/gray3"
+            android:textSize="14sp"
+            android:visibility="visible"/>
+        <!--android:drawableBottom="@drawable/selector_edit_focus"-->
+        <ImageButton
+            android:id="@+id/ibClearAlias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40px"
+            android:background="@null"
+            android:src="@drawable/ic_clear_white_48dp"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20px"
+        android:layout_marginTop="40px"
+        android:text="标签"
+        android:textColor="@color/gray2"
+        android:textSize="14sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40px">
+
+        <EditText
+            android:id="@+id/etTag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:background="@null"
+            android:drawablePadding="20px"
+            android:focusable="false"
+            android:gravity="bottom"
+            android:hint="添加标签对联系人进行分类"
+            android:textColorHint="@color/gray3"
+            android:textSize="14sp"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/ibClearTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40px"
+            android:background="@null"
+            android:src="@mipmap/ic_delete"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20px"
+        android:layout_marginTop="40px"
+        android:text="@string/phone_number"
+        android:textColor="@color/gray2"
+        android:textSize="14sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40px">
+
+        <EditText
+            android:id="@+id/etPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:background="@null"
+            android:drawablePadding="20px"
+            android:focusable="false"
+            android:gravity="bottom"
+            android:hint="添加电话号码"
+            android:textColorHint="@color/gray3"
+            android:textSize="14sp"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/ibClearPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40px"
+            android:background="@null"
+            android:src="@mipmap/ic_delete"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20px"
+        android:layout_marginTop="40px"
+        android:text="描述"
+        android:textColor="@color/gray2"
+        android:textSize="14sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40px">
+
+        <ImageButton
+            android:id="@+id/ibClearDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40px"
+            android:background="@null"
+            android:src="@mipmap/ic_delete"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/etDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:background="@null"
+            android:drawablePadding="20px"
+            android:focusable="false"
+            android:gravity="bottom"
+            android:hint="添加更多备注信息"
+            android:textColorHint="@color/gray3"
+            android:textSize="14sp"
+            android:visibility="visible"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20px"
+        android:layout_marginTop="40px"
+        android:text="附加图片"
+        android:textColor="@color/gray2"
+        android:textSize="14sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40px">
+
+        <EditText
+            android:id="@+id/etPicture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:background="@null"
+            android:drawablePadding="20px"
+            android:focusable="false"
+            android:gravity="bottom"
+            android:hint="添加名片或相关图片"
+            android:textColorHint="@color/gray3"
+            android:textSize="14sp"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/ibClearPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40px"
+            android:background="@null"
+            android:src="@mipmap/ic_delete"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.LinearLayoutCompat>

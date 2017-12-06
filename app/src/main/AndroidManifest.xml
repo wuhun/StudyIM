@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="studyim.cn.edu.cafa.studyim">
 
+    <!-- 获取手机状态-例如手机串号 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name=".app.MyApplication"
         android:allowBackup="true"
@@ -37,9 +40,15 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.main.StudyShearchActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_study_shearch"
-            android:theme="@style/MyTheme"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/MyTheme" />
+        <activity
+            android:name="tools.com.lvliangliang.wuhuntools.permission.PermissionActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.other.DetailUserInfoActivity" />
+        <activity android:name=".activity.other.SetUserRemarkName" />
+        <activity android:name=".activity.other.SendAddFriendActivity"></activity>
     </application>
 
 </manifest>

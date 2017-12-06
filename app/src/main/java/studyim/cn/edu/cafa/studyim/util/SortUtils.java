@@ -19,7 +19,7 @@ public class SortUtils {
         List<Friend> specialList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             //将属于#号的集合分离开来
-            String pinYinFirstLetter = WuhunPingyinTool.getPinYinFirstCharIsLetter(list.get(i).getNoteName());
+            String pinYinFirstLetter = WuhunPingyinTool.getPinYinFirstCharIsLetter(list.get(i).getREMARKNAME());
             if (pinYinFirstLetter.equalsIgnoreCase("#")) {
                 specialList.add(list.get(i));
             }

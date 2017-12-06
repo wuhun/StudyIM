@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout.LayoutParams;
@@ -46,9 +47,11 @@ public class LoadDialog extends Dialog {
         this.getContext().setTheme(android.R.style.Theme_InputMethod);
         setContentView(R.layout.layout_dialog_loading);
 
+        mShowMessage = (TextView) findViewById(R.id.show_message);
         if (!TextUtils.isEmpty(this.tipMsg)) {
-            mShowMessage = (TextView) findViewById(R.id.show_message);
             mShowMessage.setText(this.tipMsg);
+        } else {
+            mShowMessage.setVisibility(View.GONE);
         }
 
         Window window = getWindow();
