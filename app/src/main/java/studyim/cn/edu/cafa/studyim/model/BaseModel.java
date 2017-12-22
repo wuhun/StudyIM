@@ -1,5 +1,6 @@
 package studyim.cn.edu.cafa.studyim.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * 修订历史：
  * ================================================
  */
-public class BaseModel<T> {
+public class BaseModel<T> implements Serializable {
 
     /**
      * msg :
@@ -20,7 +21,6 @@ public class BaseModel<T> {
      * code : 1
      * before : http://124.127.38.214/
      */
-
     private String msg;
     private int code;
     private String before;

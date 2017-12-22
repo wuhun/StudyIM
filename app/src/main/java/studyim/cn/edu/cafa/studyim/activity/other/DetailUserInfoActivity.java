@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -21,6 +23,7 @@ import studyim.cn.edu.cafa.studyim.model.UserInfo;
 import studyim.cn.edu.cafa.studyim.ui.OptionItemView;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
 import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
+import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 public class DetailUserInfoActivity extends BaseActivity {
 
@@ -62,8 +65,8 @@ public class DetailUserInfoActivity extends BaseActivity {
     OptionItemView oivAlias;
     @BindView(R.id.oiv_delete)
     OptionItemView oivDelete;
-    @BindView(R.id.btn_detail_me)
-    Button btnDetailMe;
+//    @BindView(R.id.btn_detail_me)
+//    Button btnDetailMe;
 
     private Context mContext;
     private UserInfo userInfo;
@@ -85,15 +88,15 @@ public class DetailUserInfoActivity extends BaseActivity {
     }
 
     private void initeListener() {
-        bodyImgMenu.setOnClickListener(mOnClickListener);
-        btnAddConstact.setOnClickListener(mOnClickListener);
-        llClickSetTag.setOnClickListener(mOnClickListener);
-        bodySearch.setOnClickListener(mOnClickListener);
+        bodyImgMenu.setOnClickListener(mOnClickListener);//返回
+        btnAddConstact.setOnClickListener(mOnClickListener);//添加好友
+        llClickSetTag.setOnClickListener(mOnClickListener);//设置注备
+        bodySearch.setOnClickListener(mOnClickListener);//
         rlMenu.setOnClickListener(mOnClickListener);
         
         oivAlias.setOnClickListener(mOnClickListener);
         oivDelete.setOnClickListener(mOnClickListener);
-        btnDetailMe.setOnClickListener(mOnClickListener);
+//        btnDetailMe.setOnClickListener(mOnClickListener);
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -113,9 +116,10 @@ public class DetailUserInfoActivity extends BaseActivity {
                 startActivityForResult(intent, USER_REMARK_NAME);
             }else if(v.getId() == R.id.oiv_delete) {
                 // TODO: 2017/12/4 删除当前用户
-            }else if(v.getId() == R.id.btn_detail_me) {
-                // TODO: 2017/12/5 查看个人信息
             }
+//            else if(v.getId() == R.id.btn_detail_me) {
+//                // TODO: 2017/12/5 查看个人信息
+//            }
         }
     };
 
@@ -186,6 +190,28 @@ public class DetailUserInfoActivity extends BaseActivity {
         userInfo = (UserInfo) intent.getSerializableExtra(PUT_USER_INFO);
         String url = intent.getStringExtra(BEFORE);
 
+//        String extraUserId = intent.getStringExtra(GET_USERID);
+//        if (extraUserId != null && userInfo == null) {
+//            HttpUtil.friend_getinfo(extraUserId, new Callback() {
+//                @Override
+//                public void onFailure(Call call, IOException e) {
+//                    handler.sendEmptyMessage(REQUEST_ERROR);
+//                }
+//
+//                @Override
+//                public void onResponse(Call call, final Response response) throws IOException {
+//                    if (response.isSuccessful()) {
+//                        String result = response.body().string();
+//                        WuhunDebug.debug("DetailUserInfoActivity:" + result);
+//                        BaseModel<UserInfo> model = getGson().fromJson(result, new TypeToken<BaseModel<UserInfo>>() {}.getType());
+//                        WuhunDebug.debug("DetailUserInfoActivity:" + model);
+//                    } else {
+//                        handler.sendEmptyMessage(REQUEST_FAIL);
+//                    }
+//                }
+//            });
+//        }
+
         if(userInfo == null)  return;
         tvNickname.setText(userInfo.getNICKNAME());
         tvSchool.setText(userInfo.getSCHOOL());
@@ -217,7 +243,21 @@ public class DetailUserInfoActivity extends BaseActivity {
         WuhunDebug.debug("DetailUserInfoActivity:" + userInfo.toString());
     }
 
+    private static final int REQUEST_ERROR = 0x01;
+    private static final int REQUEST_FAIL = 0x02;
+    private static final int REQUEST_SUCCESS = 0x03;
 
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what == REQUEST_ERROR) {
+                WuhunToast.normal("获取失败").show();
+            }else if(msg.what == REQUEST_FAIL) {
+                WuhunToast.normal(getResources().getString(R.string.request_fail)).show();
+            }
+            super.handleMessage(msg);
+        }
+    };
 
 //    private String getAvaterUri(UserInfo userInfo) {
 //        String uri;

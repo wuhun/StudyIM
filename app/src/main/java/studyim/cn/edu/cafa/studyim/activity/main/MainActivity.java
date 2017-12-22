@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.rong.imlib.RongIMClient;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
@@ -24,8 +25,12 @@ import studyim.cn.edu.cafa.studyim.fragment.main.MainHomeFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainMeFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainResourceFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainStudyFragment;
+import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import tools.com.lvliangliang.wuhuntools.adapter.lazyViewPgaerAdapter.LazyFragmentPagerAdapter;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
+
+import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
 public class MainActivity extends BaseActivity {
 
@@ -35,10 +40,14 @@ public class MainActivity extends BaseActivity {
     private Class mClass[] = {
             MainStudyFragment.class, MainResourceFragment.class, MainContactFragment.class, MainHomeFragment.class, MainMeFragment.class
     };
-    private BaseFragment mFragment[] = {
-            new MainStudyFragment(), new MainResourceFragment(), new MainContactFragment(), new MainHomeFragment(), new MainMeFragment()
-    };
     private String mTitles[] = {"学习", "资源", "通讯录", "官网", "我的"};
+    private BaseFragment mFragment[] = {
+            FragmentFactory.getInstance().getMainStudyFragment(),
+            FragmentFactory.getInstance().getMainResourceFragment(),
+            FragmentFactory.getInstance().getMainContactFragment(),
+            FragmentFactory.getInstance().getMainHomeFragment(),
+            FragmentFactory.getInstance().getMainMeFragment()
+    };
     private int mImages[] = {
             R.drawable.main_tab_study_icon_selecor,
             R.drawable.main_tab_resource_icon_selecor,
@@ -58,9 +67,30 @@ public class MainActivity extends BaseActivity {
     }
 
     private void init() {
+        initConnect();
         initView();
         initEvent();
         mTabHost.setCurrentTab(3);
+    }
+
+    private void initConnect() {
+        RongIMClient.connect(getSPUtil().getRctoken(), new RongIMClient.ConnectCallback() {
+            @Override
+            public void onTokenIncorrect() {
+                WuhunToast.normal("Token 错误，请重新登录").show();
+            }
+
+            @Override
+            public void onSuccess(String s) {
+                TestLog.i("success" + s);
+                WuhunToast.normal("连接成功").show();
+            }
+
+            @Override
+            public void onError(RongIMClient.ErrorCode errorCode) {
+                WuhunToast.normal("连接融云失败").show();
+            }
+        });
     }
 
     private void initView() {
@@ -202,7 +232,8 @@ public class MainActivity extends BaseActivity {
             }
             //退出
             if (WuhunToast.doubleClickExit()) {
-                moveTaskToBack(false);
+                MainActivity.this.finish();
+//                moveTaskToBack(false);
             }
             return true;
         }

@@ -8,8 +8,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.model.Friend;
+import studyim.cn.edu.cafa.studyim.model.FriendGetAddList;
+import studyim.cn.edu.cafa.studyim.model.FriendGetInfoModel;
 import studyim.cn.edu.cafa.studyim.model.UserInfo;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 
 /**
@@ -25,7 +26,7 @@ public class UserAvatarUtil {
 
     public static void showAvatar(Context context, UserInfo userInfo, String beforeUrl, ImageView imgAvatar) {
         if (userInfo.getAVATAR() != null) {
-            WuhunDebug.debug(beforeUrl + userInfo.getAVATAR());
+//            WuhunDebug.debug(beforeUrl + userInfo.getAVATAR());
             Glide.with(context).load(beforeUrl + userInfo.getAVATAR())
                     .error(R.mipmap.default_useravatar)
                     .placeholder(R.mipmap.default_useravatar)
@@ -66,7 +67,7 @@ public class UserAvatarUtil {
 
     public static void showAvatar(Context context, Friend friend, String beforeUrl, ImageView imgAvatar) {
         if (friend.getAVATAR() != null) {
-            WuhunDebug.debug(beforeUrl + friend.getAVATAR());
+//            WuhunDebug.debug(beforeUrl + friend.getAVATAR());
             Glide.with(context).load(beforeUrl + friend.getAVATAR())
                     .error(R.mipmap.default_useravatar)
                     .placeholder(R.mipmap.default_useravatar)
@@ -101,6 +102,93 @@ public class UserAvatarUtil {
             uri =  RongGenerate.generateDefaultAvatar(friend.getNICKNAME(), friend.getUSERBUDDYID()+"");
         } else {
             uri = friend.getAVATAR();
+        }
+        return uri;
+    }
+
+    public static void showAvatar(Context context, FriendGetAddList model, String beforeUrl, ImageView imgAvatar) {
+        if (model.getAVATAR() != null) {
+//            WuhunDebug.debug(beforeUrl + model.getAVATAR());
+            Glide.with(context).load(beforeUrl + model.getAVATAR())
+                    .error(R.mipmap.default_useravatar)
+                    .placeholder(R.mipmap.default_useravatar)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .skipMemoryCache(true)
+                    .dontAnimate()
+                    .centerCrop().into(imgAvatar);
+        } else {
+            if (model.getNICKNAME() != null && model.getUSERID() + "" != null) {
+                Glide.with(context).load(getAvatarUri(model))
+                        .error(R.mipmap.default_useravatar)
+                        .placeholder(R.mipmap.default_useravatar)
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .skipMemoryCache(true)
+                        .dontAnimate()
+                        .centerCrop().into(imgAvatar);
+            } else {
+                Glide.with(context).load(context.getResources().getDrawable(R.mipmap.default_useravatar))
+                        .placeholder(R.mipmap.default_useravatar)
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .skipMemoryCache(true)
+                        .dontAnimate()
+                        .centerCrop().into(imgAvatar);
+            }
+        }
+    }
+
+    public static String getAvatarUri(FriendGetAddList model) {
+        String uri;
+        if(model == null) return null;
+        if (WuhunDataTool.isNullString(model.getAVATAR())) {
+            uri =  RongGenerate.generateDefaultAvatar(model.getNICKNAME(), model.getUSERID()+"");
+        } else {
+            uri = model.getAVATAR();
+        }
+        return uri;
+    }
+
+    public static void showAvatar(Context context, FriendGetInfoModel.ResultBean model, String beforeUrl, ImageView imgAvatar) {
+        if (model.getAvatar() != null) {
+            String uri = null;
+            if (model.getAvatar().startsWith("http://")) {
+                uri = model.getAvatar();
+            } else {
+                uri = beforeUrl + model.getAvatar();
+            }
+            Glide.with(context).load(uri)
+                    .error(R.mipmap.default_useravatar)
+                    .placeholder(R.mipmap.default_useravatar)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .skipMemoryCache(true)
+                    .dontAnimate()
+                    .centerCrop().into(imgAvatar);
+        } else {
+            if (model.getNickName() != null && model.getUserId() + "" != null) {
+                Glide.with(context).load(getAvatarUri(model))
+                        .error(R.mipmap.default_useravatar)
+                        .placeholder(R.mipmap.default_useravatar)
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .skipMemoryCache(true)
+                        .dontAnimate()
+                        .centerCrop().into(imgAvatar);
+            } else {
+                Glide.with(context).load(context.getResources().getDrawable(R.mipmap.default_useravatar))
+                        .placeholder(R.mipmap.default_useravatar)
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .skipMemoryCache(true)
+                        .dontAnimate()
+                        .centerCrop().into(imgAvatar);
+            }
+        }
+    }
+
+    public static String getAvatarUri(FriendGetInfoModel.ResultBean model) {
+        String uri;
+        if(model == null) return null;
+        if (WuhunDataTool.isNullString(model.getAvatar())) {
+            uri =  RongGenerate.generateDefaultAvatar(model.getNickName(), model.getUserId()+"");
+        } else {
+            uri = model.getAvatar();
         }
         return uri;
     }

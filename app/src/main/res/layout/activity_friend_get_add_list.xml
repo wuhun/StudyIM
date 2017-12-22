@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/gray5"
+    tools:context="studyim.cn.edu.cafa.studyim.activity.other.FriendGetAddListActivity">
+
+    <include layout="@layout/head_title_bar" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:ellipsize="end"
+        android:text="新的朋友"
+        android:padding="10dp"/>
+
+    <tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView
+        android:id="@+id/rv_new_friend_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        app:rv_divider_color="@color/line"
+        app:rv_divider_size="1px"/>
+
+</android.support.v7.widget.LinearLayoutCompat>

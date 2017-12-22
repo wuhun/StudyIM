@@ -12,6 +12,9 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
+
 /**
  * 作者：悟魂 ————2017/11/8 0008.
  * 版本：1.0
@@ -81,7 +84,13 @@ public class BaseActivity extends AppCompatActivity {
 //        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //        startActivity(intent);
 //    }
-
+    public void resultFailToast(String msg) {
+        if (WuhunDataTool.isNullString(msg)) {
+            WuhunToast.normal(msg).show();
+        } else {
+            WuhunToast.normal("获取失败").show();
+        }
+    }
 
     @Override
     protected void onDestroy() {

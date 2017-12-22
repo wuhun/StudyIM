@@ -1,5 +1,9 @@
 package studyim.cn.edu.cafa.studyim.fragment.main;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,6 +12,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -19,8 +24,10 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
-import studyim.cn.edu.cafa.studyim.app.MyApplication;
+import studyim.cn.edu.cafa.studyim.activity.other.FriendGetAddListActivity;
+import studyim.cn.edu.cafa.studyim.activity.other.FriendGetinfoActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
+import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendListModel;
 import studyim.cn.edu.cafa.studyim.ui.QuickIndexBar;
@@ -32,11 +39,13 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRHeaderAndFooterAdapter;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
+import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
+
+import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
 
 /**
  * ================================================
@@ -57,7 +66,10 @@ public class MainContactFragment extends BaseFragment {
     @BindView(R.id.tvLetter)
     TextView mTvLetter;
     @BindView(R.id.img_add_friend)
-    ImageView imgAddFriend;
+    RelativeLayout imgAddFriend;
+    @BindView(R.id.img_add_friend_dot)
+    ImageView imgAddFriendDot;
+
 
     @BindView(R.id.head_bg)
     ImageView headBg;//背景颜色
@@ -120,7 +132,20 @@ public class MainContactFragment extends BaseFragment {
     @Override
     protected void initListener() {
         mQib.setOnLetterUpdateListener(mOnLetterUpdateListener);
+        imgAddFriend.setOnClickListener(mOnClickListener);
     }
+
+    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(v.getId() == R.id.img_add_friend) {
+                // TODO: 2017/12/6 查看
+                jumpToActivity(FriendGetAddListActivity.class);
+                imgAddFriendDot.setVisibility(View.GONE);
+            }
+        }
+    };
+
 
     @Override
     protected void initData() {
@@ -129,6 +154,7 @@ public class MainContactFragment extends BaseFragment {
     }
 
     private void loadData() {
+        /** 获取好友列表 */
         HttpUtil.getFriendList(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -139,7 +165,7 @@ public class MainContactFragment extends BaseFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String result = response.body().string();
-                    FriendListModel friendList = MyApplication.getGson().fromJson(result, FriendListModel.class);
+                    FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
                     if (null == friendList || null == friendList.getResult()) {
                         handler.sendEmptyMessage(REQUEST_FAIL);
                         return;
@@ -152,34 +178,33 @@ public class MainContactFragment extends BaseFragment {
                 }
             }
         });
-//        List<Friend> friends = new ArrayList<>();
-//        friends.add(new Friend("1","http://tupian.qqjay.com/tou2/2017/0524/d0991c6179bf6ebe68f443859f27254a.jpg","囚徒","囚徒","囚徒"));
-//        friends.add(new Friend("2","http://tupian.qqjay.com/tou2/2017/0524/595255a4d8c66da4e6a861d748c0899c.jpg","冷酷谋杀犯","冷酷谋杀犯","冷酷谋杀犯"));
-//        friends.add(new Friend("3","http://tupian.qqjay.com/tou2/2017/0701/7db9580e389dd4f2121b93d716cc0387.jpg","冷酷谋杀犯","冷酷谋杀犯","冷酷谋杀犯"));
-//        friends.add(new Friend("4","http://tupian.qqjay.com/tou2/2017/0701/ef41afc6dc7b543ec509f94328810423.jpg","记得笑","记得笑","记得笑"));
-//        friends.add(new Friend("5","http://tupian.qqjay.com/tou2/2017/0701/b5e38a8bf690cbacd17b36c1b988f6f1.jpg","孤神","孤神","孤神"));
-//        friends.add(new Friend("6","http://tupian.qqjay.com/tou2/2017/0701/99ebdcc1ec2dc7c6a2448144f0674669.png","无极","无极","无极"));
-//        friends.add(new Friend("7","http://tupian.qqjay.com/tou2/2017/0701/c9eb2682b9c0a6f9a89520a8b5ab3818.jpg","入言梦","入言梦","入言梦"));
-//        friends.add(new Friend("8","http://tupian.qqjay.com/tou2/2017/0701/149ea01cb1e26f8b25b69f9b4bd67700.jpg","怎深拥你i","怎深拥你i","怎深拥你i"));
-//        friends.add(new Friend("9","http://tupian.qqjay.com/tou3/2016/1221/33ddf51ce1e3dd5a56b20c28ea50717b.jpg","失心疯","失心疯","失心疯"));
-//        friends.add(new Friend("10","http://tupian.qqjay.com/tou3/2016/1221/719adfb657ec7e7958d194122f7bc023.jpg","翻跟斗","翻跟斗","翻跟斗"));
-//        friends.add(new Friend("11","http://tupian.qqjay.com/tou3/2016/1221/719adfb657ec7e7958d194122f7bc023.jpg","翻跟斗","翻跟斗","翻跟斗"));
-//        friends.add(new Friend("12","http://tupian.qqjay.com/tou3/2016/1221/0a561ab522b8c14b534fc849e030fa12.jpg","好姑凉前途无量","好姑凉前途无量","好姑凉前途无量"));
-//        friends.add(new Friend("13","http://tupian.qqjay.com/tou2/2017/0524/d0991c6179bf6ebe68f443859f27254a.jpg","45","45","45"));
-//        friends.add(new Friend("14","http://tupian.qqjay.com/tou2/2017/0524/d0991c6179bf6ebe68f443859f27254a.jpg","434","434","434"));
-//        friends.add(new Friend("15","http://tupian.qqjay.com/tou2/2017/0524/d0991c6179bf6ebe68f443859f27254a.jpg","464","464","464"));
-//        friends.add(new Friend("15","http://tupian.qqjay.com/tou2/2017/0524/d0991c6179bf6ebe68f443859f27254a.jpg","!@#$","!@#$","!@#$"));
-//        friends.add(new Friend("15","http://tupian.qqjay.com/tou2/2017/0524/d0991c6179bf6ebe68f443859f27254a.jpg","@#$","@#$","@#$"));
-//        friends.add(new Friend("16","http://tupian.qqjay.com/tou3/2016/1221/4d7f0d1cd71545086ceaac05504c7e4a.jpg","admin","admin","admin"));
-//        friends.add(new Friend("17","http://tupian.qqjay.com/tou3/2016/1221/4d7f0d1cd71545086ceaac05504c7e4a.jpg","呆到深处自然萌","呆到深处自然萌","呆到深处自然萌"));
-//        friends.add(new Friend("18", null,"张三","张三","张三"));
+    }
 
-//        updateBottom(friends);
+    private void unregisterBR() {
+        BroadcastManager.getInstance(getActivity()).unregister(Constant.ADD_FRIEND_RED_DOT);
+        BroadcastManager.getInstance(getActivity()).unregister(Constant.UPDATA_CONSTACT_LIST);
+    }
+
+    private void registerBR() {
+        BroadcastManager.getInstance(getActivity()).register(Constant.ADD_FRIEND_RED_DOT, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // getActivity 设置父activity的tag提示
+                imgAddFriendDot.setVisibility(View.VISIBLE);
+            }
+        });
+        BroadcastManager.getInstance(getActivity()).register(Constant.UPDATA_CONSTACT_LIST, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                loadData(); //更新列表
+            }
+        });
     }
 
     public static final int FRIEND_LIST_SUCCESS = 0x01;
     public static final int REQUEST_FAIL = 0x02;
     public static final int REQUEST_ERROR = 0x03;
+    public static final int GET_ADD_FRIEND_LIST_SUCCESS = 0x03;
 
 
     Handler handler = new Handler(){
@@ -193,14 +218,14 @@ public class MainContactFragment extends BaseFragment {
                 FriendListModel model = (FriendListModel)msg.obj;
                 HOME_URL = model.getBefore();
 
-                WuhunDebug.debug("=success-获取好友列表=>" + model.getResult());
+//                WuhunDebug.debug("=success-获取好友列表=>" + model.getResult());
                 if (model.getCode() == 1) {
                     List<Friend> friends = new ArrayList<>();
                     friends.addAll(model.getResult());
                     updateBottom(friends);
 //                    WuhunDebug.debug("===>" + model.getResult());
                 } else {
-                    if (WuhunDataTool.isNullString(model.getMsg())) {
+                    if (!WuhunDataTool.isNullString(model.getMsg())) {
                         WuhunToast.normal(model.getMsg()).show();
                     } else {
                         WuhunToast.normal("获取失败").show();
@@ -210,6 +235,7 @@ public class MainContactFragment extends BaseFragment {
             super.handleMessage(msg);
         }
     };
+
 
     private void updateBottom(List<Friend> friends) {
         if (friends != null && friends.size() > 0) {
@@ -233,6 +259,8 @@ public class MainContactFragment extends BaseFragment {
     @Override
     protected void initView() {
         mData = new ArrayList<>();
+
+        registerBR();
     }
 
     @Override
@@ -303,7 +331,12 @@ public class MainContactFragment extends BaseFragment {
                 mAdapter.getInnerAdapter()).setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
-                WuhunToast.info("点击了：" + (position)).show(); //有头部 -1：没有：position
+//                WuhunToast.info("点击了：" + (position)).show(); //有头部 -1：没有：position
+                Friend friend = mData.get(position);
+                String userid = friend.getUSERBUDDYID();
+                Intent intent = new Intent(mActivity, FriendGetinfoActivity.class);
+                intent.putExtra(FriendGetinfoActivity.GET_USERID, userid);
+                jumpToActivity(intent);
             }
         });
     }
@@ -315,8 +348,15 @@ public class MainContactFragment extends BaseFragment {
         footerView.setLayoutParams(params);
         footerView.setGravity(Gravity.CENTER);
         footerView.setPadding(0,10,0,10);
+        footerView.setTextColor(Color.parseColor("#FBFBFB"));
 //        footerView.setBackgroundResource(R.color.gray5);
         return footerView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterBR();
     }
 
 }

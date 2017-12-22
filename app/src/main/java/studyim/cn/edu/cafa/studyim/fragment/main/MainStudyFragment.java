@@ -12,9 +12,7 @@ import butterknife.BindView;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.activity.main.StudyShearchActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
-import studyim.cn.edu.cafa.studyim.fragment.study.StudyAllFragment;
-import studyim.cn.edu.cafa.studyim.fragment.study.StudyClassFragment;
-import studyim.cn.edu.cafa.studyim.fragment.study.StudyLeadFragment;
+import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 /**
@@ -53,7 +51,9 @@ public class MainStudyFragment extends BaseFragment {
     private int position = 0;
 
     private BaseFragment mFragment[] = {
-            new StudyAllFragment(),new StudyClassFragment(),new StudyLeadFragment()
+            FragmentFactory.getInstance().getstudyAllFragment(),
+            FragmentFactory.getInstance().getStudyClassFragment(),
+            FragmentFactory.getInstance().getStudyLeadFragment()
     };
     private FragmentTransaction ft;
 

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray5"
+    tools:context="studyim.cn.edu.cafa.studyim.activity.other.FriendGetinfoActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/ll_content_user_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/head_title"
+                layout="@layout/head_title_bar" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <ImageView
+                    android:id="@+id/img_avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@mipmap/default_header" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_username"
+                            style="@style/tag_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:text="用户名" />
+
+                        <ImageView
+                            android:id="@+id/img_sex"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@mipmap/ic_sex_male" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_nickname"
+                            style="@style/p4_g3_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:text="昵称：" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 注备信息 -->
+            <LinearLayout
+                android:id="@+id/ll_click_set_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:padding="14dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="设置注备和标签" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_remark_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tv_remark_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="注备信息" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_remark_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tv_remark_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="电话号码" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <TextView
+                        style="@style/tag_text"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="学校" />
+
+                    <TextView
+                        android:id="@+id/tv_school"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="学校" />
+                </LinearLayout>
+
+                <View style="@style/Line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <TextView
+                        style="@style/tag_text"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="专业" />
+
+                    <TextView
+                        android:id="@+id/tv_major"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="专业" />
+                </LinearLayout>
+
+                <View style="@style/Line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <TextView
+                        style="@style/tag_text"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="班级" />
+
+                    <TextView
+                        android:id="@+id/tv_class"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="班级" />
+                </LinearLayout>
+
+                <View style="@style/Line" />
+
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/btn_add_constact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@drawable/btn_green_selecter"
+                android:padding="4dp"
+                android:text="添加到为好友"
+                android:textColor="@color/white" />
+            <!--android:background="@color/btn_green"-->
+            <Button
+                android:id="@+id/btn_send_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@drawable/btn_green_selecter"
+                android:padding="4dp"
+                android:text="发消息"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <!--<Button-->
+            <!--android:id="@+id/btn_detail_me"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="20dp"-->
+            <!--android:background="@drawable/btn_green_selecter"-->
+            <!--android:padding="4dp"-->
+            <!--android:text="查看个人信息"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:visibility="gone" />-->
+        </LinearLayout>
+    </ScrollView>
+    <!--菜单-->
+    <RelativeLayout
+        android:id="@+id/rlMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <View
+            android:id="@+id/vMask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/mask" />
+
+        <LinearLayout
+            android:id="@+id/svMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:scrollbars="none">
+
+
+            <studyim.cn.edu.cafa.studyim.ui.OptionItemView
+                android:id="@+id/oiv_alias"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/selector_common_item"
+                app:left_image_margin_left="40px"
+                app:left_image_margin_right="36px"
+                app:left_src="@mipmap/icon_menu_note"
+                app:left_text="设置注备名称"
+                app:left_text_color="@color/gray1" />
+
+            <View style="@style/Line" />
+
+            <studyim.cn.edu.cafa.studyim.ui.OptionItemView
+                android:id="@+id/oiv_delete"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/selector_common_item"
+                app:left_image_margin_left="40px"
+                app:left_image_margin_right="36px"
+                app:left_src="@mipmap/icon_menu_delete"
+                app:left_text="删除"
+                app:left_text_color="@color/gray1" />
+
+            <View style="@style/Line" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</FrameLayout>

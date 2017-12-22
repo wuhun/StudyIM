@@ -1,6 +1,5 @@
 package studyim.cn.edu.cafa.studyim.app;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.google.gson.Gson;
@@ -16,7 +15,7 @@ import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
  * 说明：全局application
  */
 
-public class MyApplication extends Application {
+public class MyApplication extends RongApplication {
 
     public static Context mContext;
     public static Gson gson;

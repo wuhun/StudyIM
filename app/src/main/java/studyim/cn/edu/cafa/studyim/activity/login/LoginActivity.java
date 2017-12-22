@@ -201,6 +201,8 @@ public class LoginActivity extends BaseActivity {
     }
 
 
+
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -216,7 +218,7 @@ public class LoginActivity extends BaseActivity {
                     WuhunToast.normal("用户名或密码错误").show();
                 }
             } else if (msg.what == LOGIN_ERROR) {
-                WuhunToast.normal(getResources().getString(R.string.Login)).show();
+                WuhunToast.normal(getResources().getString(R.string.request_error)).show();
             }else if(msg.what == BROWSE) {
                 jumpToActivity(MainActivity.class);
             }

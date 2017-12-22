@@ -45,6 +45,12 @@
     <style name="tag_text">
         <item name="android:textColor">@color/tag_text_color</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!-- 描述 -->
+    <style name="p4_g3_text">
+        <item name="android:textColor">@color/gray3</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>

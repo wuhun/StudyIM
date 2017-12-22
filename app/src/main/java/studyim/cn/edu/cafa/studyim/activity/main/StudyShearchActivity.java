@@ -37,7 +37,6 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
@@ -136,7 +135,7 @@ public class StudyShearchActivity extends BaseActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.btn_search:
-                    WuhunToast.info("您搜索的内容为：" + etSearchContent.getText().toString()).show();
+//                    WuhunToast.info("您搜索的内容为：" + etSearchContent.getText().toString()).show();
     //                    HttpUtil.userInfoSearch();
     //                    llDefaultContent.setVisibility(View.GONE);
                     String content = etSearchContent.getText().toString();
@@ -165,7 +164,6 @@ public class StudyShearchActivity extends BaseActivity {
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String json = response.body().string();
-            WuhunDebug.debug(json);
             BaseModel<UserInfo> model = getGson().fromJson(json, new TypeToken<BaseModel<UserInfo>>(){}.getType());
 //            List<UserInfo> result = model.getResult();
 //            TestLog.i("********debug↓********");
@@ -197,10 +195,13 @@ public class StudyShearchActivity extends BaseActivity {
                     }
                     llDefaultContent.setVisibility(View.GONE);
                     // TODO: 2017/12/1 适配数据
-                    TestLog.i("获取成功");
                     showUserInfoList(model);
                 } else {
-                    TestLog.i("获取失败");
+                    if (!WuhunDataTool.isNullString(model.getMsg())) {
+                        WuhunToast.normal(model.getMsg()).show();
+                    } else {
+                        WuhunToast.normal("获取失败").show();
+                    }
                 }
             }else if(msg.what == REQUEST_FAIL) {
                 WuhunToast.normal(getResources().getString(R.string.request_fail)).show();

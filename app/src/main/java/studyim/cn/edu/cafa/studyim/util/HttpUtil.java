@@ -24,6 +24,33 @@ import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
  */
 public class HttpUtil {
 
+    /** 获取好友详细信息 */
+    public static void friend_getinfo(String buddyUserId, Callback callback) {
+        String uri = Constant.indexUrl + "CAFA/friend/getInfo";
+        Map<String, String> map = new HashMap<>();
+        map.put("buddyUserId", buddyUserId);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 确认好友请求 */
+    public static void friendAskaddmsg(String buddyUserId,String isAgree, Callback callback) {
+        String uri = Constant.indexUrl + "CAFA/friend/askaddmsg";
+        Map<String, String> map = new HashMap<>();
+        map.put("buddyUserId", buddyUserId);
+        map.put("isAgree", isAgree);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 获取申请列表 */
+    public static void friend_GetAddList(Callback callback) {
+        String uri = Constant.indexUrl + "CAFA/friend/getaddlist";
+//        WuhunDebug.debug("uri:" + uri + "\n token:" + getSPUtil().getTokens() + "\n userid:" + getSPUtil().getUSERID());
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, null);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
     /** 发送好友请求 */
     public static void friendAdd(String buddyUserId, String userid, String msg, String name, Callback callback) {
         String uri = Constant.indexUrl + "CAFA/friend/add";

@@ -15,4 +15,7 @@ public class Constant {
     //    public static final String indexUrl = "http://124.127.38.215/";
     public static final String indexUrl = "http://124.127.38.214/ios/";
 
+
+    public static final String ADD_FRIEND_RED_DOT = "add_friend_red_dot";
+    public static java.lang.String UPDATA_CONSTACT_LIST = "updata_constact_list";
 }
