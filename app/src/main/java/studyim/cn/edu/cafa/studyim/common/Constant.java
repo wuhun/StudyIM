@@ -18,4 +18,7 @@ public class Constant {
 
     public static final String ADD_FRIEND_RED_DOT = "add_friend_red_dot";
     public static java.lang.String UPDATA_CONSTACT_LIST = "updata_constact_list";
+
+
+    public static final String ME_SHOW_RED = "show_red";
 }

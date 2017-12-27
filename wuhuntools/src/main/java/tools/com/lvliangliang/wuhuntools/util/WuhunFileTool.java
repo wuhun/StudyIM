@@ -17,6 +17,15 @@ import java.io.Writer;
  * 作者：悟魂 ————2017/11/2 0002.
  * 版本：1.0
  * 说明：
+ *
+ * 输入输出
+ *  mFileWrite                  写入文件
+ *  writeChineseFile            UTF-8写入文件
+ *
+ *  bufferInputRead             读取文件内容
+ *
+ *  流：
+ *  closeIO     关闭流
  */
 
 public class WuhunFileTool {

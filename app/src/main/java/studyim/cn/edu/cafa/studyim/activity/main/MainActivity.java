@@ -1,6 +1,8 @@
 package studyim.cn.edu.cafa.studyim.activity.main;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
@@ -16,10 +18,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.rong.imkit.RongIM;
+import io.rong.imkit.manager.IUnReadMessageObserver;
 import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Conversation;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
+import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainContactFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainHomeFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainMeFragment;
@@ -28,8 +34,10 @@ import studyim.cn.edu.cafa.studyim.fragment.main.MainStudyFragment;
 import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import tools.com.lvliangliang.wuhuntools.adapter.lazyViewPgaerAdapter.LazyFragmentPagerAdapter;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
+import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
+import static studyim.cn.edu.cafa.studyim.app.MyApplication.getContext;
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
 public class MainActivity extends BaseActivity {
@@ -55,6 +63,10 @@ public class MainActivity extends BaseActivity {
             R.drawable.main_tab_home_icon_selecor,
             R.drawable.main_tab_me_icon_selecor,
     };
+
+    ImageView dot_study, dot_resource, dot_contact, dot_home, dot_me;
+    private ImageView mDotimg[] = {dot_study, dot_resource, dot_contact, dot_home, dot_me};
+
     private Context context;
 
     @Override
@@ -69,8 +81,41 @@ public class MainActivity extends BaseActivity {
     private void init() {
         initConnect();
         initView();
-        initEvent();
+        initEvent(); //选中位置
         mTabHost.setCurrentTab(3);
+        initData();
+    }
+
+    private void initData() {
+        // TODO: 2017/12/25 我的广播加载我的提醒红点
+        BroadcastManager.getInstance(getContext()).register(Constant.ME_SHOW_RED, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mDotimg[4].setVisibility(View.VISIBLE);
+            }
+        });
+
+        //  会话聊天界面，未读消息提醒
+        final Conversation.ConversationType[] conversationTypes = {
+                Conversation.ConversationType.PRIVATE,Conversation.ConversationType.GROUP, Conversation.ConversationType.SYSTEM,
+                Conversation.ConversationType.PUBLIC_SERVICE, Conversation.ConversationType.APP_PUBLIC_SERVICE
+        };
+
+        RongIM.getInstance().addUnReadMessageCountChangedObserver(new IUnReadMessageObserver() {
+            @Override
+            public void onCountChanged(int count) {
+                unreadMsg(count);
+            }
+        }, conversationTypes);
+    }
+
+    private void unreadMsg(int count) {
+        TestLog.i("MainActivity: 未读消息：" + count);
+        if (count == 0) {
+            mDotimg[0].setVisibility(View.GONE);
+        } else {
+            mDotimg[0].setVisibility(View.VISIBLE);
+        }
     }
 
     private void initConnect() {
@@ -107,7 +152,6 @@ public class MainActivity extends BaseActivity {
             TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTitles[i]).setIndicator(getTabView(i));//底部
             mTabHost.addTab(tabSpec, mClass[i], null);
             mFragmentList.add(mFragment[i]);//fragment
-//            mTabHost.getTabWidget().getChildAt(i).setBackgroundColor(Color.WHITE);
             mTabHost.getTabWidget().getChildAt(i).setBackgroundColor(0xACBDCA);//背景色
         }
 
@@ -122,54 +166,20 @@ public class MainActivity extends BaseActivity {
                 return mFragmentList.get(position);
             }
         });
-//        mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
-//            @Override
-//            public Fragment getItem(int position) {
-//                return mFragmentList.get(position);
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return mFragmentList.size();
-//            }
-//
-//            /////////////////////////////////////////////////////////////////////////////////
-////            @Override
-////            public Object instantiateItem(ViewGroup container, int position) {
-////                BaseFragment f = (BaseFragment) super.instantiateItem(container, position);
-////                return f;
-////            }
-//
-//            @Override
-//            public int getItemPosition(Object object) {
-//                return PagerAdapter.POSITION_NONE;
-////                return super.getItemPosition(object);
-//            }
-//
-//            @Override
-//            public void destroyItem(ViewGroup container, int position, Object object) {
-//                //super.destroyItem(container, position, object);
-//            }
-//
-//            //            @Override
-////            public void destroyItem(ViewGroup container, int position, Object object) {
-////                super.destroyItem(container, position, object);
-//////                if(position > mDisplayViewList.size() - 1)return;
-//////                container.removeView(mDisplayViewList.get(position));
-//////                TestLog.i("pageAdapter中移除了"+position);
-////            }
-//            /////////////////////////////////////////////////////////////////////////////////
-//        });
+        //mViewPager.setOffscreenPageLimit(4);//预加载界面
     }
 
     /**
      * 获取当前tab标签
      */
     private View getTabView(int index) {
+        TestLog.i("getTabView调用次数：" + index);
         View view = LayoutInflater.from(this).inflate(R.layout.tab_item, null);
 
         ImageView image = (ImageView) view.findViewById(R.id.image);
         TextView title = (TextView) view.findViewById(R.id.title);
+
+        mDotimg[index] = (ImageView) view.findViewById(R.id.img_red_dot);
 
         image.setImageResource(mImages[index]);
         title.setText(mTitles[index]);
@@ -188,19 +198,18 @@ public class MainActivity extends BaseActivity {
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
             @Override
             public void onPageSelected(int position) {
                 mTabHost.setCurrentTab(position);
+                //取消红点
+                ImageView img = (ImageView) mTabHost.getCurrentTabView().findViewById(R.id.img_red_dot);
+                img.setVisibility(View.GONE);
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
+            public void onPageScrollStateChanged(int state) {}
         });
 
     }
@@ -238,5 +247,18 @@ public class MainActivity extends BaseActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RongIM.getInstance().removeUnReadMessageCountChangedObserver(new IUnReadMessageObserver() {
+            @Override
+            public void onCountChanged(int i) {
+                unreadMsg(i);
+            }
+        });
+
+        BroadcastManager.getInstance(getContext()).unregister(Constant.ME_SHOW_RED);
     }
 }

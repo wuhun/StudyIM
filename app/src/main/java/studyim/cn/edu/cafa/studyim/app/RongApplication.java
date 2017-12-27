@@ -2,6 +2,8 @@ package studyim.cn.edu.cafa.studyim.app;
 
 import android.app.Application;
 
+import org.litepal.LitePal;
+
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
@@ -28,6 +30,8 @@ public class RongApplication extends Application implements RongIMClient.OnRecal
     @Override
     public void onCreate() {
         super.onCreate();
+        // 初始化litepal数据库管理
+        LitePal.initialize(getApplicationContext());
         // 初始化融云
         initRongCloud();
     }

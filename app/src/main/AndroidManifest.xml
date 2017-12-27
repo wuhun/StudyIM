@@ -14,9 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
 
-        <!--<meta-data-->
-            <!--android:name="com.amap.api.v2.apikey"-->
-            <!--android:value="高德地图的 AppKey" />-->
+        <!-- <meta-data -->
+        <!-- android:name="com.amap.api.v2.apikey" -->
+        <!-- android:value="高德地图的 AppKey" /> -->
+
 
         <!-- 欢迎界面 -->
         <activity
@@ -56,20 +57,35 @@
         <activity android:name=".activity.other.FriendGetAddListActivity" />
         <activity android:name=".activity.other.FriendGetinfoActivity" />
         <activity android:name=".activity.other.SessionActivity" />
-        <!--会话页面-->
+        <!-- 会话页面 -->
         <activity
             android:name=".activity.rong.ConversationListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
-                <!-- ${packageName}  -->
+                <!-- ${packageName} -->
                 <data
-                    android:host="${applicationId}"
+                    android:host="${packageName}"
                     android:pathPrefix="/conversation/"
+                    android:scheme="rong" />
+            </intent-filter>
+        </activity>
+        <!-- 聚合会话列表,显示 -->
+        <activity
+            android:name=".activity.rong.SubConversationListActivtiy"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="${packageName}"
+                    android:pathPrefix="/subconversationlist"
                     android:scheme="rong" />
             </intent-filter>
         </activity>

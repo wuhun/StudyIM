@@ -8,6 +8,8 @@ import android.os.Looper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import tools.com.lvliangliang.wuhuntools.util.WuhunFileTool;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
@@ -21,7 +23,6 @@ import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
  */
 
 public class WuhunCrashTools implements Thread.UncaughtExceptionHandler {
-
     private Thread.UncaughtExceptionHandler mHandler;
     private boolean mInitialized;//是否初始化成功
     private String mCrashDirPath;//错误日志写入目录
@@ -97,6 +98,21 @@ public class WuhunCrashTools implements Thread.UncaughtExceptionHandler {
 //        String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 //        final String fullPath = mCrashDirPath + now + ".txt";
 //        if (!RxFileTool.createOrExistsFile(fullPath)) return;
+
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String formatTime = sdf.format(date);
+
+//        WuhunFileTool
+//        String path = FileUtils.getCachePath(this.mContext, "crashlog") + "/crash_" + formatTime + ".log";
+//        File crashFile = new File(path);
+//
+//            crashFile.createNewFile();
+//            OutputStream stream = new FileOutputStream(crashFile);
+//            PrintStream printStream = new PrintStream(stream);
+//            ex.printStackTrace(printStream);
+//            printStream.close();
+
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -118,23 +134,22 @@ public class WuhunCrashTools implements Thread.UncaughtExceptionHandler {
 //            }
 //        }).start();
 
-        //打印错误日志
+        //打印错误日志到控制台
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String crashHead = getCrashHead();
+                String crashHead = getCrashHead();//头部信息
                 TestLog.i(crashHead);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 try {
-                    throwable.printStackTrace(new PrintStream(baos));
+                    throwable.printStackTrace(new PrintStream(baos));//打印到控制台
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
                     WuhunFileTool.closeIO(baos);
                 }
                 TestLog.i("==byteArrayOutputStream==>" + baos.toString());
-
                 TestLog.i("==Cause==>" + throwable.getCause());
                 TestLog.i("==message==>" + throwable.getMessage());
             }
@@ -146,15 +161,12 @@ public class WuhunCrashTools implements Thread.UncaughtExceptionHandler {
             mHandler.uncaughtException(thread, throwable);
         } else {
             try {
-//                RxToast.error(mContext, "很抱歉,程序异常,即将退出应用.").show();
-//                RxToast.error(mContext, "很抱歉,程序异常,即将退出应用.").show();
-                TestLog.e("很抱歉,程序异常,即将退出应用1.");
+                WuhunToast.error("很抱歉,程序异常,即将退出应用.").show();
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 TestLog.i("error : " + e.toString());
             }
-            //退出程序
-            android.os.Process.killProcess(android.os.Process.myPid());
+            android.os.Process.killProcess(android.os.Process.myPid());//退出程序
             System.exit(1);//非正常退出，就是说无论程序正在执行与否，都退出，
         }
     }

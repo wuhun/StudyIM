@@ -24,10 +24,12 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.activity.login.LoginActivity;
 import studyim.cn.edu.cafa.studyim.activity.other.FriendGetAddListActivity;
 import studyim.cn.edu.cafa.studyim.activity.other.FriendGetinfoActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import studyim.cn.edu.cafa.studyim.common.Constant;
+import studyim.cn.edu.cafa.studyim.db.DBManager;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendListModel;
 import studyim.cn.edu.cafa.studyim.ui.QuickIndexBar;
@@ -214,6 +216,8 @@ public class MainContactFragment extends BaseFragment {
                 WuhunToast.error(getResources().getString(R.string.request_error)).show();
             }else if(msg.what == REQUEST_FAIL) {
                 WuhunToast.warning(getResources().getString(R.string.request_fail)).show();
+                jumpToActivity(LoginActivity.class);
+                getActivity().finish();
             }else if(msg.what == FRIEND_LIST_SUCCESS) {
                 FriendListModel model = (FriendListModel)msg.obj;
                 HOME_URL = model.getBefore();
@@ -223,6 +227,7 @@ public class MainContactFragment extends BaseFragment {
                     List<Friend> friends = new ArrayList<>();
                     friends.addAll(model.getResult());
                     updateBottom(friends);
+                    DBManager.getmInstance().setAllUserInfo(friends);
 //                    WuhunDebug.debug("===>" + model.getResult());
                 } else {
                     if (!WuhunDataTool.isNullString(model.getMsg())) {
@@ -241,7 +246,6 @@ public class MainContactFragment extends BaseFragment {
         if (friends != null && friends.size() > 0) {
             mData.clear();
             mData.addAll(friends);
-
             if (mData.size() == 0) {
 //                footerView.setVisibility(View.GONE);
                 footerView.setText("您还没有联系人，去添加吧！");
@@ -321,7 +325,6 @@ public class MainContactFragment extends BaseFragment {
                     }
                 }
             };
-
 //            adapter.addHeaderView(getFooterView());
             adapter.addFooterView(getFooterView());
             mAdapter = adapter.getHeaderAndFooterAdapter();

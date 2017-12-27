@@ -3,6 +3,8 @@ package studyim.cn.edu.cafa.studyim.model;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import org.litepal.crud.DataSupport;
+
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
 
@@ -10,7 +12,7 @@ import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
  * @创建者 CSDN_LQR
  * @描述 朋友表(用户信息表)
  */
-public class Friend implements Comparable<Friend> {
+public class Friend extends DataSupport implements Comparable<Friend> {
 /////////////////////////////////////////////////////////////////////////////////
     private String USERBUDDYID;//好友id
     private String NICKNAME;//昵称 - 默认
