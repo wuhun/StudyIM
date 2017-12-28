@@ -7,11 +7,16 @@ import android.os.Build;
 import android.os.Looper;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
+import tools.com.lvliangliang.wuhuntools.util.WuhunDateTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunFileTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunIOTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 /**
@@ -99,40 +104,54 @@ public class WuhunCrashTools implements Thread.UncaughtExceptionHandler {
 //        final String fullPath = mCrashDirPath + now + ".txt";
 //        if (!RxFileTool.createOrExistsFile(fullPath)) return;
 
-        Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String formatTime = sdf.format(date);
 
-//        WuhunFileTool
-//        String path = FileUtils.getCachePath(this.mContext, "crashlog") + "/crash_" + formatTime + ".log";
-//        File crashFile = new File(path);
-//
-//            crashFile.createNewFile();
-//            OutputStream stream = new FileOutputStream(crashFile);
-//            PrintStream printStream = new PrintStream(stream);
-//            ex.printStackTrace(printStream);
-//            printStream.close();
+        WuhunThread.runThread(new Runnable() {
+            @Override
+            public void run() {
+                String logTime = WuhunDateTool.getDateFormat(System.currentTimeMillis(), WuhunDateTool.DATE2);//文件名
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                PrintWriter pw = null;
-//                try {
-//                    pw = new PrintWriter(new FileWriter(fullPath, false));
-//                    pw.write(getCrashHead());
-//                    throwable.printStackTrace(pw);
-//                    Throwable cause = throwable.getCause();
-//                    while (cause != null) {
-//                        cause.printStackTrace(pw);
-//                        cause = cause.getCause();
+                File sdPath = WuhunFileTool.getSDPath();
+                if(sdPath != null) {
+                    File logPath = new File(sdPath.getPath() + File.separator + "_StudyIM");
+                    File logFile = new File(logPath.getPath(), "StudyIM_" + logTime + ".log");
+                    OutputStream stream = null;
+                    try {
+                        logFile.createNewFile(); //创建文件
+                        stream = new FileOutputStream(logFile); //文件输出流
+                        stream.write(getCrashHead().getBytes()); //写入头部
+                        PrintStream ps = new PrintStream(stream);
+                        throwable.printStackTrace(ps);//写入错误信息
+                        Throwable cause = throwable.getCause();
+                        while(cause != null) {
+                            cause.printStackTrace();
+                            cause = cause.getCause();
+                        }
+                        stream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally{
+                        WuhunIOTool.closeIO(stream);
+                    }
+
+//                    PrintWriter pw = null;
+//                    try {
+//                        logFile.createNewFile(); //创建文件
+//                        pw = new PrintWriter(new FileWriter(logFile, false)); // 输出流
+//                        pw.write(getCrashHead());   //写入头部
+//                        throwable.printStackTrace(pw); //写入错误信息
+//                        Throwable cause = throwable.getCause();//异常原因
+//                        while(cause != null) {
+//                            cause.printStackTrace(pw);
+//                            cause = cause.getCause();
+//                        }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }finally {
+//                        WuhunIOTool.closeIO(pw);
 //                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    RxFileTool.closeIO(pw);
-//                }
-//            }
-//        }).start();
+                }
+            }
+        });
 
         //打印错误日志到控制台
         new Thread(new Runnable() {
@@ -147,11 +166,10 @@ public class WuhunCrashTools implements Thread.UncaughtExceptionHandler {
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    WuhunFileTool.closeIO(baos);
+                    WuhunIOTool.closeIO(baos);
                 }
                 TestLog.i("==byteArrayOutputStream==>" + baos.toString());
-                TestLog.i("==Cause==>" + throwable.getCause());
-                TestLog.i("==message==>" + throwable.getMessage());
+                TestLog.i("==message==>" + throwable.toString());
             }
         }).start();
 

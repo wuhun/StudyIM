@@ -55,7 +55,7 @@ public class StudyAllFragment extends BaseFragment {
                 for (Conversation con : conversations) {
                     WuhunDebug.debug("类型:" + con.getConversationType() +
                             "\n对方id" + con.getTargetId() +
-                            "\n时间：" + WuhunDateTool.getMMddHHmm(con.getReceivedTime())+
+                            "\n时间：" + WuhunDateTool.getDateFormat(con.getReceivedTime(), WuhunDateTool.DATE1)+
                             "\n是否置顶" + con.isTop() +
                             "\n未读消息数" + con.getUnreadMessageCount() +
                             "\n文字消息草稿" + con.getDraft() +

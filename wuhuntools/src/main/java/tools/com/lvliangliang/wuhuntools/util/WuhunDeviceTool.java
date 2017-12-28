@@ -528,7 +528,7 @@ public class WuhunDeviceTool {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            WuhunFileTool.closeIO(lnr, isr);
+            WuhunIOTool.closeIO(lnr, isr);
         }
         return macAddress == null ? "" : macAddress;
     }

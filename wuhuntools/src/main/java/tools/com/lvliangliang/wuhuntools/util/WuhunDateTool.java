@@ -13,26 +13,19 @@ import java.text.SimpleDateFormat;
  */
 public class WuhunDateTool {
 
-    private static final String yyyyMMdd_HHmmss = "yyyy-MM-dd HH:mm:ss";
-    private static final String MMdd_HHmm = "mm/dd HH:mm";
+    public static final String DATE1 = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE2 = "yyyyMMdd_HHmmss";
+    public static final String DATE3 = "mm/dd HH:mm";
 
     /**
-     * 获取时间类型为：yyyy-MM-dd HH:mm:ss
-     * @param time  long类型的当前时间
-     * @return      yyyy-MM-dd HH:mm:ss
-     */
-    public static String getyyyyMMddHHmmss(long time){
-        SimpleDateFormat sdf = new SimpleDateFormat(yyyyMMdd_HHmmss);
-        return sdf.format(time);
-    }
-
-    /**
-     *
-     * @param time
+     * 获取时间类型结果
+     * @param time              当前时间 - long类型
+     * @param dateFormat        转换的格式类型
      * @return
      */
-    public static String getMMddHHmm(long time){
-        SimpleDateFormat sdf = new SimpleDateFormat(MMdd_HHmm);
+    public static String getDateFormat(long time, String dateFormat){
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         return sdf.format(time);
     }
+
 }
