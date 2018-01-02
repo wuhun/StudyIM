@@ -41,6 +41,7 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRHeaderAndFooterAdapter;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
@@ -148,7 +149,6 @@ public class MainContactFragment extends BaseFragment {
         }
     };
 
-
     @Override
     protected void initData() {
         setAdapter();
@@ -187,6 +187,9 @@ public class MainContactFragment extends BaseFragment {
         BroadcastManager.getInstance(getActivity()).unregister(Constant.UPDATA_CONSTACT_LIST);
     }
 
+    /**
+     * 广播更新列表
+     */
     private void registerBR() {
         BroadcastManager.getInstance(getActivity()).register(Constant.ADD_FRIEND_RED_DOT, new BroadcastReceiver() {
             @Override
@@ -198,6 +201,7 @@ public class MainContactFragment extends BaseFragment {
         BroadcastManager.getInstance(getActivity()).register(Constant.UPDATA_CONSTACT_LIST, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                TestLog.i("收到广播更新列表………………");
                 loadData(); //更新列表
             }
         });
@@ -263,7 +267,6 @@ public class MainContactFragment extends BaseFragment {
     @Override
     protected void initView() {
         mData = new ArrayList<>();
-
         registerBR();
     }
 

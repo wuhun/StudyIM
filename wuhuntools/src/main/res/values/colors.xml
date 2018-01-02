@@ -5,5 +5,22 @@
     <color name="red">#FF4C5B</color>
     <color name="b">#353A3E</color>
     <color name="main_theme_color">#0195ff</color>
+
+    <color name="blue4">#ff2781e8</color>
+    <color name="blue2">#003cff</color>
+    <color name="blue1">#2733dc</color>
+    <color name="blue">#0000ff</color>
+
     <color name="line">#D2D2D2</color>
+
+    <color name="black">#ff000000</color>
+    <color name="gray2">#ff272727</color>
+    <color name="gray3">#ff525252</color>
+    <color name="gray4">#ff858484</color>
+    <color name="gray5">#ffa0a0a0</color>
+    <color name="gray6">#ffdbdbdb</color>
+    <color name="gray7">#ffe8e8e8</color>
+    <color name="gray8">#fff0f0f0</color>
+    <color name="gray9">#ffffffff</color>
+
 </resources>

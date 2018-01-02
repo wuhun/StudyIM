@@ -15,10 +15,12 @@ public class Constant {
     //    public static final String indexUrl = "http://124.127.38.215/";
     public static final String indexUrl = "http://124.127.38.214/ios/";
 
-
+    /**  */
     public static final String ADD_FRIEND_RED_DOT = "add_friend_red_dot";
+    /** 更新通讯录列表内容 */
     public static java.lang.String UPDATA_CONSTACT_LIST = "updata_constact_list";
-
-
+    /** 更新融云的个人信息提供 */
+    public static java.lang.String USER_GETINFO_REFRESH = "user_getinfo_refresh";
+    /** 主页 我的提示点 */
     public static final String ME_SHOW_RED = "show_red";
 }

@@ -1,10 +1,12 @@
 package studyim.cn.edu.cafa.studyim.activity.other;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -25,12 +27,20 @@ import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.common.Constant;
+import studyim.cn.edu.cafa.studyim.db.DBManager;
 import studyim.cn.edu.cafa.studyim.model.FriendGetInfoModel;
+import studyim.cn.edu.cafa.studyim.model.FriendUserInfo;
+import studyim.cn.edu.cafa.studyim.model.ResultModel;
 import studyim.cn.edu.cafa.studyim.ui.OptionItemView;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
 import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
+import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
+import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
+import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
+import tools.com.lvliangliang.wuhuntools.permission.PermissionsUtil;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunPhoneTool;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
@@ -62,15 +72,13 @@ public class FriendGetinfoActivity extends BaseActivity {
     @BindView(R.id.tv_class)
     TextView tvClass;
 
-//    @BindView(R.id.ll_click_set_tag)
-//    LinearLayout llClickSetTag;
+    @BindView(R.id.ll_click_set_tag)
+    LinearLayout llClickSetTag;
     @BindView(R.id.btn_add_constact)
     Button btnAddConstact;
     @BindView(R.id.btn_send_msg)
     Button btnSendMsg;
 
-//    @BindView(R.id.btn_detail_me)
-//    Button btnDetailMe;
     @BindView(R.id.ll_content_user_info)
     LinearLayout llContentUserInfo;
     @BindView(R.id.vMask)
@@ -92,9 +100,14 @@ public class FriendGetinfoActivity extends BaseActivity {
     TextView bodyTvTitle;
     @BindView(R.id.body_search)
     ImageView bodySearch;
+    @BindView(R.id.img_call_phone)
+    ImageView imgCallPhone;
 
     private Context mContext;
     private String extraUserId; //用户id
+
+    public static final int USER_REMARK_NAME = 0x01;
+    private FriendUserInfo friendUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,17 +115,18 @@ public class FriendGetinfoActivity extends BaseActivity {
         setContentView(R.layout.activity_friend_getinfo);
         ButterKnife.bind(this);
 
-        getIntentData();
         initView();
+        getIntentData();
         initeListener();
     }
 
     private void initeListener() {
         bodyImgMenu.setOnClickListener(mOnClickListener);//返回
         btnAddConstact.setOnClickListener(mOnClickListener);//添加好友
-//        llClickSetTag.setOnClickListener(mOnClickListener);//设置注备
-//        bodySearch.setOnClickListener(mOnClickListener);//右边菜单
-//        rlMenu.setOnClickListener(mOnClickListener);
+        llClickSetTag.setOnClickListener(mOnClickListener);//设置注备
+        imgCallPhone.setOnClickListener(mOnClickListener);
+        bodySearch.setOnClickListener(mOnClickListener);//右边菜单
+        rlMenu.setOnClickListener(mOnClickListener);//隐藏菜单
         // TODO: 2017/12/8 添加好友 发送消息
 //        btnAddConstact
         //发消息
@@ -130,18 +144,39 @@ public class FriendGetinfoActivity extends BaseActivity {
                 FriendGetinfoActivity.this.finish();
             }else if(v.getId() == R.id.btn_add_constact) { //添加好友
                 sendAddFriendRequset();
-            }
-//            else if(v.getId() == R.id.body_search) {
-//                showMenu();
-//            }else if(v.getId() == R.id.rlMenu) {
-//                hideMenu();
-//            }
-            else if(v.getId() == R.id.oiv_alias) {
+            } else if(v.getId() == R.id.body_search) {
+                showMenu();
+            }else if(v.getId() == R.id.rlMenu) {
+                // 隐藏菜单
+                hideMenu();
+            }else if(v.getId() == R.id.oiv_alias || v.getId() == R.id.ll_click_set_tag) {
                 // TODO: 2017/12/4 设置注备名称 REMARKNAME
-//                Intent intent = new Intent(mContext, SetUserRemarkName.class);
+                Intent intent = new Intent(mContext, SetUserRemarkName.class);
+                intent.putExtra(SetUserRemarkName.FRIEND_INFO, friendInfo.getResult());
 //                startActivityForResult(intent, USER_REMARK_NAME);
+                jumpToActivity(intent);
             }else if(v.getId() == R.id.oiv_delete) {
                 // TODO: 2017/12/4 删除当前用户
+                HttpUtil.friendDelete(friendUserInfo.getUserId()+"", new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        WuhunToast.normal(R.string.request_error).show();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String result = response.body().string();
+                        ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                        if (response.isSuccessful() && resultModel.getCode() == 1) {
+                            handler.sendEmptyMessage(DELETE_SUCCESS);
+                        } else {
+                            String msg = resultModel.getMsg();
+                            if(!WuhunDataTool.isNullString(msg))
+                                WuhunToast.normal(msg).show();
+                            WuhunToast.normal(R.string.request_error).show();
+                        }
+                    }
+                });
             }else if(v.getId() == R.id.btn_send_msg) {
                 // TODO: 2017/12/8 发送消息
 //                Intent intent = new Intent(mContext, SessionActivity.class);
@@ -158,21 +193,26 @@ public class FriendGetinfoActivity extends BaseActivity {
 //                WuhunDebug.debug("与" + displayName + "聊天：" + friendInfo.getResult().getRCID());
 //                RongIM.getInstance().startPrivateChat(mContext, extraUserId, displayName);
                 finish();
+            }else if(v.getId() == R.id.img_call_phone) {
+                // TODO: 2018/1/2 呼叫电话
+                if (PermissionsUtil.hasPermission(mContext, Manifest.permission.CALL_PHONE)) {
+                    WuhunPhoneTool.showCallPhone(mContext, friendUserInfo.getRemarkTelephone());
+                } else {
+                    PermissionsUtil.requestPermission(mContext, new PermissionListener() {
+                        @Override
+                        public void permissionGranted(@NonNull String[] permission) {
+                            WuhunPhoneTool.showCallPhone(mContext, friendUserInfo.getRemarkTelephone());
+                        }
+
+                        @Override
+                        public void permissionDenied(@NonNull String[] permission) {
+                            WuhunToast.info("您拒绝了拨打电话权限").show();
+                        }
+                    }, Manifest.permission.CALL_PHONE);
+                }
             }
-//            else if(v.getId() == R.id.btn_detail_me) {
-//                // TODO: 2017/12/5 查看个人信息
-//            }
         }
     };
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(requestCode == USER_REMARK_NAME) {
-//            //获取全局的注备名称
-////            data.getStringExtra("");
-//        }
-//    }
 
     private void showMenu() {
         rlMenu.setVisibility(View.VISIBLE);
@@ -221,72 +261,63 @@ public class FriendGetinfoActivity extends BaseActivity {
         headBg.setImageResource(R.mipmap.main_bg);
         bodyImgMenu.setImageResource(R.drawable.icon_back);
         bodyTvTitle.setText("详细资料");
-        bodySearch.setVisibility(View.GONE);
-//        bodySearch.setImageResource(R.mipmap.head_menu_more);
+//        bodySearch.setVisibility(View.GONE);
+        bodySearch.setImageResource(R.mipmap.head_menu_more);
     }
 
     public void getIntentData() {
         Intent intent = getIntent();
 
         extraUserId = intent.getStringExtra(GET_USERID);
+        getUserInfo();
+    }
+
+    /**
+     * 获取好友信息
+     */
+    private void getUserInfo() {
         if (extraUserId != null) {
-            HttpUtil.friend_getinfo(extraUserId, new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    handler.sendEmptyMessage(REQUEST_ERROR);
-                }
-
-                @Override
-                public void onResponse(Call call, final Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        String result = response.body().string();
-
-                        friendInfo = getGson().fromJson(result, FriendGetInfoModel.class);
-
-                        WuhunDebug.debug("DetailUserInfoActivity:" + friendInfo);
-
-                        Message msg = handler.obtainMessage(REQUEST_SUCCESS, friendInfo);
-                        handler.sendMessage(msg);
-//                        BaseModel<UserInfo> model = getGson().fromJson(result, new TypeToken<BaseModel<UserInfo>>() {}.getType());
-//                        WuhunDebug.debug("DetailUserInfoActivity:" + model);
-                    } else {
-                        handler.sendEmptyMessage(REQUEST_FAIL);
+            if (WuhunNetTools.isAvailable(mContext)) {
+                HttpUtil.friend_getinfo(extraUserId, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        handler.sendEmptyMessage(REQUEST_ERROR);
                     }
-                }
-            });
-        }
 
-//        if(userInfo == null)  return;
-//        tvNickname.setText(userInfo.getNICKNAME());
-//        tvSchool.setText(userInfo.getSCHOOL());
-//        tvMajop.setText(userInfo.getMAJOR());
-//        tvClass.setText(userInfo.getCLASS());
-//        UserAvatarUtil.showAvatar(this, userInfo, url, imgAvatar);
-//
-//        String sex = userInfo.getSEX();
-//        if (sex.equals("W")) {
-//            img_sex.setImageResource(R.mipmap.ic_sex_female);
-//        } else {
-//            img_sex.setImageResource(R.mipmap.ic_sex_male);
-//        }
-//
-//        String isbuddy = userInfo.getISBUDDY();
-//
-//        if (isbuddy.equals("N")) {
-//            btnAddConstact.setVisibility(View.VISIBLE);
-//            btnSendMsg.setVisibility(View.GONE);
-//        } else {
-//            btnSendMsg.setVisibility(View.VISIBLE);
-//            btnAddConstact.setVisibility(View.GONE);
-//        }
-//
-////        tv.setText(userInfo.toString());
-//        WuhunDebug.debug("DetailUserInfoActivity:" + userInfo.toString());
+                    @Override
+                    public void onResponse(Call call, final Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            String result = response.body().string();
+
+                            friendInfo = getGson().fromJson(result, FriendGetInfoModel.class);
+
+                            WuhunDebug.debug("DetailUserInfoActivity:" + friendInfo);
+
+                            Message msg = handler.obtainMessage(REQUEST_SUCCESS, friendInfo);
+                            handler.sendMessage(msg);
+                            //                        BaseModel<UserInfo> model = getGson().fromJson(result, new TypeToken<BaseModel<UserInfo>>() {}.getType());
+                            //                        WuhunDebug.debug("DetailUserInfoActivity:" + model);
+                        } else {
+                            handler.sendEmptyMessage(REQUEST_FAIL);
+                        }
+                    }
+                });
+            } else {
+                Integer userid = Integer.valueOf(extraUserId);
+                if (userid != null) {
+                    FriendUserInfo userinfo = DBManager.getmInstance().getFriendUserInfo(userid);
+                    showFriendInfo(userinfo);
+                } else {
+                    WuhunToast.normal("当前网络不可用").show();
+                }
+            }
+        }
     }
 
     private static final int REQUEST_ERROR = 0x01;
     private static final int REQUEST_FAIL = 0x02;
     private static final int REQUEST_SUCCESS = 0x03;
+    private static final int DELETE_SUCCESS = 0x04;
 
     Handler handler = new Handler(){
         @Override
@@ -298,17 +329,24 @@ public class FriendGetinfoActivity extends BaseActivity {
             }else if(msg.what == REQUEST_SUCCESS) {
                 FriendGetInfoModel model = ((FriendGetInfoModel)msg.obj);
                 if (model.getCode() == 1) {
-                    FriendGetInfoModel.ResultBean friendInfo = model.getResult();
+                    FriendUserInfo friendInfo = model.getResult();
+                    DBManager.getmInstance().saveFriendUserInfo(friendInfo);
+                    friendUserInfo = friendInfo;
                     showFriendInfo(friendInfo);
                 } else {
                     WuhunToast.normal("获取失败").show();
                 }
+            }else if(msg.what == DELETE_SUCCESS) {
+                hideMenu();
+                BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATA_CONSTACT_LIST);
+                WuhunToast.normal("删除成功").show();
+                FriendGetinfoActivity.this.finish();
             }
             super.handleMessage(msg);
         }
     };
 
-    private void showFriendInfo(FriendGetInfoModel.ResultBean friendInfo) {
+    private void showFriendInfo(FriendUserInfo friendInfo) {
         if(friendInfo == null) return;
         String nickname = null;
         if (!WuhunDataTool.isNullString(friendInfo.getRemarkName())) {
@@ -316,15 +354,16 @@ public class FriendGetinfoActivity extends BaseActivity {
         } else {
             nickname = friendInfo.getNickName();
         }
-        tvNickname.setText("昵称：" + nickname);
-        tvUsername.setText(friendInfo.getRemarkName());
+        tvUsername.setText(nickname);
+
+        tvNickname.setText("昵称：" + friendInfo.getNickName());
         if (!WuhunDataTool.isNullString(friendInfo.getRemarkMSG())) {
-            tvRemarkMsg.setText("注备信息：" + friendInfo.getRemarkMSG());
+            tvRemarkMsg.setText("备注信息：" + friendInfo.getRemarkMSG());
         } else {
             llRemarkMsg.setVisibility(View.GONE);
         }
         if (!WuhunDataTool.isNullString(friendInfo.getRemarkTelephone())) {
-            tvRemarkPhone.setText("注备电话" + friendInfo.getRemarkTelephone());
+            tvRemarkPhone.setText("备注电话：" + friendInfo.getRemarkTelephone());
         } else {
             llRemarkPhone.setVisibility(View.GONE);
         }

@@ -5,13 +5,16 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendGetAddList;
-import studyim.cn.edu.cafa.studyim.model.FriendGetInfoModel;
+import studyim.cn.edu.cafa.studyim.model.FriendUserInfo;
 import studyim.cn.edu.cafa.studyim.model.UserInfo;
+import studyim.cn.edu.cafa.studyim.ui.GlideRoundTransform;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunImgTool;
 
 /**
  * ================================================
@@ -74,7 +77,8 @@ public class UserAvatarUtil {
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .skipMemoryCache(true)
                     .dontAnimate()
-                    .centerCrop().into(imgAvatar);
+                    .transform(new CenterCrop(context), new GlideRoundTransform(context, 4))
+                    .into(imgAvatar);
         } else {
             if (friend.getNICKNAME() != null && friend.getUSERBUDDYID() + "" != null) {
                 Glide.with(context).load(getAvatarUri(friend))
@@ -83,14 +87,16 @@ public class UserAvatarUtil {
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .skipMemoryCache(true)
                         .dontAnimate()
-                        .centerCrop().into(imgAvatar);
+                        .transform(new CenterCrop(context), new GlideRoundTransform(context, 4))
+                        .into(imgAvatar);
             } else {
                 Glide.with(context).load(context.getResources().getDrawable(R.mipmap.default_useravatar))
                         .placeholder(R.mipmap.default_useravatar)
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .skipMemoryCache(true)
                         .dontAnimate()
-                        .centerCrop().into(imgAvatar);
+                        .transform(new CenterCrop(context), new GlideRoundTransform(context, 4))
+                        .into(imgAvatar);
             }
         }
     }
@@ -147,7 +153,7 @@ public class UserAvatarUtil {
         return uri;
     }
 
-    public static void showAvatar(Context context, FriendGetInfoModel.ResultBean model, String beforeUrl, ImageView imgAvatar) {
+    public static void showAvatar(Context context, FriendUserInfo model, String beforeUrl, ImageView imgAvatar) {
         if (model.getAvatar() != null) {
             String uri = null;
             if (model.getAvatar().startsWith("http://")) {
@@ -182,13 +188,23 @@ public class UserAvatarUtil {
         }
     }
 
-    public static String getAvatarUri(FriendGetInfoModel.ResultBean model) {
+    public static String getAvatarUri(FriendUserInfo model) {
         String uri;
         if(model == null) return null;
         if (WuhunDataTool.isNullString(model.getAvatar())) {
             uri =  RongGenerate.generateDefaultAvatar(model.getNickName(), model.getUserId()+"");
         } else {
             uri = model.getAvatar();
+        }
+        return uri;
+    }
+
+    public static String getAvatarUri(String userid, String name,String avaterUri) {
+        String uri;
+        if (!WuhunDataTool.isNullString(avaterUri) && !WuhunImgTool.isImage(avaterUri)) {
+            uri =  RongGenerate.generateDefaultAvatar(name, userid);
+        } else {
+            uri = avaterUri;
         }
         return uri;
     }

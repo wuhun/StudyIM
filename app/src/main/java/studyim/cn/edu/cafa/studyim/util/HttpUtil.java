@@ -10,6 +10,7 @@ import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import studyim.cn.edu.cafa.studyim.common.Constant;
+import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
@@ -29,6 +30,42 @@ public class HttpUtil {
         String uri = Constant.indexUrl + "CAFA/friend/getInfo";
         Map<String, String> map = new HashMap<>();
         map.put("buddyUserId", buddyUserId);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /**
+     * 删除好友
+     * @param buddyUserId     要删除的好友id
+     * @param callback      回调
+     */
+    public static void friendDelete(String buddyUserId, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/friend/delete";
+        Map<String, String> map = new HashMap<>();
+        map.put("buddyUserId", buddyUserId);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /**
+     * 修改注备名称
+     * @param buddyUserId   好友id
+     * @param noteName      备注名称
+     * @param noteTelephone 备注电话
+     * @param noteMsg       备注信息
+     * @param noteImage     备注头像（未实现）
+     * @param callback      回调
+     */
+    public static void setNote(String buddyUserId, String noteName,String noteTelephone, String noteMsg, String noteImage, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/friend/setnote";
+        Map<String, String> map = new HashMap<>();
+        map.put("buddyUserId", buddyUserId);
+        map.put("noteName", noteName);
+        map.put("noteTelephone", noteTelephone);
+        map.put("noteMsg", noteMsg);
+        if(!WuhunDataTool.isNullString(noteImage)) {
+            map.put("noteImage", noteImage);
+        }
         Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
         OkHttpUtil.enqueue(reqBuilder.build(), callback);
     }
@@ -76,6 +113,13 @@ public class HttpUtil {
     /** 获取好友列表 */
     public static void getFriendList(Callback callback) {
         String uri = Constant.indexUrl + "CAFA/friend/list";
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, null);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 获取个人资料 */
+    public static void userGetInfo(Callback callback){
+        String uri = Constant.indexUrl + "CAFA/user/getInfo";
         Request.Builder reqBuilder = getLoginReqBuilder(uri, null);
         OkHttpUtil.enqueue(reqBuilder.build(), callback);
     }

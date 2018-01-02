@@ -4,6 +4,10 @@
 
     <!-- 获取手机状态-例如手机串号 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 网络是否可用 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:name=".app.MyApplication"

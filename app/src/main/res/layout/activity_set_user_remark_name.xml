@@ -10,41 +10,48 @@
     <include layout="@layout/head_title_bar"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20px"
-        android:layout_marginTop="40px"
-        android:text="注备："
-        android:textColor="@color/gray2"
-        android:textSize="14sp"/>
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="10dp"
+        android:text="注备名："
+        android:textColor="@color/gray1"
+        android:textSize="18sp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40px">
+        android:layout_marginTop="10dp">
 
         <EditText
             android:id="@+id/etAlias"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30px"
-            android:layout_marginRight="30px"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:padding="6dp"
             android:background="@null"
-            android:drawablePadding="20px"
+            android:drawablePadding="6dp"
+            android:drawableBottom="@drawable/et_bottom_line_selecter"
             android:gravity="bottom"
-            android:hint=""
+            android:lines="1"
+            android:ellipsize="end"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:hint="添加注备名"
             android:textColorHint="@color/gray3"
             android:textSize="14sp"
             android:visibility="visible"/>
         <!--android:drawableBottom="@drawable/selector_edit_focus"-->
         <ImageButton
             android:id="@+id/ibClearAlias"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="40px"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="6dp"
             android:background="@null"
-            android:src="@drawable/ic_clear_white_48dp"
+            android:src="@mipmap/clear_et_gray"
             android:visibility="gone"/>
 
     </RelativeLayout>
@@ -52,81 +59,47 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20px"
-        android:layout_marginTop="40px"
-        android:text="标签"
-        android:textColor="@color/gray2"
-        android:textSize="14sp"/>
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="10dp"
+        android:text="注备电话"
+        android:textColor="@color/gray1"
+        android:textSize="18sp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40px">
-
-        <EditText
-            android:id="@+id/etTag"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30px"
-            android:layout_marginRight="30px"
-            android:background="@null"
-            android:drawablePadding="20px"
-            android:focusable="false"
-            android:gravity="bottom"
-            android:hint="添加标签对联系人进行分类"
-            android:textColorHint="@color/gray3"
-            android:textSize="14sp"
-            android:visibility="visible"/>
-
-        <ImageButton
-            android:id="@+id/ibClearTag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="40px"
-            android:background="@null"
-            android:src="@mipmap/ic_delete"
-            android:visibility="gone"/>
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20px"
-        android:layout_marginTop="40px"
-        android:text="@string/phone_number"
-        android:textColor="@color/gray2"
-        android:textSize="14sp"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40px">
+        android:layout_marginTop="10dp">
 
         <EditText
             android:id="@+id/etPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30px"
-            android:layout_marginRight="30px"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:padding="6dp"
             android:background="@null"
-            android:drawablePadding="20px"
-            android:focusable="false"
+            android:drawableBottom="@drawable/et_bottom_line_selecter"
+            android:drawablePadding="6dp"
             android:gravity="bottom"
             android:hint="添加电话号码"
+            android:lines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:inputType="phone"
+            android:maxLength="11"
             android:textColorHint="@color/gray3"
             android:textSize="14sp"
             android:visibility="visible"/>
 
         <ImageButton
             android:id="@+id/ibClearPhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="40px"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
             android:background="@null"
-            android:src="@mipmap/ic_delete"
+            android:src="@mipmap/clear_et_gray"
             android:visibility="gone"/>
 
     </RelativeLayout>
@@ -134,25 +107,26 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20px"
-        android:layout_marginTop="40px"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="10dp"
         android:text="描述"
-        android:textColor="@color/gray2"
-        android:textSize="14sp"/>
+        android:textColor="@color/gray1"
+        android:textSize="18sp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40px">
+        android:layout_marginTop="10dp">
 
         <ImageButton
             android:id="@+id/ibClearDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="40px"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="6dp"
             android:background="@null"
-            android:src="@mipmap/ic_delete"
+            android:src="@mipmap/clear_et_gray"
             android:visibility="gone"/>
 
         <EditText
@@ -160,14 +134,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="30px"
-            android:layout_marginRight="30px"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:padding="6dp"
             android:background="@null"
-            android:drawablePadding="20px"
-            android:focusable="false"
+            android:drawableBottom="@drawable/et_bottom_line_selecter"
+            android:drawablePadding="6dp"
             android:gravity="bottom"
-            android:hint="添加更多备注信息"
+            android:hint="添加注备信息描述"
+            android:maxLength="300"
             android:textColorHint="@color/gray3"
             android:textSize="14sp"
             android:visibility="visible"/>
@@ -181,12 +156,14 @@
         android:layout_marginTop="40px"
         android:text="附加图片"
         android:textColor="@color/gray2"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40px">
+        android:layout_marginTop="40px"
+        android:visibility="gone">
 
         <EditText
             android:id="@+id/etPicture"

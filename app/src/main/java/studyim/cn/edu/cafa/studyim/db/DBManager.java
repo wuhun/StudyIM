@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import studyim.cn.edu.cafa.studyim.model.Friend;
+import studyim.cn.edu.cafa.studyim.model.FriendUserInfo;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 /**
  * ================================================
@@ -33,10 +35,24 @@ public class DBManager {
         return mInstance;
     }
 
-    /** 同步好友信息 */
+    public void saveFriendUserInfo(FriendUserInfo friendInfo){
+        TestLog.i("saveFriendUserInfo:" + friendInfo);
+        FriendUserInfo friendUserInfo = DataSupport.find(FriendUserInfo.class, friendInfo.getUserId());
+        if(friendUserInfo != null) {
+            DataSupport.delete(FriendUserInfo.class, friendInfo.getUserId());
+            friendInfo.save();
+        }
+    }
+
+    /** 同步好友详情信息 */
     public void setAllUserInfo(List<Friend> friends){
         deleteFriends();
         saveFriends(friends);
+    }
+
+    /** 查询数据库中好友详情信息 */
+    public FriendUserInfo getFriendUserInfo(int userId){
+        return DataSupport.find(FriendUserInfo.class, userId);
     }
 
     /** 保存获取的好友信息 */
@@ -60,4 +76,6 @@ public class DBManager {
         //return DataSupport.where("userid != ?", SPUtil.getInstance(getContext()).getUSERID()).find(Friend.class);
         return DataSupport.findAll(Friend.class);
     }
+
+
 }

@@ -89,20 +89,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@color/white"
+                android:background="@drawable/selector_common_item"
                 android:padding="14dp"
                 android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="设置注备和标签" />
+                    android:text="设置注备和标签"
+                    android:textColor="@color/gray1"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_remark_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:padding="14dp"
@@ -121,8 +123,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:padding="14dp"
+                android:gravity="center_vertical"
                 android:visibility="visible">
 
                 <TextView
@@ -130,6 +133,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="电话号码" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <ImageView
+                    android:id="@+id/img_call_phone"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/icon_call_phone"/>
+
             </LinearLayout>
 
             <LinearLayout

@@ -1,5 +1,7 @@
 package studyim.cn.edu.cafa.studyim.model;
 
+import java.io.Serializable;
+
 /**
  * ================================================
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
@@ -9,7 +11,7 @@ package studyim.cn.edu.cafa.studyim.model;
  * 修订历史：
  * ================================================
  */
-public class RolesModel {
+public class RolesModel implements Serializable {
 
     /**
      * roleName : 未知

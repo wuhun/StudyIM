@@ -143,8 +143,6 @@ public class FriendGetAddListActivity extends BaseActivity {
         adapter.setOnItemClickListener(mOnItemClickListener);
         adapter.setOnItemLongClickListener(mOnItemLongClickListener);
         rvNewFriendList.setAdapter(adapter);
-
-        BroadcastManager.getInstance(context).sendBroadcast(Constant.UPDATA_CONSTACT_LIST);
     }
 
     private OnItemLongClickListener mOnItemLongClickListener = new OnItemLongClickListener() {
@@ -215,6 +213,7 @@ public class FriendGetAddListActivity extends BaseActivity {
                 ResultModel model = ((ResultModel)msg.obj);
                 if (model.getCode() == 1) {
                     WuhunToast.normal("添加成功").show();
+                    BroadcastManager.getInstance(context).sendBroadcast(Constant.UPDATA_CONSTACT_LIST);
                 } else {
                     if (!WuhunDataTool.isNullString(model.getMsg())) {
                         WuhunToast.normal(model.getMsg()).show();

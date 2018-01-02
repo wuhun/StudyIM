@@ -3,6 +3,7 @@
     <dbname value="StudyIM" />
     <version value="1" />
     <list>
-        <mapping class="studyim.cn.edu.cafa.studyim.model.Friend"></mapping>
+        <mapping class="studyim.cn.edu.cafa.studyim.model.Friend" />
+        <mapping class="studyim.cn.edu.cafa.studyim.model.FriendUserInfo" />
     </list>
 </litepal>

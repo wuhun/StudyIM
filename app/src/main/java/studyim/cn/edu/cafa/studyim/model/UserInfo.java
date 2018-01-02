@@ -26,6 +26,7 @@ public class UserInfo implements Serializable {
      * BIRTHDAY : 1484409600000
      * ISBUDDY : N
      * IUNAME : 李明珠
+     *
      */
 
     private String SCHOOL; //学校
