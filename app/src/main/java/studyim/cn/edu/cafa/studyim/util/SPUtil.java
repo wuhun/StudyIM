@@ -52,6 +52,11 @@ public class SPUtil {
     /** 融云token */
     public static final String RCTOKEN = "rctoken";
 
+    public static final String SETTING_VERSION = "settingVersion";
+
+    public int getSettingVersion(){return settings.getInt(SETTING_VERSION, 1);}
+    public void setSettingVersion(int version){settings.edit().putInt(SETTING_VERSION, version).commit(); }
+
     public String getUSERID() {return settings.getString(USERID, "");}
     public void setUSERID(String userId) {
         settings.edit().putString(USERID, userId).commit();

@@ -13,7 +13,10 @@ public class Constant {
 
     public static final String HOME_URL = "http://124.127.38.214/";
     //    public static final String indexUrl = "http://124.127.38.215/";
-    public static final String indexUrl = "http://124.127.38.214/ios/";
+    public static final String indexUrl = HOME_URL+"ios/";
+
+    /** 我的界面侧滑菜单-同步设置 下载地址 */
+    public static final String ME_FRAGMENT_UPDATE_SETTINGS = "http://10.10.10.107:8080/test/mySettingList.json";
 
     /**  */
     public static final String ADD_FRIEND_RED_DOT = "add_friend_red_dot";

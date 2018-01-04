@@ -20,6 +20,16 @@ import java.io.IOException;
  */
 public class WuhunFileTool {
 
+    public static String getFileName(String FileName){
+        String name = null;
+        if (FileName.indexOf("/") != -1) {
+            name = FileName.substring(FileName.lastIndexOf("/")+1);
+        } else {
+            name = FileName;
+        }
+        return name;
+    }
+
     /**
      * 得到SD卡根目录.
      */

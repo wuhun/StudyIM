@@ -14,7 +14,7 @@ import android.os.Looper;
  */
 public class WuhunThread {
 
-    public static final Handler mHandler = new Handler();
+    public static final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * 运行到主线程 - 用于回调中控制ui视图

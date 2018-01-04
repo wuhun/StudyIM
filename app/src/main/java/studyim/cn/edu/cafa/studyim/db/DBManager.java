@@ -1,13 +1,21 @@
 package studyim.cn.edu.cafa.studyim.db;
 
+import android.net.Uri;
+
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.rong.imkit.RongIM;
+import io.rong.imlib.model.UserInfo;
+import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendUserInfo;
+import studyim.cn.edu.cafa.studyim.model.SettingModel;
+import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
+import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 
 /**
  * ================================================
@@ -59,8 +67,17 @@ public class DBManager {
     private void saveFriends(List<Friend> friends) {
         List<Friend> list = new ArrayList<>();
         for (Friend entity : friends) {
+            String name = WuhunDataTool.isNullString(entity.getREMARKNAME()) ? entity.getNICKNAME() : entity.getREMARKNAME();
+            String uri = UserAvatarUtil.initUri(Constant.HOME_URL, entity.getAVATAR());
+            String avatarUri = UserAvatarUtil.getAvatarUri(
+                    entity.getUSERBUDDYID(),
+                    name,
+                    uri);
+            UserInfo userinfo = new UserInfo(entity.getRCID(), name, Uri.parse(avatarUri));
+            RongIM.getInstance().refreshUserInfoCache(userinfo);
             list.add(entity);
         }
+        TestLog.i("DBManager - saveFriends: 保存好友到本地数据库列表");
         DataSupport.saveAll(list);
     }
 
@@ -77,5 +94,18 @@ public class DBManager {
         return DataSupport.findAll(Friend.class);
     }
 
+    public void saveSettingsList(List<SettingModel> settingModels){
+        DataSupport.saveAll(settingModels);
+    }
 
+    public List<SettingModel> getSettings(){
+        return DataSupport.findAll(SettingModel.class);
+    }
+
+    public void clearSettins(){
+        List<SettingModel> settings = getSettings();
+        for(SettingModel m : settings){
+            m.delete();
+        }
+    }
 }

@@ -1,6 +1,8 @@
 package studyim.cn.edu.cafa.studyim.fragment.main;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -10,27 +12,37 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.activity.login.LoginActivity;
 import studyim.cn.edu.cafa.studyim.activity.main.MainActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
-import studyim.cn.edu.cafa.studyim.model.MeSettingsModel;
+import studyim.cn.edu.cafa.studyim.db.DBManager;
+import studyim.cn.edu.cafa.studyim.model.SettingBaseModel;
+import studyim.cn.edu.cafa.studyim.model.SettingModel;
+import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
 import tools.com.lvliangliang.wuhuntools.net.X5WebView;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
+import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
 /**
@@ -61,12 +73,14 @@ public class MainMeFragment extends BaseFragment {
     int mDrawerWidth;//抽屉全部拉出来时的宽度
     float scrollWidth;//抽屉被拉出部分的宽度
 
-    LQRAdapterForRecyclerView<MeSettingsModel> settingAdapter;
-//    BaseRecycleAdapter<MeSettingsModel> settingAdapter;
+    LQRAdapterForRecyclerView<SettingModel> settingAdapter;
+//    BaseRecycleAdapter<SettingBaseModel> settingAdapter;
 
     private ViewGroup mViewParent;
     public X5WebView mWebView;
-    private List<MeSettingsModel> settingsData;
+    private List<SettingModel> settingsData;
+
+    public int currentSettingVersion = 1;
 
     private View.OnKeyListener myOnKeyListener = new View.OnKeyListener() {
         @Override
@@ -120,7 +134,10 @@ public class MainMeFragment extends BaseFragment {
                     dlLayout.closeDrawers();
                 }else if(url.equals(TONG_BU)) {
                     // TODO: 2017/11/28 服务器获取设置json并添加到缓存 - 解析显示
-                    WuhunToast.normal("同步预留位置").show();
+//                    updateSetting();
+                    isUpdateSetting = false;
+                    requestSetting(true);
+//                    WuhunToast.normal("同步预留位置").show();
                 }else if(url.equals(EXIT_APP)) {
                     MainActivity main = (MainActivity) MainMeFragment.this.mActivity;
                     jumpToActivity(LoginActivity.class);
@@ -130,6 +147,101 @@ public class MainMeFragment extends BaseFragment {
             }
         }
     };
+
+    /** 查看版本更新 */
+    private void requestSetting(final boolean isCache) {
+        HttpUtil.query_setting_list(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                handler.sendEmptyMessage(REQUEST_ERROR);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String result = response.body().string();
+                if(response.isSuccessful() && !WuhunDataTool.isNullString(result)) {
+                    final SettingBaseModel meSettings = getGson().fromJson(result, SettingBaseModel.class);
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO: 2018/1/4 判断版本，提示更新
+                            if (meSettings.getVersion() != currentSettingVersion) {
+                                isUpdateSetting = true;
+                                settingAdapter.notifyDataSetChangedWrapper();
+                            }
+                            if (isCache) {
+//                        getSPUtil().setSettingList(result);
+                                getSPUtil().setSettingVersion(meSettings.getVersion());
+                                Message msg = handler.obtainMessage(REQUEST_SUCCESS, result);
+                                handler.sendMessage(msg);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private static final int REQUEST_ERROR = 0x01;
+    private static final int REQUEST_SUCCESS = 0x02;
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == REQUEST_ERROR) {
+                WuhunToast.error(R.string.request_error).show();
+            } else if(msg.what == REQUEST_SUCCESS) {
+                String result = (String) msg.obj;
+                settingsData.clear();
+//                WuhunIOTool.mFileWrite(MyApplication.updateSettingFile(), result);
+                updateSetting(result);
+            }
+        }
+    };
+
+//    private void updateSetting() {
+//        TestLog.i("下载位置：" + MyApplication.updateSettingFile() + "\n 下载地址："+Constant.ME_FRAGMENT_UPDATE_SETTINGS);
+//        DownloadUtil.getInstence().download(
+//                Constant.ME_FRAGMENT_UPDATE_SETTINGS,
+//                MyApplication.updateSettingFile(),
+//                new DownloadUtil.OnDownloadListener() {
+//                    @Override
+//                    public void onDownloadSuccess() {
+//                        WuhunThread.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                LoadDialog.dismiss(mActivity);
+//                                WuhunToast.info("同步设置成功！").show();
+//                                String str = WuhunIOTool.bufferInputRead(new File(MyApplication.updateSettingFile()));
+//                                TestLog.i("设置同步：" + str);
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onDownloading(final int progress) {
+//                        WuhunThread.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                LoadDialog.show(mActivity, "正在同步中……" + progress + "%");
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onDownloadFailed() {
+//                        WuhunThread.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                LoadDialog.dismiss(mActivity);
+//                                WuhunToast.error("更新失败！").show();
+//                            }
+//                        });
+//                    }
+//                }
+//        );
+//    }
 
     @Override
     protected void initListener() {
@@ -148,15 +260,49 @@ public class MainMeFragment extends BaseFragment {
     protected void initData() {
         mWebView.loadUrl(XS_HOME);
         //本地获取json
-        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "我的", "http://www.cafa.com.cn/wapcafa/xs_wd_h.htm" ));
-        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "修改密码", "http://www.cafa.com.cn/wapcafa/xs_wd_h.htm" ));
-        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "设置", "http://www.cafa.com.cn/wapcafa/h_about.htm" ));
-        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "朋友", "http://www.cafa.com.cn/wapcafa/h_zp.htm" ));
+//        String json = getSPUtil().getSettingList();
+//        String json = WuhunIOTool.bufferInputRead(new File(MyApplication.updateSettingFile()));
+        List<SettingModel> settings = DBManager.getmInstance().getSettings();
+        if (settings == null) {
+            WuhunToast.error("数据解析错误").show();
+        } else {
+            currentSettingVersion = getSPUtil().getSettingVersion();
+            requestSetting(false);
+            settingsData = settings;
+        }
+        addDefaultSetting();
+    }
 
-        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "同步", TONG_BU ));
-        settingsData.add(new MeSettingsModel(R.drawable.sideicon, "退出登录", EXIT_APP ));
+    private void updateSetting(String json) {
+//        TestLog.i("json ==> " + json);
+//        if(WuhunDataTool.isNullString(json)) {
+//            json = "{\"version\":1,\"result\":[{\"img\":\"http://10.10.10.107:8080/test/sideicon.png\",\"reserceId\":0,\"title\":\"我的\",\"url\":\"http://www.baidu.com\"},{\"img\":\"http://10.10.10.107:8080/test/sideicon.png\",\"reserceId\":0,\"title\":\"朋友\",\"url\":\"http://www.baidu.com\"},{\"img\":\"http://10.10.10.107:8080/test/sideicon.png\",\"reserceId\":0,\"title\":\"修改密码\",\"url\":\"http://www.baidu.com\"},{\"img\":\"http://10.10.10.107:8080/test/sideicon.png\",\"reserceId\":0,\"title\":\"设置\",\"url\":\"http://www.baidu.com\"}]}";
+//        }
+        SettingBaseModel resultModel = getGson().fromJson(json, SettingBaseModel.class);
+        if (resultModel == null) {
+            WuhunToast.error("数据解析错误").show();
+            addDefaultSetting();
+        } else {
+            requestSetting(false);
+            for(SettingModel model : resultModel.getResult()){
+                settingsData.add(model);
+            }
+            DBManager.getmInstance().clearSettins();
+            DBManager.getmInstance().saveSettingsList(settingsData);
+            addDefaultSetting();
+            currentSettingVersion = resultModel.getVersion();
+            WuhunToast.info("设置菜单同步成功").show();
+        }
+//        settingsData.add(new SettingBaseModel(R.drawable.sideicon, "我的", "http://www.cafa.com.cn/wapcafa/xs_wd_h.htm" ));
+//        settingsData.add(new SettingBaseModel(R.drawable.sideicon, "修改密码", "http://www.cafa.com.cn/wapcafa/xs_wd_h.htm" ));
+//        settingsData.add(new SettingBaseModel(R.drawable.sideicon, "设置", "http://www.cafa.com.cn/wapcafa/h_about.htm" ));
+//        settingsData.add(new SettingBaseModel(R.drawable.sideicon, "朋友", "http://www.cafa.com.cn/wapcafa/h_zp.htm" ));
+    }
 
-//        settingAdapter.refresh(settingsData);
+    private void addDefaultSetting() {
+        settingsData.add(new SettingModel(R.drawable.sideicon, "同步", TONG_BU ));
+        settingsData.add(new SettingModel(R.drawable.sideicon, "退出登录", EXIT_APP ));
+        settingAdapter.setData(settingsData);
     }
 
     @Override
@@ -183,15 +329,25 @@ public class MainMeFragment extends BaseFragment {
         initAdapter();
     }
 
+    /** 是否需要同步 */
+    private boolean isUpdateSetting = false;
+
     private void initAdapter() {
         if (settingAdapter == null) {
-            settingAdapter = new LQRAdapterForRecyclerView<MeSettingsModel>(mActivity, settingsData, R.layout.me_settings_item) {
-
+            settingAdapter = new LQRAdapterForRecyclerView<SettingModel>(mActivity, settingsData, R.layout.me_settings_item) {
                 @Override
-                public void convert(LQRViewHolderForRecyclerView helper, MeSettingsModel item, int position) {
+                public void convert(LQRViewHolderForRecyclerView helper, SettingModel item, int position) {
                     if (settingsData != null && settingsData.size() > 0) {
                         helper.setText(R.id.tv_setting_text, settingsData.get(position).getTitle());
                         ImageView iv_icon = helper.getView(R.id.iv_setting_icon);
+
+                        String url = settingsData.get(position).getUrl();
+                        TextView check_version = helper.getView(R.id.check_version);
+                        if (url.equals(TONG_BU) && isUpdateSetting) {
+                            check_version.setVisibility(View.VISIBLE);
+                        } else {
+                            check_version.setVisibility(View.GONE);
+                        }
 
                         String img = settingsData.get(position).getImg();
                         if (!WuhunDataTool.isNullString(img)) {
@@ -205,31 +361,6 @@ public class MainMeFragment extends BaseFragment {
         } else {
             settingAdapter.setData(settingsData);
         }
-//            settingAdapter = new BaseRecycleAdapter<MeSettingsModel>(R.layout.me_settings_item, settingsData) {
-//                @Override
-//                protected void bindData(RecyclerView.ViewHolder holder, int position) {
-//                    SettingsViewHolder h = (SettingsViewHolder) holder;
-//                    if (settingsData != null && settingsData.size()>0) {
-//                        h.tvSettingsText.setText(settingsData.get(position).getTitle());
-////                h.ivSettingIcon
-//                        String img = settingsData.get(position).getImg();
-//                        if (!WuhunDataTool.isNullString(img)) {
-//                            Glide.with(mActivity).load(img).fitCenter().into(h.ivSettingIcon);
-//                        } else {
-//                            Glide.with(mActivity).load(settingsData.get(position).getReserceId()).fitCenter().into(h.ivSettingIcon);
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                protected RecyclerView.ViewHolder setViweHolder(View view) {
-//                    return new SettingsViewHolder(view);
-//                }
-//            };
-//            rv_settings.setAdapter(settingAdapter);
-//        } else {
-//            settingAdapter.refresh(settingsData);
-//        }
     }
 
     /**

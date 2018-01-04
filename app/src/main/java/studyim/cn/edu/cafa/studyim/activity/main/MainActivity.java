@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void unreadMsg(int count) {
-        TestLog.i("MainActivity: 未读消息：" + count);
+//        TestLog.i("MainActivity: 未读消息：" + count);
         if (count == 0) {
             mDotimg[0].setVisibility(View.GONE);
         } else {
@@ -239,7 +239,7 @@ public class MainActivity extends BaseActivity {
                 return mFragmentList.get(position);
             }
         });
-        //mViewPager.setOffscreenPageLimit(4);//预加载界面
+        mViewPager.setOffscreenPageLimit(0);//预加载界面
     }
 
     /**

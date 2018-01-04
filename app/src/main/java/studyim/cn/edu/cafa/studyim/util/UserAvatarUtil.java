@@ -154,54 +154,40 @@ public class UserAvatarUtil {
     }
 
     public static void showAvatar(Context context, FriendUserInfo model, String beforeUrl, ImageView imgAvatar) {
-        if (model.getAvatar() != null) {
-            String uri = null;
-            if (model.getAvatar().startsWith("http://")) {
-                uri = model.getAvatar();
-            } else {
-                uri = beforeUrl + model.getAvatar();
-            }
-            Glide.with(context).load(uri)
-                    .error(R.mipmap.default_useravatar)
-                    .placeholder(R.mipmap.default_useravatar)
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .skipMemoryCache(true)
-                    .dontAnimate()
-                    .centerCrop().into(imgAvatar);
-        } else {
-            if (model.getNickName() != null && model.getUserId() + "" != null) {
-                Glide.with(context).load(getAvatarUri(model))
-                        .error(R.mipmap.default_useravatar)
-                        .placeholder(R.mipmap.default_useravatar)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .skipMemoryCache(true)
-                        .dontAnimate()
-                        .centerCrop().into(imgAvatar);
-            } else {
-                Glide.with(context).load(context.getResources().getDrawable(R.mipmap.default_useravatar))
-                        .placeholder(R.mipmap.default_useravatar)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .skipMemoryCache(true)
-                        .dontAnimate()
-                        .centerCrop().into(imgAvatar);
-            }
-        }
+        String uri = initUri(beforeUrl,model.getAvatar());
+//        if (!WuhunDataTool.isNullString(model.getAvatar())
+//                && WuhunImgTool.isImage(model.getAvatar())
+//                && model.getAvatar().startsWith("http://")) {
+//            uri = model.getAvatar();
+//        } else {
+//            uri = beforeUrl + model.getAvatar();
+//        }
+        String avatarUri = getAvatarUri(
+                model.getUserId() + "",
+                WuhunDataTool.isNullString(model.getRemarkName()) ? model.getNickName() : model.getRemarkName(),
+                uri);
+        Glide.with(context).load(avatarUri)
+                .error(R.mipmap.default_useravatar)
+                .placeholder(R.mipmap.default_useravatar)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .skipMemoryCache(true)
+                .dontAnimate()
+                .centerCrop().into(imgAvatar);
     }
 
-    public static String getAvatarUri(FriendUserInfo model) {
-        String uri;
-        if(model == null) return null;
-        if (WuhunDataTool.isNullString(model.getAvatar())) {
-            uri =  RongGenerate.generateDefaultAvatar(model.getNickName(), model.getUserId()+"");
+    public static String initUri(String beforeUrl, String uri){
+        if (!WuhunDataTool.isNullString(uri)
+                && WuhunImgTool.isImage(uri)
+                && uri.startsWith("http://")) {
+            return uri;
         } else {
-            uri = model.getAvatar();
+            return beforeUrl + uri;
         }
-        return uri;
     }
 
     public static String getAvatarUri(String userid, String name,String avaterUri) {
-        String uri;
-        if (!WuhunDataTool.isNullString(avaterUri) && !WuhunImgTool.isImage(avaterUri)) {
+        String uri = null;
+        if (WuhunDataTool.isNullString(avaterUri) || !WuhunImgTool.isImage(avaterUri)) {
             uri =  RongGenerate.generateDefaultAvatar(name, userid);
         } else {
             uri = avaterUri;

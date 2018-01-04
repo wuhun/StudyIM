@@ -13,6 +13,8 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
+
 /**
  * ================================================
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
@@ -40,6 +42,7 @@ public class WuhunIOTool {
         FileWriter fw = null;
         try {
             File file = new File(filepath);
+            TestLog.i("文件大小：" + file.length() + " - " + logStr.length());
             if (file.length() + logStr.length() >= 1024 * 1024) {
                 //重写写入
                 fw = new FileWriter(filepath, false);

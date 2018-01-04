@@ -250,6 +250,8 @@ public class MainContactFragment extends BaseFragment {
         if (friends != null && friends.size() > 0) {
             mData.clear();
             mData.addAll(friends);
+
+            TestLog.i("MainContactFragment - updateBottom:" + mData.size());
             if (mData.size() == 0) {
 //                footerView.setVisibility(View.GONE);
                 footerView.setText("您还没有联系人，去添加吧！");

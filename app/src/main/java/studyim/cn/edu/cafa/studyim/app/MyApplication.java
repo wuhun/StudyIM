@@ -5,9 +5,14 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.File;
+
+import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.util.SPUtil;
 import tools.com.lvliangliang.wuhuntools.WuhunTools;
+import tools.com.lvliangliang.wuhuntools.app.WuhunAppTool;
 import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
+import tools.com.lvliangliang.wuhuntools.util.WuhunFileTool;
 
 /**
  * 作者：悟魂 ————2017/11/7 0007.
@@ -47,6 +52,17 @@ public class MyApplication extends RongApplication {
             gson = new GsonBuilder().setLenient().create();
         }
         return gson;
+    }
+
+    /** 获取更新数据 */
+    public static String updateSettingFile(){
+        String downPath = WuhunFileTool.getRootPath() + File.separator + WuhunAppTool.getAppName(mContext) + File.separator + "Setting" + File.separator;
+        String setting_path = downPath + WuhunFileTool.getFileName(Constant.ME_FRAGMENT_UPDATE_SETTINGS);
+        if (WuhunFileTool.createOrExistsFile(setting_path)) {
+            return setting_path;
+        } else {
+            return null;
+        }
     }
 
     //    private void initOKGo() {
