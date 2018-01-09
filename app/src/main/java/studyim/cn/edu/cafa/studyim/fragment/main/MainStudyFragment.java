@@ -17,6 +17,8 @@ import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.activity.main.StudyShearchActivity;
 import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
+import studyim.cn.edu.cafa.studyim.fragment.study.StudyClassFragment;
+import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
@@ -64,9 +66,15 @@ public class MainStudyFragment extends BaseFragment {
 //    };
     private Fragment mFragment[] = {
             initConversationList(),
-            initConversationList(),
+            initClassList(),
             initConversationList()
     };
+
+    StudyClassFragment mStudyClassFragment = null;
+    private Fragment initClassList() {
+        mStudyClassFragment = FragmentFactory.getInstance().getStudyClassFragment();
+        return mStudyClassFragment;
+    }
 
     /** 初始化聊天记录 */
     ConversationListFragment mConversationListFragment = null;
@@ -80,9 +88,9 @@ public class MainStudyFragment extends BaseFragment {
                     .appendPath("conversationlist")
                     .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话, 聚合显示
                     .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组, 聚合显示
-                    .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "true")//公共服务号， 非聚合显示
-                    .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "true")//订阅号， 非聚合显示
-                    .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统, 聚合显示
+//                    .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "true")//公共服务号， 非聚合显示
+//                    .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "true")//订阅号， 非聚合显示
+//                    .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统, 聚合显示
                     .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "false")//讨论组, 聚合显示
                     .build();
             listFragment.setUri(uri);
@@ -136,11 +144,8 @@ public class MainStudyFragment extends BaseFragment {
     }
 
     private void showFragment() {
-//        ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft = getChildFragmentManager().beginTransaction();
         ft.replace(R.id.fl_friend_list, mFragment[position]).commit();
-//        ft.hide(mFragment[0]).hide(mFragment[1]).hide(mFragment[2]);
-//        ft.show(fragment).commit();
     }
 
     @Override
@@ -159,12 +164,6 @@ public class MainStudyFragment extends BaseFragment {
 //        ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft = getChildFragmentManager().beginTransaction();
         ft.replace(R.id.fl_friend_list, mFragment[0]).commit();
-//        ft.add(R.id.fl_friend_list, mFragment[0], "all")
-//                .add(R.id.fl_friend_list, mFragment[1], "friend")
-//                .add(R.id.fl_friend_list, mFragment[2], "lead")
-//                .hide(mFragment[1])
-//                .hide(mFragment[2])
-//                .commit();
         setTabBackColor();
     }
 

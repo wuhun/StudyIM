@@ -1,5 +1,6 @@
 package tools.com.lvliangliang.wuhuntools.util;
 
+import android.net.Uri;
 import android.os.Environment;
 
 import java.io.File;
@@ -20,6 +21,7 @@ import java.io.IOException;
  */
 public class WuhunFileTool {
 
+    /** 文件名称 */
     public static String getFileName(String FileName){
         String name = null;
         if (FileName.indexOf("/") != -1) {
@@ -28,6 +30,16 @@ public class WuhunFileTool {
             name = FileName;
         }
         return name;
+    }
+
+    public static boolean deleteFileForUri(Uri FileUri){
+        if (FileUri == null) return false;
+
+        File file = new File(FileUri.getPath());
+        if (file.exists())
+            return file.delete();
+        else
+            return false;
     }
 
     /**

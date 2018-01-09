@@ -7,7 +7,7 @@ import java.io.Serializable;
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
  * 创建日期：2017/12/8 0008
  * 版    本：1.0
- * 描    述：
+ * 描    述：roleType: 4 老师 / 5 学生
  * 修订历史：
  * ================================================
  */
@@ -35,5 +35,13 @@ public class RolesModel implements Serializable {
 
     public void setRoleType(int roleType) {
         this.roleType = roleType;
+    }
+
+    @Override
+    public String toString() {
+        return "RolesModel{" +
+                "角色类型roleType=" + roleType +
+                ", 角色名称roleName='" + roleName + '\'' +
+                '}';
     }
 }

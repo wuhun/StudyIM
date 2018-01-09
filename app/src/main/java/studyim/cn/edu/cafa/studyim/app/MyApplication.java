@@ -65,6 +65,13 @@ public class MyApplication extends RongApplication {
         }
     }
 
+    /** 获取拍照相机目录 */
+    public static File getCameraPifFile(String fileName){
+        String pic = WuhunFileTool.getRootPath() + File.separator + WuhunAppTool.getAppName(mContext) + File.separator + "pictrue" + File.separator;
+        File file = new File(pic, fileName);
+        return file;
+    }
+
     //    private void initOKGo() {
 //        OkHttpClient.Builder builder = new OkHttpClient.Builder()
 //                .readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)

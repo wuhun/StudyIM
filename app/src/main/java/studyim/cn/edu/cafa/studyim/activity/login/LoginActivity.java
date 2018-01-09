@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,7 +28,9 @@ import studyim.cn.edu.cafa.studyim.activity.main.MainActivity;
 import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.model.LoginUserModel;
+import studyim.cn.edu.cafa.studyim.model.RolesModel;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
@@ -181,6 +184,9 @@ public class LoginActivity extends BaseActivity {
                             getSPUtil().setRctoken(loginModel.getResult().getToken());
                             getSPUtil().setUsername(etLoginNum.getText().toString());
 
+                            List<RolesModel> roles = loginModel.getResult().getRoles();
+                            getSPUtil().setRoletype(roles.get(roles.size()-1).getRoleType());
+                            TestLog.i("权限类型：" + roles.get(roles.size()-1).getRoleType() + " == " + roles.get(roles.size()-1).getRoleName());
                             WuhunDebug.debug("==>" + getSPUtil().getUsername());
                             Message msg = handler.obtainMessage();
                             msg.obj = loginModel;

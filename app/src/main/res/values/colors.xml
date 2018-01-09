@@ -153,6 +153,8 @@
     <color name="palevioletred">#db7093</color><!--苍紫罗兰色 -->
     <color name="darkviolet">#9400d3</color><!--暗紫罗兰色 -->
     <color name="mediumorchid">#ba55d3</color><!--中粉紫色 -->
+    <color name="transparent">#00000000</color>
+
     <!-- 业务色彩 -->
     <color name="main_tab_bg">#7c8891</color>
     <color name="main_tab_bg_hover">#e72d4c</color><!-- main_tab_text_color -->

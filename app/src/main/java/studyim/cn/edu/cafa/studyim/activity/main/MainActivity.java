@@ -246,7 +246,7 @@ public class MainActivity extends BaseActivity {
      * 获取当前tab标签
      */
     private View getTabView(int index) {
-        TestLog.i("getTabView调用次数：" + index);
+//        TestLog.i("getTabView调用次数：" + index);
         View view = LayoutInflater.from(this).inflate(R.layout.tab_item, null);
 
         ImageView image = (ImageView) view.findViewById(R.id.image);

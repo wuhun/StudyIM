@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray6"
+    android:orientation="vertical"
+    tools:context="studyim.cn.edu.cafa.studyim.activity.other.GroupCreateActivity">
+
+    <include layout="@layout/head_title_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <io.rong.imkit.widget.AsyncImageView
+                android:id="@+id/img_Group_portrait"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="80dp"
+                android:src="@drawable/add_group_head" />
+
+            <!--<tools.com.lvliangliang.wuhuntools.ui.ClearWriteEditText-->
+                <!--android:id="@+id/create_groupname"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="40dp"-->
+                <!--android:layout_marginLeft="35dp"-->
+                <!--android:layout_marginRight="35dp"-->
+                <!--android:layout_marginTop="80dp"-->
+                <!--android:background="@null"-->
+                <!--android:drawableBottom="@drawable/et_bottom_line_selecter"-->
+                <!--android:gravity="center"-->
+                <!--android:hint="请输入群名称(2-10字)"-->
+                <!--android:maxLength="10"-->
+                <!--android:padding="6dp"-->
+                <!--android:textColorHint="@color/gray2" />-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="40dp"
+                android:layout_marginTop="70dp"
+                android:orientation="horizontal">
+                <Spinner
+                    android:id="@+id/spinner_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+                <EditText
+                    android:id="@+id/create_groupname"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:padding="6dp"
+                    android:hint="请输入群名称(2-10字)"
+                    android:maxLength="10"
+                    android:lines="1"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColorHint="@color/gray2"
+                    android:background="@null"
+                    android:drawableBottom="@drawable/et_bottom_line_selecter"/>
+                <ImageView
+                    android:id="@+id/img_clear_groupname"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:padding="4dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/clear_et_gray"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/create_ok"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/btn_green_selecter"
+                android:text="@string/rc_dialog_ok"
+                android:textColor="#FFF" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

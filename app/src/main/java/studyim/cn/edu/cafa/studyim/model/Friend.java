@@ -5,6 +5,8 @@ import android.text.TextUtils;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.Serializable;
+
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
 
@@ -12,7 +14,7 @@ import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
  * @创建者 CSDN_LQR
  * @描述 朋友表(用户信息表)
  */
-public class Friend extends DataSupport implements Comparable<Friend> {
+public class Friend extends DataSupport implements Comparable<Friend>, Serializable {
 /////////////////////////////////////////////////////////////////////////////////
     private String USERBUDDYID;//好友id
     private String NICKNAME;//昵称 - 默认

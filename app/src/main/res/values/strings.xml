@@ -8,6 +8,7 @@
     <string name="forgot_pwd">忘记密码</string>
 
     <string name="request_error">请求失去响应，请检测当前网络环境</string>
+    <string name="request_error_net">访问服务器失败!</string>
     <string name="request_fail">登录超时,请退出重新登录</string>
 
     <string name="title_activity_study_shearch">StudyShearchActivity</string>

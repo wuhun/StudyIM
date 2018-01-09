@@ -26,6 +26,32 @@ import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 public class HttpUtil {
 
     /**
+     * 创建群组
+     * @param groupName     群名称
+     * @param groupImage    群图片
+     * @param groupType     群类型：（group//普通群组 --- class//班级群组）
+     * @param callback
+     */
+    public static void CreateGroup(String groupName,String groupImage,String groupType,Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/create";
+        Map<String,String> map = new HashMap<>();
+        map.put("groupName", groupName);
+        map.put("groupImage",groupImage);
+        map.put("groupType", groupType);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 获取班级或者群组列表 */
+    public static void getGroupList(String type, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/list";
+        Map<String, String> map = new HashMap<>();
+        map.put("type", type);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /**
      * 获取好友详细信息
      */
     public static void friend_getinfo(String buddyUserId, Callback callback) {

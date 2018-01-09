@@ -63,7 +63,7 @@ public class LoginUserModel {
         private String telephone;
         private String token;
         /** 角色 */
-        private List<RolesBean> roles;
+        private List<RolesModel> roles;
 
         public String getStudentID() {
             return studentID;
@@ -137,43 +137,12 @@ public class LoginUserModel {
             this.token = token;
         }
 
-        public List<RolesBean> getRoles() {
+        public List<RolesModel> getRoles() {
             return roles;
         }
 
-        public void setRoles(List<RolesBean> roles) {
+        public void setRoles(List<RolesModel> roles) {
             this.roles = roles;
-        }
-
-        public static class RolesBean {
-            /** 角色类型 */
-            private int roleType;
-            /** 角色名称 */
-            private String roleName;
-
-            public String getRoleName() {
-                return roleName;
-            }
-
-            public void setRoleName(String roleName) {
-                this.roleName = roleName;
-            }
-
-            public int getRoleType() {
-                return roleType;
-            }
-
-            public void setRoleType(int roleType) {
-                this.roleType = roleType;
-            }
-
-            @Override
-            public String toString() {
-                return "RolesBean{" +
-                        "角色类型roleType=" + roleType +
-                        ", 角色名称roleName='" + roleName + '\'' +
-                        '}';
-            }
         }
     }
 }

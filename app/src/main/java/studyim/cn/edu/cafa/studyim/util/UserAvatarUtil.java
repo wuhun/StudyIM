@@ -8,6 +8,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendGetAddList;
 import studyim.cn.edu.cafa.studyim.model.FriendUserInfo;
@@ -69,35 +70,21 @@ public class UserAvatarUtil {
     }
 
     public static void showAvatar(Context context, Friend friend, String beforeUrl, ImageView imgAvatar) {
-        if (friend.getAVATAR() != null) {
-//            WuhunDebug.debug(beforeUrl + friend.getAVATAR());
-            Glide.with(context).load(beforeUrl + friend.getAVATAR())
+        String uri = null;
+        if(friend != null) {
+            uri = initUri(beforeUrl, friend.getAVATAR());
+            String avatarUri = getAvatarUri(
+                    friend.getUSERBUDDYID(),
+                    friend.getREMARKNAME(),
+                    uri);
+            Glide.with(context).load(avatarUri)
                     .error(R.mipmap.default_useravatar)
                     .placeholder(R.mipmap.default_useravatar)
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .skipMemoryCache(true)
                     .dontAnimate()
-                    .transform(new CenterCrop(context), new GlideRoundTransform(context, 4))
+                    .transform(new CenterCrop(context), new GlideRoundTransform(context))
                     .into(imgAvatar);
-        } else {
-            if (friend.getNICKNAME() != null && friend.getUSERBUDDYID() + "" != null) {
-                Glide.with(context).load(getAvatarUri(friend))
-                        .error(R.mipmap.default_useravatar)
-                        .placeholder(R.mipmap.default_useravatar)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .skipMemoryCache(true)
-                        .dontAnimate()
-                        .transform(new CenterCrop(context), new GlideRoundTransform(context, 4))
-                        .into(imgAvatar);
-            } else {
-                Glide.with(context).load(context.getResources().getDrawable(R.mipmap.default_useravatar))
-                        .placeholder(R.mipmap.default_useravatar)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .skipMemoryCache(true)
-                        .dontAnimate()
-                        .transform(new CenterCrop(context), new GlideRoundTransform(context, 4))
-                        .into(imgAvatar);
-            }
         }
     }
 
@@ -121,7 +108,8 @@ public class UserAvatarUtil {
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .skipMemoryCache(true)
                     .dontAnimate()
-                    .centerCrop().into(imgAvatar);
+                    .transform(new CenterCrop(context), new GlideRoundTransform(context))
+                    .into(imgAvatar);
         } else {
             if (model.getNICKNAME() != null && model.getUSERID() + "" != null) {
                 Glide.with(context).load(getAvatarUri(model))
@@ -155,13 +143,6 @@ public class UserAvatarUtil {
 
     public static void showAvatar(Context context, FriendUserInfo model, String beforeUrl, ImageView imgAvatar) {
         String uri = initUri(beforeUrl,model.getAvatar());
-//        if (!WuhunDataTool.isNullString(model.getAvatar())
-//                && WuhunImgTool.isImage(model.getAvatar())
-//                && model.getAvatar().startsWith("http://")) {
-//            uri = model.getAvatar();
-//        } else {
-//            uri = beforeUrl + model.getAvatar();
-//        }
         String avatarUri = getAvatarUri(
                 model.getUserId() + "",
                 WuhunDataTool.isNullString(model.getRemarkName()) ? model.getNickName() : model.getRemarkName(),
@@ -172,16 +153,19 @@ public class UserAvatarUtil {
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .skipMemoryCache(true)
                 .dontAnimate()
-                .centerCrop().into(imgAvatar);
+                .transform(new CenterCrop(context), new GlideRoundTransform(context))
+                .into(imgAvatar);
     }
 
     public static String initUri(String beforeUrl, String uri){
-        if (!WuhunDataTool.isNullString(uri)
-                && WuhunImgTool.isImage(uri)
-                && uri.startsWith("http://")) {
-            return uri;
-        } else {
-            return beforeUrl + uri;
+        if (!WuhunDataTool.isNullString(uri)) {
+            if (WuhunImgTool.isImage(uri) && uri.startsWith("http://")) {
+                return uri;
+            } else {
+                return beforeUrl + uri;
+            }
+        }else{
+            return Constant.HOME_URL + "null";
         }
     }
 

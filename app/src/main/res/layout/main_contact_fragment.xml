@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -44,29 +44,75 @@
             <!--android:padding="8dp"-->
             <!--android:layout_alignParentRight="true"-->
             <!--android:src="@drawable/mansage"/>-->
-        <RelativeLayout
-            android:id="@+id/img_add_friend"
+
+        <ImageView
+            android:id="@+id/img_more_pop"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:layout_alignParentRight="true"
+            android:padding="8dp"
+            android:src="@drawable/mansage" />
+
+        <ImageView
+            android:id="@+id/img_add_friend_dot"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:padding="6dp"
+            android:src="@drawable/img_red_dot"
+            android:visibility="gone" />
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/rl_more_pop"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentRight="true">-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/img_more_pop"-->
+                <!--android:layout_width="@dimen/dp_40"-->
+                <!--android:layout_height="@dimen/dp_40"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:padding="8dp"-->
+                <!--android:src="@drawable/mansage" />-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/img_add_friend_dot"-->
+                <!--android:layout_width="20dp"-->
+                <!--android:layout_height="20dp"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:padding="6dp"-->
+                <!--android:src="@drawable/img_red_dot"-->
+                <!--android:visibility="gone" />-->
+        <!--</RelativeLayout>-->
+    </RelativeLayout>
+
+    <!-- 提示 -->
+    <LinearLayout
+        android:id="@+id/rc_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#ffdfdf"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/rc_status_bar_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/rc_notification_network_available"
+            android:paddingLeft="27dp" />
 
-            <ImageView
-                android:layout_width="@dimen/dp_40"
-                android:layout_height="@dimen/dp_40"
-                android:layout_alignParentRight="true"
-                android:padding="8dp"
-                android:src="@drawable/mansage" />
-
-            <ImageView
-                android:id="@+id/img_add_friend_dot"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:padding="6dp"
-                android:src="@drawable/img_red_dot"
-                android:visibility="gone" />
-        </RelativeLayout>
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/rc_status_bar_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="25dp"
+            android:text="@string/rc_notice_network_unavailable"
+            android:textColor="#776868"
+            android:textSize="14sp" />
+    </LinearLayout>
 
     <!-- 通讯录 -->
     <RelativeLayout
@@ -99,4 +145,4 @@
             android:textSize="20sp"
             android:visibility="gone"/>
     </RelativeLayout>
-</android.support.v7.widget.LinearLayoutCompat>
+</LinearLayout>

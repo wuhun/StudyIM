@@ -12,7 +12,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -20,18 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import io.rong.imkit.RongIM;
+import io.rong.imlib.RongIMClient;
+import io.rong.imlib.RongIMClient.ConnectionStatusListener.ConnectionStatus;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.activity.login.LoginActivity;
-import studyim.cn.edu.cafa.studyim.activity.other.FriendGetAddListActivity;
 import studyim.cn.edu.cafa.studyim.activity.other.FriendGetinfoActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.db.DBManager;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendListModel;
+import studyim.cn.edu.cafa.studyim.ui.MorePopWindow;
 import studyim.cn.edu.cafa.studyim.ui.QuickIndexBar;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.SortUtils;
@@ -68,14 +71,22 @@ public class MainContactFragment extends BaseFragment {
     QuickIndexBar mQib;
     @BindView(R.id.tvLetter)
     TextView mTvLetter;
-    @BindView(R.id.img_add_friend)
-    RelativeLayout imgAddFriend;
+    @BindView(R.id.img_more_pop)
+    ImageView imgMorePop;
     @BindView(R.id.img_add_friend_dot)
     ImageView imgAddFriendDot;
 
+    @BindView(R.id.rc_status_bar)
+    LinearLayout rcStatusBar;
+    @BindView(R.id.rc_status_bar_image)
+    ImageView rcStatusBarImage;
+    @BindView(R.id.rc_status_bar_text)
+    TextView rcStatusBarText;
 
     @BindView(R.id.head_bg)
     ImageView headBg;//背景颜色
+    @BindView(R.id.ll_all_body)
+    LinearLayout llAllBody;
 
     private LQRHeaderAndFooterAdapter mAdapter;
     private List<Friend> mData;
@@ -83,13 +94,6 @@ public class MainContactFragment extends BaseFragment {
 
     private static String HOME_URL;
 
-//    @OnClick({R.id.img_add_friend})
-//    public void onClick(View view){
-//        if(view.getId() == R.id.img_add_friend) {
-////            jumpToActivity(AddFriend);
-//            WuhunToast.normal("查找添加好友").show();
-//        }
-//    }
 
     /** 适配快速导航条 */
     private QuickIndexBar.OnLetterUpdateListener mOnLetterUpdateListener = new QuickIndexBar.OnLetterUpdateListener() {
@@ -135,15 +139,22 @@ public class MainContactFragment extends BaseFragment {
     @Override
     protected void initListener() {
         mQib.setOnLetterUpdateListener(mOnLetterUpdateListener);
-        imgAddFriend.setOnClickListener(mOnClickListener);
+        imgMorePop.setOnClickListener(mOnClickListener);
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.img_add_friend) {
-                // TODO: 2017/12/6 查看
-                jumpToActivity(FriendGetAddListActivity.class);
+            if(v.getId() == R.id.img_more_pop) {
+//                int screenWidth = WuhunDeviceTool.getScreenWidth(mActivity);
+                MorePopWindow morePopWindow = new MorePopWindow(mActivity);
+//                llAllBody.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//                int y = llAllBody.getHeight();
+                morePopWindow.showPopupWindow(imgMorePop, 0, 0);
+//                TestLog.i("剩余宽度==>" + (screenWidth - ) + " - " + WuhunSizeTool.dp2px(5));
+
+//                // TODO: 2017/12/6 查看请求列表
+//                jumpToActivity(FriendGetAddListActivity.class);
                 imgAddFriendDot.setVisibility(View.GONE);
             }
         }
@@ -151,7 +162,7 @@ public class MainContactFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        setAdapter();
+        registerBR();
         loadData();
     }
 
@@ -225,7 +236,6 @@ public class MainContactFragment extends BaseFragment {
             }else if(msg.what == FRIEND_LIST_SUCCESS) {
                 FriendListModel model = (FriendListModel)msg.obj;
                 HOME_URL = model.getBefore();
-
 //                WuhunDebug.debug("=success-获取好友列表=>" + model.getResult());
                 if (model.getCode() == 1) {
                     List<Friend> friends = new ArrayList<>();
@@ -252,9 +262,10 @@ public class MainContactFragment extends BaseFragment {
             mData.addAll(friends);
 
             TestLog.i("MainContactFragment - updateBottom:" + mData.size());
-            if (mData.size() == 0) {
+            if (mData.size() <= 0) {
 //                footerView.setVisibility(View.GONE);
                 footerView.setText("您还没有联系人，去添加吧！");
+                footerView.setVisibility(View.VISIBLE);
             } else {
                 footerView.setVisibility(View.VISIBLE);
                 footerView.setText("联系人："+ mData.size());
@@ -269,7 +280,7 @@ public class MainContactFragment extends BaseFragment {
     @Override
     protected void initView() {
         mData = new ArrayList<>();
-        registerBR();
+        setAdapter();
     }
 
     @Override
@@ -362,9 +373,61 @@ public class MainContactFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        setNotificationBarVisibility(RongIM.getInstance().getCurrentConnectionStatus());
+    }
+
+    /** 提示 */
+    private void setNotificationBarVisibility(RongIMClient.ConnectionStatusListener.ConnectionStatus status) {
+        if (this.getResources().getBoolean(io.rong.imkit.R.bool.rc_is_show_warning_notification)) {
+            String content = null;
+            if (status.equals(ConnectionStatus.NETWORK_UNAVAILABLE)) {
+                content = this.getResources().getString(io.rong.imkit.R.string.rc_notice_network_unavailable);
+            } else if (status.equals(ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT)) {
+                content = this.getResources().getString(io.rong.imkit.R.string.rc_notice_tick);
+            } else if (status.equals(ConnectionStatus.CONNECTED)) {
+                rcStatusBar.setVisibility(View.GONE);
+            } else if (status.equals(ConnectionStatus.DISCONNECTED)) {
+                content = this.getResources().getString(io.rong.imkit.R.string.rc_notice_disconnect);
+            } else if (status.equals(RongIMClient.ConnectionStatusListener.ConnectionStatus.CONNECTING)) {
+                content = this.getResources().getString(io.rong.imkit.R.string.rc_notice_connecting);
+            }
+
+            if (content != null && this.rcStatusBar != null) {
+                final String statusText = content;
+                if (rcStatusBar.getVisibility() == View.GONE) {
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            if (!RongIMClient.getInstance().getCurrentConnectionStatus().equals(RongIMClient.ConnectionStatusListener.ConnectionStatus.CONNECTED)) {
+                                rcStatusBar.setVisibility(View.VISIBLE);
+                                rcStatusBarText.setText(statusText);
+                                if (RongIMClient.getInstance().getCurrentConnectionStatus().equals(RongIMClient.ConnectionStatusListener.ConnectionStatus.CONNECTING)) {
+                                    rcStatusBarImage.setImageResource(io.rong.imkit.R.drawable.rc_notification_connecting_animated);
+                                } else {
+                                    rcStatusBarImage.setImageResource(io.rong.imkit.R.drawable.rc_notification_network_available);
+                                }
+                            }
+
+                        }
+                    }, 4000L);
+                } else {
+                    rcStatusBarText.setText(content);
+                    if (RongIMClient.getInstance().getCurrentConnectionStatus().equals(ConnectionStatus.CONNECTING)) {
+                        rcStatusBarImage.setImageResource(io.rong.imkit.R.drawable.rc_notification_connecting_animated);
+                    } else {
+                        rcStatusBarImage.setImageResource(io.rong.imkit.R.drawable.rc_notification_network_available);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterBR();
+        handler.removeCallbacksAndMessages(null);
     }
 
 }

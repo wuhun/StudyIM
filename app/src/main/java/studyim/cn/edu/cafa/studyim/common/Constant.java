@@ -18,6 +18,8 @@ public class Constant {
     /** 我的界面侧滑菜单-同步设置 下载地址 */
     public static final String ME_FRAGMENT_UPDATE_SETTINGS = "http://10.10.10.107:8080/test/mySettingList.json";
 
+
+    /////////////////////////////////////////////////////////////////////////////////
     /**  */
     public static final String ADD_FRIEND_RED_DOT = "add_friend_red_dot";
     /** 更新通讯录列表内容 */
@@ -26,4 +28,13 @@ public class Constant {
     public static java.lang.String USER_GETINFO_REFRESH = "user_getinfo_refresh";
     /** 主页 我的提示点 */
     public static final String ME_SHOW_RED = "show_red";
+
+    /////////////////////////////////////////////////////////////////////////////////
+    /** 权限 - 老师 */
+    public static final int TEACHER = 4;
+    /** 权限 - 学生 */
+    public static final int STUDENT = 5;
+
+
+
 }

@@ -1,0 +1,19 @@
+package tools.com.lvliangliang.wuhuntools.util;
+
+/**
+ * ================================================
+ * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
+ * 创建日期：2018/1/4 0004
+ * 版    本：1.0
+ * 描    述：常用状态码
+ * 修订历史：
+ * ================================================
+ */
+public class WuhunState {
+
+    // 网络请求状态回调
+    public static final int REQUEST_SUCCESS = 0x01;
+    public static final int REQUEST_FAIL = 0x02;
+    public static final int REQUEST_ERROR = 0x03;
+
+}

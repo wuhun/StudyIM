@@ -51,11 +51,26 @@ public class SPUtil {
     public static final String TOKENS = "tokens";
     /** 融云token */
     public static final String RCTOKEN = "rctoken";
-
+    /** 设置更新的版本号-用于一键更新 */
     public static final String SETTING_VERSION = "settingVersion";
 
-    public int getSettingVersion(){return settings.getInt(SETTING_VERSION, 1);}
-    public void setSettingVersion(int version){settings.edit().putInt(SETTING_VERSION, version).commit(); }
+    public static final String ROLE_TYPE = "roleType";//角色类型
+
+    public static int getRoletype() {
+        return settings.getInt(ROLE_TYPE, 4);
+    }
+
+    public void setRoletype(int roletype) {
+        settings.edit().putInt(ROLE_TYPE, roletype);
+    }
+
+    public int getSettingVersion() {
+        return settings.getInt(SETTING_VERSION, 1);
+    }
+
+    public void setSettingVersion(int version) {
+        settings.edit().putInt(SETTING_VERSION, version).commit();
+    }
 
     public String getUSERID() {return settings.getString(USERID, "");}
     public void setUSERID(String userId) {

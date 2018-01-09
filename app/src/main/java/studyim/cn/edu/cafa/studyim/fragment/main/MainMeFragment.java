@@ -153,7 +153,9 @@ public class MainMeFragment extends BaseFragment {
         HttpUtil.query_setting_list(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                handler.sendEmptyMessage(REQUEST_ERROR);
+                if(isCache) {
+                    handler.sendEmptyMessage(VERSION_REQUEST_ERROR);
+                }
             }
 
             @Override
@@ -184,6 +186,7 @@ public class MainMeFragment extends BaseFragment {
 
     private static final int REQUEST_ERROR = 0x01;
     private static final int REQUEST_SUCCESS = 0x02;
+    private static final int VERSION_REQUEST_ERROR = 0x03;
 
     Handler handler = new Handler(){
         @Override
@@ -196,6 +199,8 @@ public class MainMeFragment extends BaseFragment {
                 settingsData.clear();
 //                WuhunIOTool.mFileWrite(MyApplication.updateSettingFile(), result);
                 updateSetting(result);
+            }else if(msg.what == VERSION_REQUEST_ERROR) {
+                WuhunToast.error("同步更新设置失败").show();
             }
         }
     };

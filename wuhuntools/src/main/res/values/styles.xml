@@ -18,6 +18,4 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/line</item>
     </style>
-
-
 </resources>
