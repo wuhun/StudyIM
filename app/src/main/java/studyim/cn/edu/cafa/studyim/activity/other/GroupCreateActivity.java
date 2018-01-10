@@ -1,11 +1,19 @@
 package studyim.cn.edu.cafa.studyim.activity.other;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -21,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +48,11 @@ import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.ui.BottomMenuDialog;
 import studyim.cn.edu.cafa.studyim.ui.GlideRoundTransform;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
-import studyim.cn.edu.cafa.studyim.util.PhotoUtils;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
-import tools.com.lvliangliang.wuhuntools.util.WuhunCameraTool;
+import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
+import tools.com.lvliangliang.wuhuntools.permission.PermissionsUtil;
+import tools.com.lvliangliang.wuhuntools.util.WuhunFileTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunImgTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunState;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
@@ -78,8 +89,10 @@ public class GroupCreateActivity extends BaseActivity {
     private List<Friend> groupList = new ArrayList<>();
     private Context mContext;
 
-    private PhotoUtils photoUtils;
-    private Uri picUri;
+    private Uri picUri;//拍照地址
+    private File fileUri = new File(Environment.getExternalStorageDirectory().getPath() + "/photo.jpg");
+    private Uri cropUri;//剪裁地址
+    private File cropFile = new File(Environment.getExternalStorageDirectory().getPath() + "/crop_photo.jpg");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +163,7 @@ public class GroupCreateActivity extends BaseActivity {
                     String groupName = createGroupname.getText().toString();
                     TestLog.i("输入的内容：" + groupName);
                     if (groupName.length() >= 2 && groupName.length() <= 10) {
-                        createGroup(groupName);
+                        createGroup(groupName);//创建群组
                     } else {
                         WuhunToast.info("群名称不符合要求").show();
                     }
@@ -183,6 +196,7 @@ public class GroupCreateActivity extends BaseActivity {
                 TestLog.i("result: " + result);
                 if (result != null && response.isSuccessful()) {
                     // TODO: 2018/1/9 跳转到群聊界面
+                    WuhunToast.info("" + result).show();
                 } else {
                     WuhunToast.info(R.string.request_error_net).show();
                 }
@@ -210,33 +224,6 @@ public class GroupCreateActivity extends BaseActivity {
         bodyRight.setVisibility(View.GONE);
         bodyOk.setVisibility(View.GONE);
 
-//        cameraImageUri = WuhunCameraTool.getUri(mContext, cameraFile);
-//        cropImageUri = WuhunCameraTool.getUri(mContext, CropFile);
-
-        photoUtils = new PhotoUtils(new PhotoUtils.OnPhotoResultListener() {
-            @Override
-            public void onPhotoResult(Uri uri) {
-                //成功监听
-                picUri = uri;
-                Glide.with(mContext).load(uri.getPath().toString())
-                        .error(R.mipmap.default_useravatar)
-                        .placeholder(R.mipmap.default_useravatar)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .skipMemoryCache(true)
-                        .dontAnimate()
-                        .transform(new CenterCrop(mContext), new GlideRoundTransform(mContext))
-                        .into(imgGroupPortrait);
-            }
-
-            @Override
-            public void onPhotoCancel() {}
-        });
-        //imgGroupPortrait   图片
-        //createGroupname     名称
-        //createOk      创建并跳转到对话界面
-//        if(MyApplication.getSPUtil().get) {
-//
-//        }
         groupTypeList.add("普通群");
         groupTypeList.add("班级群");
         spinner_adapter = new ArrayAdapter<String>(this, R.layout.shearch_spinner_item, groupTypeList);
@@ -274,8 +261,23 @@ public class GroupCreateActivity extends BaseActivity {
                 if (dialog != null && dialog.isShowing()) {
                     dialog.dismiss();
                 }
-                if(WuhunCameraTool.takePicturePermisstion(mContext)) {
-                    photoUtils.takePicture(GroupCreateActivity.this);
+                if (PermissionsUtil.hasPermission(mContext, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    picUri = buildUri();
+                    takePicture(GroupCreateActivity.this, picUri, CODE_CAMERA_REQUEST);
+                } else {
+                    PermissionsUtil.requestPermission(mContext, new PermissionListener() {
+                        @Override
+                        public void permissionGranted(@NonNull String[] permission) {
+                            //调用系统相机
+                            picUri = buildUri();
+                            takePicture(GroupCreateActivity.this, picUri, CODE_CAMERA_REQUEST);
+                        }
+
+                        @Override
+                        public void permissionDenied(@NonNull String[] permission) {
+                            WuhunToast.info("您拒绝了拍照权限").show();
+                        }
+                    }, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, false, null);
                 }
             }
         });
@@ -285,25 +287,125 @@ public class GroupCreateActivity extends BaseActivity {
                 if (dialog != null && dialog.isShowing()) {
                     dialog.dismiss();
                 }
-                photoUtils.selectPicture(GroupCreateActivity.this);
+                selectPicture();
             }
         });
         dialog.show();
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case PhotoUtils.INTENT_CROP:
-            case PhotoUtils.INTENT_TAKE:
-            case PhotoUtils.INTENT_SELECT:
-                photoUtils.onActivityResult(GroupCreateActivity.this, requestCode, resultCode, data);
-                break;
+        super.onActivityResult(requestCode, resultCode, data);
+        TestLog.i("数据回调:" + requestCode);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CODE_CAMERA_REQUEST://相机回调
+                    if (new File(picUri.getPath()).exists()) {
+                        cropUri = buildCropUri();
+                        corp(picUri, cropUri);
+                    }
+                    break;
+                case CODE_CROP_RESULT://剪裁
+//                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), cropUri);
+                        String pathForUri = WuhunImgTool.getPathForUri(mContext, cropUri);
+                        TestLog.i("cropUri: " + pathForUri);
+                        showImg(pathForUri);
+                    break;
+                case CODE_SELECT_IMG://相册
+                    cropUri = buildCropUri();
+                    if (data != null && data.getData() != null) {
+                        String picturePath = WuhunImgTool.getPathForUri(mContext, data.getData());
+                        TestLog.i("picturePath： " + picturePath);
+                        Uri path = Uri.parse(picturePath);
+                        if (path != null) {
+                            cropUri = buildCropUri();
+                            corp(path, cropUri);
+                        }
+                    }
+                    break;
+            }
         }
     }
 
+    private void showImg(String file) {
+        Glide.clear(imgGroupPortrait);
+        Glide.with(mContext).load(file)
+                .error(R.mipmap.default_useravatar)
+                .placeholder(R.mipmap.default_useravatar)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .dontAnimate()
+                .transform(new CenterCrop(mContext), new GlideRoundTransform(mContext))
+                .into(imgGroupPortrait);
+    }
 
+    /**  裁剪图片成功后返回  **/
+    public static final int CODE_CROP_RESULT = 2;
+    /** 选择图片 */
+    public static final int CODE_SELECT_IMG = 3;
+    /**  拍照成功后返回 */
+    public static final int CODE_CAMERA_REQUEST = 4;
 
+    /**  构建uri */
+    private Uri buildUri() {
+        picUri = Uri.fromFile(fileUri);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            picUri = FileProvider.getUriForFile(GroupCreateActivity.this, "com.studyim.fileprovider", fileUri);
+        }
+        return picUri;
+    }
+    /**  构建uri */
+    private Uri buildCropUri() {
+        cropUri = Uri.fromFile(cropFile);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cropUri = FileProvider.getUriForFile(GroupCreateActivity.this, "com.studyim.fileprovider", cropFile);
+        }
+        return cropUri;
+    }
+    /**
+     * 自动获取相机权限
+     */
 
+    public static void takePicture(Activity activity, Uri imageUri, int requestCode) {
+        //调用系统相机
+        Intent intentCamera = new Intent();
+        intentCamera.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intentCamera.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); //添加这一句表示对目标应用临时授权该Uri所代表的文件
+        }
+        //将拍照结果保存至photo_file的Uri中，不保留在相册中
+        intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        activity.startActivityForResult(intentCamera, requestCode);
+    }
 
+    private void corp(Uri uri,Uri saveUri) {
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        cropIntent.setDataAndType(uri, "image/*");
+        cropIntent.putExtra("crop", "true");//发送裁剪信号
+        cropIntent.putExtra("aspectX", 1);
+        cropIntent.putExtra("aspectY", 1);
+        cropIntent.putExtra("outputX", 200);
+        cropIntent.putExtra("outputY", 200);
+//        cropIntent.putExtra("scale", true);
+        //1-false用uri返回图片
+        //2-true直接用bitmap返回图片（此种只适用于小图片，返回图片过大会报错）
+        cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);//将剪切的图片保存到目标Uri中
+        cropIntent.putExtra("return-data", false);
+//        cropIntent.putExtra("noFaceDetection", true);
+        cropIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        GroupCreateActivity.this.startActivityForResult(cropIntent, CODE_CROP_RESULT);
+    }
+
+    private void selectPicture() {
+        //每次选择图片吧之前的图片删除
+        WuhunFileTool.deleteFileForUri(buildCropUri());
+
+        Intent intent = new Intent(Intent.ACTION_PICK, null);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        GroupCreateActivity.this.startActivityForResult(intent, CODE_SELECT_IMG);
+    }
 }

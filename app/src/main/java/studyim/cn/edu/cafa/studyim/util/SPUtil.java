@@ -61,7 +61,7 @@ public class SPUtil {
     }
 
     public void setRoletype(int roletype) {
-        settings.edit().putInt(ROLE_TYPE, roletype);
+        settings.edit().putInt(ROLE_TYPE, roletype).commit();
     }
 
     public int getSettingVersion() {
