@@ -16,6 +16,7 @@ public class WuhunDateTool {
     public static final String DATE1 = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE2 = "yyyyMMdd_HHmmss";
     public static final String DATE3 = "mm/dd HH:mm";
+    public static final String DATE4 = "yyyy-MM-dd";
 
     /**
      * 获取时间类型结果

@@ -18,6 +18,7 @@ import studyim.cn.edu.cafa.studyim.activity.main.StudyShearchActivity;
 import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyClassFragment;
+import studyim.cn.edu.cafa.studyim.fragment.study.StudyLeadFragment;
 import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
@@ -67,8 +68,14 @@ public class MainStudyFragment extends BaseFragment {
     private Fragment mFragment[] = {
             initConversationList(),
             initClassList(),
-            initConversationList()
+            initLearList()
     };
+
+    StudyLeadFragment mStudyLeadFragment;
+    private Fragment initLearList() {
+        mStudyLeadFragment = FragmentFactory.getInstance().getStudyLeadFragment();
+        return mStudyLeadFragment;
+    }
 
     StudyClassFragment mStudyClassFragment = null;
     private Fragment initClassList() {

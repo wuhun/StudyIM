@@ -57,13 +57,13 @@ public class X5WebView extends WebView {
 
 		WebSettings webSetting = this.getSettings();
 		webSetting.setAllowFileAccess(true);
-		webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-		webSetting.setSupportZoom(true);
-		webSetting.setBuiltInZoomControls(true);
-		webSetting.setUseWideViewPort(true);
+		webSetting.setSupportZoom(true);//支持缩放
+		webSetting.setBuiltInZoomControls(false);//出现缩放工具
+		webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//自适应屏幕
+		webSetting.setUseWideViewPort(true);//推荐使用的窗口
+		webSetting.setLoadWithOverviewMode(true);//充满全屏(webview加载的页面的模式)
 		webSetting.setSupportMultipleWindows(false);//新窗口
 		webSetting.setJavaScriptCanOpenWindowsAutomatically(true);//自动打开窗口
-		// webSetting.setLoadWithOverviewMode(true);//充满全屏
 		// webSetting.setDatabaseEnabled(true);
 		webSetting.setCacheMode(WebSettings.LOAD_NO_CACHE);// 优先使用缓存
 		webSetting.setAppCacheMaxSize(Long.MAX_VALUE);// 设置缓存的大小

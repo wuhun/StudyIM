@@ -9,10 +9,79 @@
 
     <include layout="@layout/head_title_bar" />
 
-    <fragment
-        android:id="@+id/conversation"
-        android:name="io.rong.imkit.fragment.ConversationFragment"
+    <LinearLayout
+        android:id="@+id/ll_sub_title"
+        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:id="@+id/rl_tab_chat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/textview1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="聊天"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="14sp" />
+        </RelativeLayout>
+        <View style="@style/yLine" />
+
+        <RelativeLayout
+            android:id="@+id/rl_tab_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="公告"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="14sp" />
+        </RelativeLayout>
+        <View style="@style/yLine" />
+
+        <RelativeLayout
+            android:id="@+id/rl_tab_active"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="活动"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="14sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/conversation_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <!--<fragment-->
+        <!--android:id="@+id/conversation"-->
+        <!--android:name="io.rong.imkit.fragment.ConversationFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
 </android.support.v7.widget.LinearLayoutCompat>

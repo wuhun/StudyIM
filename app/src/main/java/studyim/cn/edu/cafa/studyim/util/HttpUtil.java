@@ -25,6 +25,16 @@ import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
  */
 public class HttpUtil {
 
+    /** 获取群内的活动列表 */
+    public static void getActivityList(String groupId, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/activity/list";
+        Map<String, String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        map.put("dateTime", System.currentTimeMillis() + "");
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
     /**
      * 创建群组
      * @param groupName     群名称
@@ -38,6 +48,16 @@ public class HttpUtil {
         map.put("groupName", groupName);
         map.put("groupImage",groupImage);
         map.put("groupType", groupType);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 获取群公告 */
+    public static void getGroupNoticeList(String groupId, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/noticeList";
+        Map<String, String> map = new HashMap<>();
+        map.put("groupId", groupId);//群id
+        map.put("dateTime", System.currentTimeMillis()+"");
         Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
         OkHttpUtil.enqueue(reqBuilder.build(), callback);
     }

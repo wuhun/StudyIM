@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,9 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.RongIMClient.ConnectionStatusListener.ConnectionStatus;
+import io.rong.imlib.model.Conversation;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -39,6 +42,7 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
@@ -78,7 +82,18 @@ public class StudyClassFragment extends BaseFragment {
             @Override
             public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
                 GroupModel model = groupList.get(position);
-                RongIM.getInstance().startGroupChat(mActivity, model.getGROUPRCID(), model.getNAME());
+                TestLog.i("群聊 id：" + model.getGROUPID() + " - title：" + model.getNAME());
+//                RongIM.getInstance().startGroupChat(mActivity, model.getGROUPRCID(), model.getNAME());
+                if(RongContext.getInstance() != null && model != null) {
+                    Uri uri = Uri.parse("rong://" + mActivity.getApplicationInfo().packageName).buildUpon()
+                            .appendPath("conversation")
+                            .appendPath(Conversation.ConversationType.GROUP.getName().toLowerCase())
+                            .appendQueryParameter("targetId", model.getGROUPRCID())
+                            .appendQueryParameter("title", model.getNAME())
+                            .appendQueryParameter("groupId", model.getGROUPID()+"")
+                            .build();
+                    mActivity.startActivity(new Intent("android.intent.action.VIEW", uri));
+                }
             }
         });
     }
@@ -87,6 +102,7 @@ public class StudyClassFragment extends BaseFragment {
     protected void initData() {
         BroadcastManager.getInstance(mActivity).sendBroadcast(Constant.UPDATE_GROUP_LIST);
         List<GroupModel> classGroup = DBManager.getmInstance().getGroupByClass();
+        groupList.clear();
         groupList = classGroup;
         madapter.setData(groupList);
     }
@@ -199,9 +215,9 @@ public class StudyClassFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
+
+                TestLog.i("群列表:" + result);
                 if(response.isSuccessful()) {
-//                    Message message = handler.obtainMessage(WuhunState.REQUEST_SUCCESS, result);
-//                    handler.sendMessage(message);
                     if(result == null) return;
                     BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
                     if(model != null && model.getCode() == 1){

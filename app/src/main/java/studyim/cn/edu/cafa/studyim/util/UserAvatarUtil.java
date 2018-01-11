@@ -195,4 +195,14 @@ public class UserAvatarUtil {
         }
         return uri;
     }
+
+    public static void showImage(Context context, String uri, ImageView imageView){
+        Glide.with(context).load(uri)
+                .error(R.mipmap.default_useravatar)
+                .placeholder(R.mipmap.default_useravatar)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .skipMemoryCache(true)
+                .dontAnimate()
+                .into(imageView);
+    }
 }

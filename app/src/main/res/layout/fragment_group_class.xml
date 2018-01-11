@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/content_bg"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+    <TextView
+        android:id="@+id/tv_enpty_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="暂无公告内容"
+        android:layout_gravity="center_horizontal"
+        android:padding="20dp"
+        android:visibility="gone"/>
+
+    <tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView
+        android:id="@+id/rv_notice_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:rv_divider_color="@color/line"
+        app:rv_divider_size="1px"/>
+
+</LinearLayout>

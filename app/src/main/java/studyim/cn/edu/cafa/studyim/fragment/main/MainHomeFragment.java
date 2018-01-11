@@ -70,14 +70,6 @@ public class MainHomeFragment extends BaseFragment {
         return R.layout.main_home_fragment;
     }
 
-    @Override
-    public void onDestroy() {
-        if(mWebView != null) {
-            mWebView.clearWebView();
-        }
-        super.onDestroy();
-    }
-
     public void backWebView(){
         if(mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
@@ -90,5 +82,25 @@ public class MainHomeFragment extends BaseFragment {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mWebView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mWebView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if(mWebView != null) {
+            mWebView.clearWebView();
+        }
+        super.onDestroy();
     }
 }
