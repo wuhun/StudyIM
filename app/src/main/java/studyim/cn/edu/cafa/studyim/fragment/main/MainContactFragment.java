@@ -195,7 +195,7 @@ public class MainContactFragment extends BaseFragment {
 
     private void unregisterBR() {
         BroadcastManager.getInstance(getActivity()).unregister(Constant.ADD_FRIEND_RED_DOT);
-        BroadcastManager.getInstance(getActivity()).unregister(Constant.UPDATA_CONSTACT_LIST);
+        BroadcastManager.getInstance(getActivity()).unregister(Constant.UPDATE_CONSTACT_LIST);
     }
 
     /**
@@ -209,7 +209,7 @@ public class MainContactFragment extends BaseFragment {
                 imgAddFriendDot.setVisibility(View.VISIBLE);
             }
         });
-        BroadcastManager.getInstance(getActivity()).register(Constant.UPDATA_CONSTACT_LIST, new BroadcastReceiver() {
+        BroadcastManager.getInstance(getActivity()).register(Constant.UPDATE_CONSTACT_LIST, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 TestLog.i("收到广播更新列表………………");

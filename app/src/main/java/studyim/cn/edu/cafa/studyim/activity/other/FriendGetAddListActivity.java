@@ -213,7 +213,7 @@ public class FriendGetAddListActivity extends BaseActivity {
                 ResultModel model = ((ResultModel)msg.obj);
                 if (model.getCode() == 1) {
                     WuhunToast.normal("添加成功").show();
-                    BroadcastManager.getInstance(context).sendBroadcast(Constant.UPDATA_CONSTACT_LIST);
+                    BroadcastManager.getInstance(context).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
                 } else {
                     if (!WuhunDataTool.isNullString(model.getMsg())) {
                         WuhunToast.normal(model.getMsg()).show();

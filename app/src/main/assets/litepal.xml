@@ -6,5 +6,6 @@
         <mapping class="studyim.cn.edu.cafa.studyim.model.Friend" />
         <mapping class="studyim.cn.edu.cafa.studyim.model.FriendUserInfo" />
         <mapping class="studyim.cn.edu.cafa.studyim.model.SettingModel" />
+        <mapping class="studyim.cn.edu.cafa.studyim.model.GroupModel" />
     </list>
 </litepal>

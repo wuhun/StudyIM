@@ -185,7 +185,7 @@ public class SetUserRemarkName extends BaseActivity {
                             if (resultModel.getCode() == 1) {
                                 WuhunToast.normal("修改备注成功").show();
                                 UserInfo info = new UserInfo(friendinfo.getUserId()+"", etAlias.getText().toString(), Uri.parse(friendinfo.getAvatar()));
-                                BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATA_CONSTACT_LIST);
+                                BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
                                 RongIM.getInstance().refreshUserInfoCache(info);
                                 SetUserRemarkName.this.finish();
                             } else {

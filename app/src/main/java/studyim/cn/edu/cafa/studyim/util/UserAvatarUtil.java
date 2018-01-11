@@ -12,6 +12,7 @@ import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendGetAddList;
 import studyim.cn.edu.cafa.studyim.model.FriendUserInfo;
+import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import studyim.cn.edu.cafa.studyim.model.UserInfo;
 import studyim.cn.edu.cafa.studyim.ui.GlideRoundTransform;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
@@ -146,6 +147,22 @@ public class UserAvatarUtil {
         String avatarUri = getAvatarUri(
                 model.getUserId() + "",
                 WuhunDataTool.isNullString(model.getRemarkName()) ? model.getNickName() : model.getRemarkName(),
+                uri);
+        Glide.with(context).load(avatarUri)
+                .error(R.mipmap.default_useravatar)
+                .placeholder(R.mipmap.default_useravatar)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .skipMemoryCache(true)
+                .dontAnimate()
+                .transform(new CenterCrop(context), new GlideRoundTransform(context))
+                .into(imgAvatar);
+    }
+
+    public static void showAvatar(Context context, GroupModel model, String beforeUrl, ImageView imgAvatar) {
+        String uri = initUri(beforeUrl,model.getGROUPIMAGE());
+        String avatarUri = getAvatarUri(
+                model.getGROUPRCID() + "",
+                model.getNAME(),
                 uri);
         Glide.with(context).load(avatarUri)
                 .error(R.mipmap.default_useravatar)

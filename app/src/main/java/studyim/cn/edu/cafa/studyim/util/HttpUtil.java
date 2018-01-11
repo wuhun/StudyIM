@@ -42,11 +42,22 @@ public class HttpUtil {
         OkHttpUtil.enqueue(reqBuilder.build(), callback);
     }
 
+    /** 更具群id获取群成员列表信息 */
+    public static void getGroupMemeberlist(String groupId, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/memeberlist";
+        Map<String, String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
     /** 获取班级或者群组列表 */
     public static void getGroupList(String type, Callback callback){
         String uri = Constant.indexUrl + "CAFA/group/list";
         Map<String, String> map = new HashMap<>();
-        map.put("type", type);
+        if(!WuhunDataTool.isNullString(type)) {
+            map.put("type", type);
+        }
         Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
         OkHttpUtil.enqueue(reqBuilder.build(), callback);
     }

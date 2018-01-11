@@ -9,9 +9,14 @@
 
     <include layout="@layout/head_title_bar" />
 
-    <fragment
-        android:id="@+id/subconversationlist"
-        android:name="io.rong.imkit.fragment.SubConversationListFragment"
+    <!--<fragment-->
+        <!--android:id="@+id/subconversationlist"-->
+        <!--android:name="io.rong.imkit.fragment.SubConversationListFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
+    <FrameLayout
+        android:id="@+id/sub_conversation_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

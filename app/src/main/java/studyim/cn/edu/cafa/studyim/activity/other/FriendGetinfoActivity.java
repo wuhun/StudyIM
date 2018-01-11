@@ -338,7 +338,7 @@ public class FriendGetinfoActivity extends BaseActivity {
                 }
             }else if(msg.what == DELETE_SUCCESS) {
                 hideMenu();
-                BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATA_CONSTACT_LIST);
+                BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
                 WuhunToast.normal("删除成功").show();
                 FriendGetinfoActivity.this.finish();
             }

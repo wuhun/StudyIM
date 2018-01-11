@@ -43,7 +43,7 @@
         <!--android:dividerHeight="0.5dp" />-->
 
     <tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView
-        android:id="@+id/rc_list"
+        android:id="@+id/rc_group_list"
         android:layout_below="@+id/rc_status_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

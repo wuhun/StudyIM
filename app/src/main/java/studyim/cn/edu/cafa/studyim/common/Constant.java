@@ -23,9 +23,11 @@ public class Constant {
     /**  */
     public static final String ADD_FRIEND_RED_DOT = "add_friend_red_dot";
     /** 更新通讯录列表内容 */
-    public static java.lang.String UPDATA_CONSTACT_LIST = "updata_constact_list";
+    public static java.lang.String UPDATE_CONSTACT_LIST = "update_constact_list";
     /** 更新融云的个人信息提供 */
     public static java.lang.String USER_GETINFO_REFRESH = "user_getinfo_refresh";
+    /** 更新群组列表信息 */
+    public static java.lang.String UPDATE_GROUP_LIST = "update_group_list";
     /** 主页 我的提示点 */
     public static final String ME_SHOW_RED = "show_red";
 
@@ -34,7 +36,5 @@ public class Constant {
     public static final int TEACHER = 4;
     /** 权限 - 学生 */
     public static final int STUDENT = 5;
-
-
 
 }

@@ -14,6 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -27,6 +29,10 @@ import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.activity.main.MainActivity;
 import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
+import studyim.cn.edu.cafa.studyim.common.Constant;
+import studyim.cn.edu.cafa.studyim.db.DBManager;
+import studyim.cn.edu.cafa.studyim.model.BaseModel;
+import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import studyim.cn.edu.cafa.studyim.model.LoginUserModel;
 import studyim.cn.edu.cafa.studyim.model.RolesModel;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
@@ -36,6 +42,7 @@ import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionsUtil;
 import tools.com.lvliangliang.wuhuntools.ui.ClearWriteEditText;
+import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDeviceTool;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.loadDialog.LoadDialog;
@@ -76,6 +83,8 @@ public class LoginActivity extends BaseActivity {
     private static int LOGIN_FAIL = 0x02;
     private static int LOGIN_ERROR = 0x03;
     private static int BROWSE = 0x04;//预览
+//    private static int FIND_GROUP_MEMEBERLIST = 0x05;
+    private static int GO_TO_MAIN = 0x06;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +111,7 @@ public class LoginActivity extends BaseActivity {
         }
         switch (view.getId()) {
             case R.id.btn_login_sign:
-                goToMain();
+                login();
                 break;
             case R.id.tv_login_query_pwd:
                 // TODO: 2017/11/8 忘记密码
@@ -125,7 +134,7 @@ public class LoginActivity extends BaseActivity {
 
     private String imei;
 
-    private void goToMain() {
+    private void login() {
 //        准备参数
         username = etLoginNum.getText().toString().trim();
         password = etLoginPwd.getText().toString().trim();
@@ -213,9 +222,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == LOGIN_SUCCESS) {
-                LoadDialog.dismiss(mContext);
-                jumpToActivity(MainActivity.class);
-                LoginActivity.this.finish();
+                initGroupList();
             } else if (msg.what == LOGIN_FAIL) {
                 LoginUserModel model = ((LoginUserModel) msg.obj);
                 if (null != model.getMsg()) {
@@ -227,11 +234,79 @@ public class LoginActivity extends BaseActivity {
                 WuhunToast.normal(getResources().getString(R.string.request_error)).show();
             }else if(msg.what == BROWSE) {
                 jumpToActivity(MainActivity.class);
+//            }else if(msg.what == FIND_GROUP_MEMEBERLIST) {
+//                List<GroupModel> groups= (List<GroupModel>) msg.obj;
+//                initGroupMemeberList(groups);
+            }else if(msg.what == GO_TO_MAIN){
+                LoadDialog.dismiss(mContext);
+                jumpToActivity(MainActivity.class);
+                LoginActivity.this.finish();
             }
             LoadDialog.dismiss(LoginActivity.this);
             super.handleMessage(msg);
         }
     };
+
+    /** 加载群成员信息列表 */
+//    private void initGroupMemeberList(List<GroupModel> groups) {
+//        if(groups  == null && groups.size() <= 0) return;
+//        for(final GroupModel group : groups){
+//            if(group == null)
+//                continue;
+//            TestLog.i("==> " + group);
+//            final int groupid = group.getGROUPID();
+//            // 更新群组成员
+//            HttpUtil.getGroupMemeberlist(String.valueOf(groupid), new Callback() {
+//                @Override
+//                public void onFailure(Call call, IOException e) {}
+//
+//                @Override
+//                public void onResponse(Call call, Response response) throws IOException {
+//                    String result = response.body().string();
+////                    TestLog.i("查询群成员result: " + result);
+//                    BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>(){}.getType());
+//                    if(response.isSuccessful() && model != null && model.getCode() == 1){
+//                        String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
+//                        List<GroupMemeberModel> memeber = model.getResult();
+////                        TestLog.i("循环" + memeber);
+//                        for(GroupMemeberModel groupitem : memeber){
+////                            TestLog.i("成员: " + groupitem);
+//                            String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
+//                            String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
+//                            String avatarUri = UserAvatarUtil.getAvatarUri(
+//                                    groupitem.getUSERID() + "", name, uri);
+//                            UserInfo userInfo = new UserInfo(groupitem.getRCID(), name, Uri.parse(avatarUri));
+//                            RongIM.getInstance().refreshUserInfoCache(userInfo);
+//                        }
+//                    }
+//                    handler.sendEmptyMessage(GO_TO_MAIN);
+//                }
+//            });
+//        }
+//    }
+
+    /** 初始化群组信息 */
+    private void initGroupList() {
+        HttpUtil.getGroupList(null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {}
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
+                if(model != null && model.getCode() == 1 && response.isSuccessful()) {
+                    List<GroupModel> groups = model.getResult();
+                    String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
+                    DBManager.getmInstance().saveGroups(groups, before);
+
+//                    Message msg = handler.obtainMessage(FIND_GROUP_MEMEBERLIST, groups);
+//                    handler.sendMessage(msg);
+                    handler.sendEmptyMessageDelayed(GO_TO_MAIN,1000);
+                }
+            }
+        });
+    }
 
     private void showLoadDialog(){
         ld = new LoadDialog(mContext, false, "正在加载中……");
@@ -253,6 +328,7 @@ public class LoginActivity extends BaseActivity {
         super.onDestroy();
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
+            handler = null;
         }
     }
 

@@ -154,7 +154,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onError(RongIMClient.ErrorCode errorCode) {
-                WuhunToast.normal("连接融云失败").show();
+                WuhunToast.normal("连接融云服务器失败").show();
             }
         });
     }
