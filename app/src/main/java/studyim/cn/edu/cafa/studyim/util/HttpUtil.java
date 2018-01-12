@@ -25,6 +25,43 @@ import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
  */
 public class HttpUtil {
 
+    /** 添加到群组 */
+    public static void groupJoin(String groupId, String userId, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/join";
+        Map<String,String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        map.put("userId", userId);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 退出群聊 */
+    public static void groupQuit(String groupId, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/quit";
+        Map<String,String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 解散群聊 */
+    public static void groupDismiss(String groupId, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/dismiss";
+        Map<String,String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 获取群详情信息 */
+    public static void getGroupInfo(String groupId, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/getinfo";
+        Map<String, String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
     /** 获取群内的活动列表 */
     public static void getActivityList(String groupId, Callback callback){
         String uri = Constant.indexUrl + "CAFA/group/activity/list";
@@ -239,7 +276,9 @@ public class HttpUtil {
         Map<String, String> param = map;
         if (null == param)
             param = new HashMap<>();
-        param.put("userId", getSPUtil().getUSERID());
+        if(!param.containsKey("userId")){
+            param.put("userId", getSPUtil().getUSERID());
+        }
         Request.Builder reqBuilder = new Request.Builder().url(uri)
                 .addHeader("tokens", getSPUtil().getTokens())
                 .post(getRequestBody(param));

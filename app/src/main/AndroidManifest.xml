@@ -118,7 +118,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activity.other.WebViewActivity"></activity>
+        <activity android:name=".activity.other.WebViewActivity" />
+        <activity android:name=".activity.other.GroupDetailMenuActivity"></activity>
+        <activity android:name=".activity.other.GroupAddFriendActivity"></activity>
     </application>
 
 </manifest>

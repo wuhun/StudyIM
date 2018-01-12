@@ -1,5 +1,6 @@
 package studyim.cn.edu.cafa.studyim.activity.rong;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,9 +26,12 @@ import io.rong.imlib.model.Discussion;
 import io.rong.imlib.model.PublicServiceProfile;
 import io.rong.imlib.model.UserInfo;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.activity.other.GroupDetailMenuActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
+import studyim.cn.edu.cafa.studyim.db.DBManager;
 import studyim.cn.edu.cafa.studyim.fragment.other.GroupActiveFragment;
 import studyim.cn.edu.cafa.studyim.fragment.other.GroupGradeFragment;
+import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 public class ConversationListActivity extends BaseActivity {
@@ -54,6 +58,8 @@ public class ConversationListActivity extends BaseActivity {
 
     @BindView(R.id.conversation_list)
     FrameLayout conversation_list;
+
+    Context mContext;
 
     private Fragment mFragment[] = {
             getConverstationFragment(),
@@ -123,6 +129,11 @@ public class ConversationListActivity extends BaseActivity {
                 ConversationListActivity.this.finish();
             }else if(v.getId() == R.id.body_search) { //聊天设置
                 // TODO: 2017/12/21 设置当前用户资料
+                if(mGroupId != null){
+                    Intent intent = new Intent(mContext, GroupDetailMenuActivity.class);
+                    intent.putExtra(GroupDetailMenuActivity.GROUPID, mGroupId);
+                    jumpToActivity(intent);
+                }
             }else if(v.getId() == R.id.rl_tab_chat) {
                 position = 0;
                 showFragment();
@@ -137,6 +148,7 @@ public class ConversationListActivity extends BaseActivity {
     };
 
     private void initView() {
+        mContext = this;
         headBg.setImageResource(R.drawable.main_bg);
         backActivity.setImageResource(R.drawable.icon_back);
         detailUser.setImageResource(R.drawable.default_user);
@@ -189,7 +201,7 @@ public class ConversationListActivity extends BaseActivity {
         mTargetId = intent.getData().getQueryParameter("targetId");
         mTitle = intent.getData().getQueryParameter("title");
         mGroupId = intent.getData().getQueryParameter("groupId");
-        TestLog.i("对话界面ConversationListActivity： id:" + mTargetId + " - title:" + mTitle);
+//        TestLog.i("对话界面ConversationListActivity： id:" + mTargetId + " - title:" + mTitle);
 //        mTargetIds = intent.getData().getQueryParameter("targetIds");
         mConversationType = Conversation.ConversationType.valueOf(intent.getData().getLastPathSegment().toUpperCase(Locale.getDefault()));
 
@@ -216,8 +228,11 @@ public class ConversationListActivity extends BaseActivity {
             setGroupActionBar(targetId);
 
             ll_sub_title.setVisibility(View.VISIBLE);
-
-
+            if(mGroupId == null){
+                GroupModel groupByRCID = DBManager.getmInstance().findGroupByRCID(mTargetId);
+                if(groupByRCID != null)
+                    mGroupId = groupByRCID.getGROUPID()+"";
+            }
 
             TestLog.i("设置群聊界面");
         } else if (conversationType.equals(Conversation.ConversationType.DISCUSSION)) {

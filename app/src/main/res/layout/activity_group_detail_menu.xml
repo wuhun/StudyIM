@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/content_bg"
+    tools:context="studyim.cn.edu.cafa.studyim.activity.other.GroupDetailMenuActivity">
+
+    <include layout="@layout/head_title_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView
+                android:id="@+id/rv_group_member"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                android:background="@color/white"
+                app:rv_column="5"
+                app:rv_orientation="vertical"
+                app:rv_type="grid" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/selector_common_item">
+
+                <View style="@style/Line" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="群头像"
+                        android:layout_centerVertical="true"
+                        style="@style/tag_text" />
+                    <ImageView
+                        android:id="@+id/img_group_avater"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/rc_default_portrait"/>
+                </RelativeLayout>
+                <View style="@style/Line" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="群名称"
+                        style="@style/tag_text"
+                        android:layout_centerVertical="true"/>
+                    <TextView
+                        android:id="@+id/tv_groupname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:text=""
+                        android:textSize="12dp"/>
+                </RelativeLayout>
+                <View style="@style/Line" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="群描述"
+                        style="@style/tag_text"
+                        android:layout_centerVertical="true"/>
+                    <TextView
+                        android:id="@+id/tv_groupmsg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="260dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:text=""
+                        android:textSize="12dp"
+                        android:lines="1"
+                        android:ellipsize="end"
+                        android:singleLine="true"/>
+                </RelativeLayout>
+                <View style="@style/Line" />
+
+            </LinearLayout>
+
+            <!-- 按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:orientation="vertical">
+                <Button
+                    android:id="@+id/btn_group_quit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_red_selector"
+                    android:text="退出群组"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
+                <Button
+                    android:id="@+id/btn_manager_group_quit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/btn_red_selector"
+                    android:text="解散并退出"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

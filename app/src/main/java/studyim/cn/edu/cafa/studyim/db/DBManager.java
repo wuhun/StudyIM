@@ -179,6 +179,11 @@ public class DBManager {
         return DataSupport.findAll(GroupModel.class);
     }
 
+    public GroupModel findGroupByRCID(String GROUPRCID){
+        List<GroupModel> groupModels = DataSupport.where("GROUPRCID = ?", GROUPRCID).find(GroupModel.class);
+        return groupModels.get(0);
+    }
+
     public void deleteGroups(){
         List<GroupModel> groups = getAllGroup();
         for(GroupModel  n : groups){

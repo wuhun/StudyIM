@@ -7,7 +7,7 @@ import java.io.Serializable;
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
  * 创建日期：2018/1/11 0011
  * 版    本：1.0
- * 描    述：
+ * 描    述：群成员类
  * 修订历史：
  * ================================================
  */
@@ -40,6 +40,7 @@ public class GroupMemeberModel implements Serializable{
     private String ISFRIEND;
     private String NAME;
     private int USER_BUDDY_ID;
+    private String type; // 自定义： 1(添加群成员)， 2(删除群成员)
 
     public String getREMARKNAME() {
         return REMARKNAME;
@@ -135,6 +136,14 @@ public class GroupMemeberModel implements Serializable{
 
     public void setUSER_BUDDY_ID(int USER_BUDDY_ID) {
         this.USER_BUDDY_ID = USER_BUDDY_ID;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override
