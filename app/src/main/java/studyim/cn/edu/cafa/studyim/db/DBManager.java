@@ -139,7 +139,7 @@ public class DBManager {
     }
 
     /** 更新群成员信息 */
-    private void refreshGroupMemeber(String groupId) {
+    private void refreshGroupMemeber(final String groupId) {
         HttpUtil.getGroupMemeberlist(String.valueOf(groupId), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {}
@@ -147,14 +147,14 @@ public class DBManager {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-//                    TestLog.i("查询群成员result: " + result);
                 BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>(){}.getType());
                 if(response.isSuccessful() && model != null && model.getCode() == 1){
                     String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
                     List<GroupMemeberModel> memeber = model.getResult();
 //                        TestLog.i("循环" + memeber);
                     for(GroupMemeberModel groupitem : memeber){
-//                            TestLog.i("成员: " + groupitem);
+                        TestLog.i("成员: " + groupId + " - " + groupitem.getGROUPID() + " - " + groupitem.getNICKNAME());
+
                         String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
                         String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
                         String avatarUri = UserAvatarUtil.getAvatarUri(
@@ -165,6 +165,11 @@ public class DBManager {
                 }
             }
         });
+    }
+
+    /** 获取群成员 */
+    public List<GroupMemeberModel> findGroupMemeberByGroupId(String groupId){
+        return DataSupport.where("GROUPID = ?", groupId).find(GroupMemeberModel.class);
     }
 
     public List<GroupModel> getGroupByClass(){

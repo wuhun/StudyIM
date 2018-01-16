@@ -7,6 +7,7 @@ import studyim.cn.edu.cafa.studyim.fragment.main.MainResourceFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainStudyFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyAllFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyClassFragment;
+import studyim.cn.edu.cafa.studyim.fragment.study.StudyCommonFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyLeadFragment;
 
 /**
@@ -100,6 +101,18 @@ public class FragmentFactory {
     private StudyAllFragment studyAllFragment;
     private StudyClassFragment studyClassFragment;
     private StudyLeadFragment studyLeadFragment;
+    private StudyCommonFragment mStudyCommonFragment;
+
+    public StudyCommonFragment getStudyCommonFragment(){
+        if(mStudyCommonFragment == null) {
+            synchronized (StudyCommonFragment.class){
+                if(mStudyCommonFragment == null) {
+                    mStudyCommonFragment = new StudyCommonFragment();
+                }
+            }
+        }
+        return mStudyCommonFragment;
+    }
 
     public StudyLeadFragment getStudyLeadFragment(){
         if(studyLeadFragment == null) {

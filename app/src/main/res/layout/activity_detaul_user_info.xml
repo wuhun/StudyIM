@@ -226,53 +226,5 @@
 
         </LinearLayout>
     </RelativeLayout>
-    <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@color/mask" />-->
-
-        <!--<LinearLayout-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="vertical">-->
-
-            <!--<studyim.cn.edu.cafa.studyim.ui.OptionItemView-->
-                <!--android:id="@+id/oivAlias"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="50dp"-->
-                <!--android:background="@drawable/selector_common_item"-->
-                <!--app:left_image_margin_left="40px"-->
-                <!--app:left_image_margin_right="36px"-->
-                <!--app:left_src="@mipmap/icon_menu_note"-->
-                <!--app:left_text="设置注备名称"-->
-                <!--app:left_text_color="@color/gray1" />-->
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="80dp"-->
-                <!--android:background="@drawable/selector_common_item" />-->
-
-            <!--<View style="@style/Line" />-->
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="80dp"-->
-                <!--android:background="@drawable/selector_common_item" />-->
-
-            <!--<View style="@style/Line" />-->
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="80dp"-->
-                <!--android:background="@drawable/selector_common_item" />-->
-
-            <!--<View style="@style/Line" />-->
-        <!--</LinearLayout>-->
-    <!--</RelativeLayout>-->
 
 </FrameLayout>

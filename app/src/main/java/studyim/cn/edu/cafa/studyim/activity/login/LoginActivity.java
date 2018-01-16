@@ -196,7 +196,7 @@ public class LoginActivity extends BaseActivity {
                             List<RolesModel> roles = loginModel.getResult().getRoles();
                             getSPUtil().setRoletype(roles.get(roles.size()-1).getRoleType());
                             TestLog.i("权限类型：" + roles.get(roles.size()-1).getRoleType() + " == " + roles.get(roles.size()-1).getRoleName());
-                            WuhunDebug.debug("==>" + getSPUtil().getUsername());
+//                            WuhunDebug.debug("==>" + getSPUtil().getUsername());
                             Message msg = handler.obtainMessage();
                             msg.obj = loginModel;
                             msg.what = LOGIN_SUCCESS;

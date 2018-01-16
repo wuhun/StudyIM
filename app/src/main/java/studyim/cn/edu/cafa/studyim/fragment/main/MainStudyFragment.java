@@ -18,6 +18,7 @@ import studyim.cn.edu.cafa.studyim.activity.main.StudyShearchActivity;
 import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyClassFragment;
+import studyim.cn.edu.cafa.studyim.fragment.study.StudyCommonFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyLeadFragment;
 import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
@@ -53,6 +54,8 @@ public class MainStudyFragment extends BaseFragment {
     RelativeLayout rlTabClass;
     @BindView(R.id.rl_tab_lead)
     RelativeLayout rlTabLead;
+    @BindView(R.id.rl_tab_common)
+    RelativeLayout rlTabCommon;
     @BindView(R.id.fl_friend_list)
     FrameLayout flFriendList;
 
@@ -68,8 +71,15 @@ public class MainStudyFragment extends BaseFragment {
     private Fragment mFragment[] = {
             initConversationList(),
             initClassList(),
-            initLearList()
+            initLearList(),
+            initCommonList()
     };
+
+    StudyCommonFragment mStudyCommonFragment;
+    private Fragment initCommonList() {
+        mStudyCommonFragment = FragmentFactory.getInstance().getStudyCommonFragment();
+        return mStudyCommonFragment;
+    }
 
     StudyLeadFragment mStudyLeadFragment;
     private Fragment initLearList() {
@@ -127,6 +137,11 @@ public class MainStudyFragment extends BaseFragment {
                     setTabBackColor();
                     showFragment();
                     break;
+                case R.id.rl_tab_common:
+                    position = 3;
+                    setTabBackColor();
+                    showFragment();
+                    break;
                 case R.id.body_search:
                     jumpToActivity(StudyShearchActivity.class);
                     break;
@@ -141,12 +156,15 @@ public class MainStudyFragment extends BaseFragment {
         rlTabAll.setBackgroundResource(R.drawable.study_tab_bottom_redline_selector);
         rlTabClass.setBackgroundResource(R.drawable.study_tab_bottom_redline_selector);
         rlTabLead.setBackgroundResource(R.drawable.study_tab_bottom_redline_selector);
+        rlTabCommon.setBackgroundResource(R.drawable.study_tab_bottom_redline_selector);
         if (position == 0) {
             rlTabAll.setBackgroundResource(R.drawable.study_tab_hover);
         } else if (position == 1) {
             rlTabClass.setBackgroundResource(R.drawable.study_tab_hover);
         } else if (position == 2) {
             rlTabLead.setBackgroundResource(R.drawable.study_tab_hover);
+        }else if(position == 3) {
+            rlTabCommon.setBackgroundResource(R.drawable.study_tab_hover);
         }
     }
 
@@ -160,6 +178,7 @@ public class MainStudyFragment extends BaseFragment {
         rlTabAll.setOnClickListener(mOnClick);
         rlTabClass.setOnClickListener(mOnClick);
         rlTabLead.setOnClickListener(mOnClick);
+        rlTabCommon.setOnClickListener(mOnClick);
         bodySearch.setOnClickListener(mOnClick);
     }
 

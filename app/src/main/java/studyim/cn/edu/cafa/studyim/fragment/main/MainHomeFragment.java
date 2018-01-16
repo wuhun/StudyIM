@@ -5,7 +5,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
+import butterknife.BindView;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
@@ -26,6 +28,8 @@ public class MainHomeFragment extends BaseFragment {
     private static String HOMEPATH = "file:///android_res/raw/home.htm";
     private ViewGroup mViewParent;
     public X5WebView mWebView;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
 
     private View.OnKeyListener myOnKeyListener = new View.OnKeyListener() {
@@ -34,7 +38,7 @@ public class MainHomeFragment extends BaseFragment {
             WuhunToast.info("点击了返回键");
             TestLog.i("点击了返回键");
 
-            if((keyCode == KeyEvent.KEYCODE_BACK) && mWebView.canGoBack()) {
+            if ((keyCode == KeyEvent.KEYCODE_BACK) && mWebView.canGoBack()) {
                 mWebView.goBack();
                 mActivity.getSupportFragmentManager().popBackStack();
                 return true;
@@ -46,7 +50,24 @@ public class MainHomeFragment extends BaseFragment {
     @Override
     protected void initListener() {
 //        mWebView.setOnKeyListener(myOnKeyListener);
+        mWebView.setOnloding(new X5WebView.WebLoding() {
+            @Override
+            public void logining(int i) {
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(i);
+            }
+
+            @Override
+            public void loginOver() {
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void setTitle(String title) {}
+        });
     }
+
+
 
     @Override
     protected void initData() {
@@ -63,20 +84,21 @@ public class MainHomeFragment extends BaseFragment {
     }
 
     @Override
-    protected void getIntentData(Bundle arguments) { }
+    protected void getIntentData(Bundle arguments) {
+    }
 
     @Override
     protected int setLayoutResouceId() {
         return R.layout.main_home_fragment;
     }
 
-    public void backWebView(){
-        if(mWebView != null && mWebView.canGoBack()) {
+    public void backWebView() {
+        if (mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
         }
     }
 
-    public boolean isGoBack(){
+    public boolean isGoBack() {
         if (mWebView != null && mWebView.canGoBack()) {
             return true;
         } else {
@@ -98,7 +120,7 @@ public class MainHomeFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        if(mWebView != null) {
+        if (mWebView != null) {
             mWebView.clearWebView();
         }
         super.onDestroy();

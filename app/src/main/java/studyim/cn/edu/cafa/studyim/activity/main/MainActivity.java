@@ -117,7 +117,7 @@ public class MainActivity extends BaseActivity {
 
         //  会话聊天界面，未读消息提醒
         final Conversation.ConversationType[] conversationTypes = {
-                Conversation.ConversationType.PRIVATE,Conversation.ConversationType.GROUP, Conversation.ConversationType.SYSTEM,
+                Conversation.ConversationType.PRIVATE, Conversation.ConversationType.GROUP, Conversation.ConversationType.SYSTEM,
                 Conversation.ConversationType.PUBLIC_SERVICE, Conversation.ConversationType.APP_PUBLIC_SERVICE
         };
 
@@ -169,22 +169,22 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                if(WuhunDataTool.isNullString(result))
+                if (WuhunDataTool.isNullString(result))
                     WuhunToast.normal(R.string.request_error).show();
                 UserGetInfo userGetInfo = getGson().fromJson(result, UserGetInfo.class);
                 if (response.isSuccessful() && userGetInfo != null) {
-                    if(userGetInfo.getCode() == 1) {
+                    if (userGetInfo.getCode() == 1) {
 //                        Message message = handler.obtainMessage(REQUEST_SUCCESS, userGetInfo);
 //                        handler.sendMessage(message);
                         UserGetInfo.ResultBean user = userGetInfo.getResult();
                         if (user != null) {
                             Uri parse = Uri.parse(UserAvatarUtil.getAvatarUri(user.getUserId() + "", user.getNickName(), user.getAvatar()));
-                            if (parse!=null) {
+                            if (parse != null) {
                                 UserInfo info = new UserInfo(token, user.getNickName(), parse);
                                 RongIM.getInstance().refreshUserInfoCache(info);
                             }
                         }
-                    }else{
+                    } else {
                         Message message = handler.obtainMessage(REQUEST_FAIL, userGetInfo);
                         handler.sendMessage(message);
                     }
@@ -198,10 +198,10 @@ public class MainActivity extends BaseActivity {
     private static final int REQUEST_SUCCESS = 0x01;
     private static final int REQUEST_FAIL = 0x02;
 
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == REQUEST_FAIL) {
+            if (msg.what == REQUEST_FAIL) {
                 UserGetInfo info = (UserGetInfo) msg.obj;
                 if (WuhunDataTool.isNullString(info.getMsg()))
                     WuhunToast.error(R.string.request_fail).show();
@@ -271,10 +271,12 @@ public class MainActivity extends BaseActivity {
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //屏幕滚动过程中不断被调用
+            }
 
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(int position) { //当前界面 position
                 mTabHost.setCurrentTab(position);
                 //取消红点
                 ImageView img = (ImageView) mTabHost.getCurrentTabView().findViewById(R.id.img_red_dot);
@@ -282,7 +284,9 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrollStateChanged(int state) {
+                //手指操作屏幕 1(按下) , 2(抬起) ，0（结束）
+            }
         });
 
     }

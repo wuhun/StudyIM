@@ -55,11 +55,20 @@
                 android:src="@drawable/add"/>
         </RelativeLayout>
         <!-- 内容 -->
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/webView1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-        </FrameLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:max="100"
+                android:progress="30"
+                android:progressDrawable="@drawable/web_load_bar"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- menu -->

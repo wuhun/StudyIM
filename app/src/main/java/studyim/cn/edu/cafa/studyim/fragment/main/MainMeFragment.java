@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -69,6 +70,8 @@ public class MainMeFragment extends BaseFragment {
     RelativeLayout rlLeftMenu;
     @BindView(R.id.rv_settings)
     WuhunRecyclerView rv_settings;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     int mDrawerWidth;//抽屉全部拉出来时的宽度
     float scrollWidth;//抽屉被拉出部分的宽度
@@ -124,6 +127,7 @@ public class MainMeFragment extends BaseFragment {
         @Override
         public void onDrawerClosed(View arg0) {}
     };
+
     private OnItemClickListener settingItemClicik = new OnItemClickListener() {
         @Override
         public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
@@ -139,9 +143,10 @@ public class MainMeFragment extends BaseFragment {
                     requestSetting(true);
 //                    WuhunToast.normal("同步预留位置").show();
                 }else if(url.equals(EXIT_APP)) {
-                    MainActivity main = (MainActivity) MainMeFragment.this.mActivity;
-                    jumpToActivity(LoginActivity.class);
+                    MainActivity main = (MainActivity) getActivity();
                     getSPUtil().setTokens("");
+                    dlLayout.closeDrawers();
+                    jumpToActivity(LoginActivity.class);
                     main.closeActivity();
                 }
             }
@@ -256,6 +261,22 @@ public class MainMeFragment extends BaseFragment {
         dlLayout.setDrawerListener(mDrawerListener);
         rv_settings.setAdapter(settingAdapter);
         settingAdapter.setOnItemClickListener(settingItemClicik);
+
+        mWebView.setOnloding(new X5WebView.WebLoding() {
+            @Override
+            public void logining(int i) {
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(i);
+            }
+
+            @Override
+            public void loginOver() {
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void setTitle(String title) {}
+        });
     }
 
     private static final String TONG_BU = "load_setting";
@@ -324,6 +345,7 @@ public class MainMeFragment extends BaseFragment {
         llContent = mRootView.findViewById(R.id.ll_content);
 
         dlLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);//关闭手势滑动
+
         bodyImgMenu = mRootView.findViewById(R.id.body_img_menu);
         rlLeftMenu = mRootView.findViewById(R.id.rl_left_menu);
 
@@ -332,6 +354,7 @@ public class MainMeFragment extends BaseFragment {
 
 //        // settings
         initAdapter();
+        dlLayout.closeDrawer(Gravity.LEFT);
     }
 
     /** 是否需要同步 */
@@ -415,6 +438,18 @@ public class MainMeFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mWebView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mWebView.onPause();
+    }
+
+    @Override
     public void onDestroy() {
         //wuhun
         if (mWebView != null) {
@@ -425,81 +460,5 @@ public class MainMeFragment extends BaseFragment {
     /////////////////////////////////////////////////////////////////////////////////
     //// 我是华丽丽的分割线~
     /////////////////////////////////////////////////////////////////////////////////
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        //wuhun
-//        TestLog.i("settingsData_onAttach:");
-//    }
-//
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        //wuhun
-//        TestLog.i("settingsData_onCreate:");
-//    }
-//
-//    @Nullable
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        //wuhun
-//        TestLog.i("settingsData_onCreateView:");
-//        return super.onCreateView(inflater, container, savedInstanceState);
-//    }
-//
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        //wuhun
-//        TestLog.i("settingsData_onActivityCreated:" + settingsData.size());
-//    }
-//
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        //wuhun
-//        TestLog.i("settingsData_onStart:" + settingsData.size());
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        //wuhun
-//        TestLog.i("settingsData_onResume:" + settingsData.size());
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        dlLayout.closeDrawers();
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        //wuhun
-//        TestLog.i("settingsData_onStop:" + settingsData.size());
-//    }
-//
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        //wuhun
-//        TestLog.i("settingsData_onDestroyView:" + settingsData.size());
-//    }
-//
-//    @Override
-//    public void onDestroyOptionsMenu() {
-//        super.onDestroyOptionsMenu();
-//        //wuhun
-//        TestLog.i("settingsData_onDestroyOptionsMenu:" + settingsData.size());
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        //wuhun
-//        TestLog.i("settingsData_onDetach:" + settingsData.size());
-//    }
 
 }

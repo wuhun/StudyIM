@@ -5,7 +5,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
+import butterknife.BindView;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import tools.com.lvliangliang.wuhuntools.net.X5WebView;
@@ -25,6 +27,8 @@ public class MainResourceFragment extends BaseFragment {
     private static String JS_HOME = "http://www.cafa.com.cn/wapcafa/js_home.htm";
     private ViewGroup mViewParent;
     public X5WebView mWebView;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     private View.OnKeyListener myOnKeyListener = new View.OnKeyListener() {
         @Override
@@ -40,7 +44,24 @@ public class MainResourceFragment extends BaseFragment {
     @Override
     protected void initListener() {
         mWebView.setOnKeyListener(myOnKeyListener);
+
+        mWebView.setOnloding(new X5WebView.WebLoding() {
+            @Override
+            public void logining(int i) {
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(i);
+            }
+
+            @Override
+            public void loginOver() {
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void setTitle(String title) {}
+        });
     }
+
 
     @Override
     protected void initData() {
@@ -66,14 +87,6 @@ public class MainResourceFragment extends BaseFragment {
         return R.layout.main_resourse_fragment;
     }
 
-    @Override
-    public void onDestroy() {
-        if(mWebView != null) {
-            mWebView.clearWebView();
-        }
-        super.onDestroy();
-    }
-
     public void backWebView(){
         if(mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
@@ -88,4 +101,23 @@ public class MainResourceFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mWebView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mWebView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if(mWebView != null) {
+            mWebView.clearWebView();
+        }
+        super.onDestroy();
+    }
 }
