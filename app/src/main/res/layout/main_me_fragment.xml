@@ -55,7 +55,7 @@
                 android:src="@drawable/add"/>
         </RelativeLayout>
         <!-- 内容 -->
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/webView1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -68,7 +68,7 @@
                 android:max="100"
                 android:progress="30"
                 android:progressDrawable="@drawable/web_load_bar"/>
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <!-- menu -->

@@ -4,15 +4,14 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import butterknife.BindView;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.net.X5WebView;
-import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 /**
  * ================================================
@@ -25,17 +24,19 @@ import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
  */
 public class MainHomeFragment extends BaseFragment {
 
+    private String TAG = "MainHomeFragment";
+
     private static String HOMEPATH = "file:///android_res/raw/home.htm";
     private ViewGroup mViewParent;
-    public X5WebView mWebView;
+    private X5WebView mWebView;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
 
 
     private View.OnKeyListener myOnKeyListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            WuhunToast.info("点击了返回键");
             TestLog.i("点击了返回键");
 
             if ((keyCode == KeyEvent.KEYCODE_BACK) && mWebView.canGoBack()) {
@@ -49,6 +50,7 @@ public class MainHomeFragment extends BaseFragment {
 
     @Override
     protected void initListener() {
+        TestLog.i(TAG + " - initListener()");
 //        mWebView.setOnKeyListener(myOnKeyListener);
         mWebView.setOnloding(new X5WebView.WebLoding() {
             @Override
@@ -71,20 +73,28 @@ public class MainHomeFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        TestLog.i(TAG + " - initData()");
         mWebView.loadUrl(HOMEPATH);
     }
 
     @Override
     protected void initView() {
+        TestLog.i(TAG + " - initView()");
         mViewParent = (ViewGroup) mRootView.findViewById(R.id.webView1);
+        View childAt = mViewParent.getChildAt(0);
+        int childId = childAt.getId();
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        lp.addRule(RelativeLayout.BELOW, childId);
+
         mWebView = new X5WebView(mActivity, null);
-        mViewParent.addView(mWebView, new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
+        mViewParent.addView(mWebView, lp);
     }
 
     @Override
     protected void getIntentData(Bundle arguments) {
+        TestLog.i(TAG + " - getIntentData()");
     }
 
     @Override
@@ -93,12 +103,14 @@ public class MainHomeFragment extends BaseFragment {
     }
 
     public void backWebView() {
+        TestLog.i(TAG + " - backWebView()");
         if (mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
         }
     }
 
     public boolean isGoBack() {
+        TestLog.i(TAG + " - isGoBack()");
         if (mWebView != null && mWebView.canGoBack()) {
             return true;
         } else {
@@ -120,6 +132,7 @@ public class MainHomeFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
+        TestLog.i(TAG + " - onDestroy()");
         if (mWebView != null) {
             mWebView.clearWebView();
         }

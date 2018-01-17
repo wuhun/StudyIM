@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -73,14 +72,16 @@ public class MainMeFragment extends BaseFragment {
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
+    X5WebView mWebView;
+
     int mDrawerWidth;//抽屉全部拉出来时的宽度
     float scrollWidth;//抽屉被拉出部分的宽度
 
     LQRAdapterForRecyclerView<SettingModel> settingAdapter;
 //    BaseRecycleAdapter<SettingBaseModel> settingAdapter;
 
-    private ViewGroup mViewParent;
-    public X5WebView mWebView;
+    private RelativeLayout mViewParent;
+//    public X5WebView mWebView;
     private List<SettingModel> settingsData;
 
     public int currentSettingVersion = 1;
@@ -335,11 +336,18 @@ public class MainMeFragment extends BaseFragment {
     protected void initView() {
         settingsData = new ArrayList<>();
 
-        mViewParent = (ViewGroup) mRootView.findViewById(R.id.webView1);
+        mViewParent = (RelativeLayout) mRootView.findViewById(R.id.webView1);
+
+        View childAt = mViewParent.getChildAt(0);
+        int childId = childAt.getId();
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        lp.addRule(RelativeLayout.BELOW, childId);
+
         mWebView = new X5WebView(mActivity, null);
-        mViewParent.addView(mWebView, new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
+        mViewParent.addView(mWebView, lp);
+
 
         dlLayout = mRootView.findViewById(R.id.dl_layout);
         llContent = mRootView.findViewById(R.id.ll_content);
@@ -454,6 +462,7 @@ public class MainMeFragment extends BaseFragment {
         //wuhun
         if (mWebView != null) {
             mWebView.clearWebView();
+            mWebView = null;
         }
         super.onDestroy();
     }

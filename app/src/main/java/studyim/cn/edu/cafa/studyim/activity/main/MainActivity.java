@@ -55,6 +55,8 @@ import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
 public class MainActivity extends BaseActivity {
 
+    private String TAG = "MainActivity";
+
     private FragmentTabHost mTabHost;
     private ViewPager mViewPager;
     private List<BaseFragment> mFragmentList;
@@ -62,13 +64,14 @@ public class MainActivity extends BaseActivity {
             MainStudyFragment.class, MainResourceFragment.class, MainContactFragment.class, MainHomeFragment.class, MainMeFragment.class
     };
     private String mTitles[] = {"学习", "资源", "通讯录", "官网", "我的"};
-    private BaseFragment mFragment[] = {
-            FragmentFactory.getInstance().getMainStudyFragment(),
-            FragmentFactory.getInstance().getMainResourceFragment(),
-            FragmentFactory.getInstance().getMainContactFragment(),
-            FragmentFactory.getInstance().getMainHomeFragment(),
-            FragmentFactory.getInstance().getMainMeFragment()
-    };
+    private BaseFragment[] mFragment;
+//    = {
+//            FragmentFactory.getInstance().getMainStudyFragment(),
+//            FragmentFactory.getInstance().getMainResourceFragment(),
+//            FragmentFactory.getInstance().getMainContactFragment(),
+//            FragmentFactory.getInstance().getMainHomeFragment(),
+//            FragmentFactory.getInstance().getMainMeFragment()
+//    };
     private int mImages[] = {
             R.drawable.main_tab_study_icon_selecor,
             R.drawable.main_tab_resource_icon_selecor,
@@ -92,6 +95,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void init() {
+        TestLog.i(TAG + " - init()");
         initConnect();
         initView();
         initEvent(); //选中位置
@@ -100,6 +104,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initData() {
+        TestLog.i(TAG + " - initData()");
         // TODO: 2017/12/25 我的广播加载我的提醒红点
         BroadcastManager.getInstance(getContext()).register(Constant.ME_SHOW_RED, new BroadcastReceiver() {
             @Override
@@ -115,10 +120,13 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        //  会话聊天界面，未读消息提醒
+        // 会话聊天界面，未读消息提醒
         final Conversation.ConversationType[] conversationTypes = {
-                Conversation.ConversationType.PRIVATE, Conversation.ConversationType.GROUP, Conversation.ConversationType.SYSTEM,
-                Conversation.ConversationType.PUBLIC_SERVICE, Conversation.ConversationType.APP_PUBLIC_SERVICE
+                Conversation.ConversationType.PRIVATE,
+                Conversation.ConversationType.GROUP,
+//                Conversation.ConversationType.SYSTEM,
+//                Conversation.ConversationType.PUBLIC_SERVICE,
+//                Conversation.ConversationType.APP_PUBLIC_SERVICE
         };
 
         RongIM.getInstance().addUnReadMessageCountChangedObserver(new IUnReadMessageObserver() {
@@ -139,6 +147,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initConnect() {
+        TestLog.i(TAG + " - initConnect()");
         RongIMClient.connect(getSPUtil().getRctoken(), new RongIMClient.ConnectCallback() {
             @Override
             public void onTokenIncorrect() {
@@ -147,7 +156,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onSuccess(String s) {
-                TestLog.i("success" + s);
+//                TestLog.i("success" + s);
                 initUserInfo(s);
 //                WuhunToast.normal("连接成功").show);
             }
@@ -212,7 +221,16 @@ public class MainActivity extends BaseActivity {
     };
 
     private void initView() {
+        TestLog.i(TAG + " - initView()");
         context = this;
+        mFragment = new BaseFragment[]{
+                FragmentFactory.getInstance().getMainStudyFragment(),
+                FragmentFactory.getInstance().getMainResourceFragment(),
+                FragmentFactory.getInstance().getMainContactFragment(),
+                FragmentFactory.getInstance().getMainHomeFragment(),
+                FragmentFactory.getInstance().getMainMeFragment()
+        };
+
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
 
@@ -261,7 +279,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initEvent() {
-
+        TestLog.i(TAG + " - initEvent()");
         mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
@@ -320,6 +338,8 @@ public class MainActivity extends BaseActivity {
             if (WuhunToast.doubleClickExit()) {
                 MainActivity.this.finish();
 //                moveTaskToBack(false);
+//                closeActivity();
+                TestLog.i("关闭" + TAG);
             }
             return true;
         }
@@ -328,6 +348,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        TestLog.i(TAG + " - onDestroy()");
         super.onDestroy();
         RongIM.getInstance().removeUnReadMessageCountChangedObserver(new IUnReadMessageObserver() {
             @Override

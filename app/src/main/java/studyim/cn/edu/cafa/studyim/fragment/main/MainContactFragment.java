@@ -1,7 +1,9 @@
 package studyim.cn.edu.cafa.studyim.fragment.main;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -230,9 +232,19 @@ public class MainContactFragment extends BaseFragment {
             if(msg.what == REQUEST_ERROR) {
                 WuhunToast.error(getResources().getString(R.string.request_error)).show();
             }else if(msg.what == REQUEST_FAIL) {
-                WuhunToast.warning(getResources().getString(R.string.request_fail)).show();
-                jumpToActivity(LoginActivity.class);
-                getActivity().finish();
+//                WuhunToast.warning(getResources().getString(R.string.request_fail)).show();
+                new AlertDialog.Builder(mActivity)
+                        .setTitle("登录超时")
+                        .setMessage("是否以游客方式继续浏览？")
+                        .setNegativeButton("去登陆", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                jumpToActivity(LoginActivity.class);
+                                mActivity.finish();
+                            }
+                        })
+                        .setPositiveButton("继续浏览", null)
+                        .show();
             }else if(msg.what == FRIEND_LIST_SUCCESS) {
                 FriendListModel model = (FriendListModel)msg.obj;
                 HOME_URL = model.getBefore();

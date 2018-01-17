@@ -183,7 +183,7 @@ public class StudyCommonFragment extends BaseFragment {
         super.onDestroy();
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
-            handler = null;
+//            handler = null;
         }
     }
 

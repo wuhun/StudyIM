@@ -1,5 +1,7 @@
 package studyim.cn.edu.cafa.studyim.model;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
 
 /**
@@ -11,7 +13,7 @@ import java.io.Serializable;
  * 修订历史：
  * ================================================
  */
-public class GroupMemeberModel implements Serializable{
+public class GroupMemeberModel extends DataSupport implements Serializable{
 
     /**
      * REMARKNAME : null

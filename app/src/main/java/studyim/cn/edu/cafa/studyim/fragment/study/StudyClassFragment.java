@@ -200,7 +200,7 @@ public class StudyClassFragment extends BaseFragment {
         super.onDestroy();
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
-            handler = null;
+//            handler = null;
         }
         BroadcastManager.getInstance(mActivity).unregister(Constant.UPDATE_GROUP_LIST);
     }

@@ -32,6 +32,8 @@ import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.db.DBManager;
 import studyim.cn.edu.cafa.studyim.model.BaseModel;
+import studyim.cn.edu.cafa.studyim.model.Friend;
+import studyim.cn.edu.cafa.studyim.model.FriendListModel;
 import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import studyim.cn.edu.cafa.studyim.model.LoginUserModel;
 import studyim.cn.edu.cafa.studyim.model.RolesModel;
@@ -222,7 +224,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == LOGIN_SUCCESS) {
-                initGroupList();
+                initConstacts();
             } else if (msg.what == LOGIN_FAIL) {
                 LoginUserModel model = ((LoginUserModel) msg.obj);
                 if (null != model.getMsg()) {
@@ -247,45 +249,34 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
-    /** 加载群成员信息列表 */
-//    private void initGroupMemeberList(List<GroupModel> groups) {
-//        if(groups  == null && groups.size() <= 0) return;
-//        for(final GroupModel group : groups){
-//            if(group == null)
-//                continue;
-//            TestLog.i("==> " + group);
-//            final int groupid = group.getGROUPID();
-//            // 更新群组成员
-//            HttpUtil.getGroupMemeberlist(String.valueOf(groupid), new Callback() {
-//                @Override
-//                public void onFailure(Call call, IOException e) {}
-//
-//                @Override
-//                public void onResponse(Call call, Response response) throws IOException {
-//                    String result = response.body().string();
-////                    TestLog.i("查询群成员result: " + result);
-//                    BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>(){}.getType());
-//                    if(response.isSuccessful() && model != null && model.getCode() == 1){
-//                        String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
-//                        List<GroupMemeberModel> memeber = model.getResult();
-////                        TestLog.i("循环" + memeber);
-//                        for(GroupMemeberModel groupitem : memeber){
-////                            TestLog.i("成员: " + groupitem);
-//                            String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
-//                            String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
-//                            String avatarUri = UserAvatarUtil.getAvatarUri(
-//                                    groupitem.getUSERID() + "", name, uri);
-//                            UserInfo userInfo = new UserInfo(groupitem.getRCID(), name, Uri.parse(avatarUri));
-//                            RongIM.getInstance().refreshUserInfoCache(userInfo);
-//                        }
-//                    }
-//                    handler.sendEmptyMessage(GO_TO_MAIN);
-//                }
-//            });
-//        }
-//    }
+    private void initConstacts() {
+        initFriendList();
+        initGroupList();
+    }
 
-    /** 初始化群组信息 */
+    /** 同步好友列表 */
+    private void initFriendList() {
+        /** 获取好友列表 */
+        HttpUtil.getFriendList(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {}
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String result = response.body().string();
+                    FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
+                    if(friendList != null && friendList.getCode() == 1 && friendList.getResult() != null) {
+                        String HOME_URL = friendList.getBefore();
+                        List<Friend> friends = friendList.getResult();
+                        DBManager.getmInstance().setAllUserInfo(friends);
+                    }
+                }
+            }
+        });
+    }
+
+    /** 同步群组信息 */
     private void initGroupList() {
         HttpUtil.getGroupList(null, new Callback() {
             @Override
@@ -300,8 +291,6 @@ public class LoginActivity extends BaseActivity {
                     String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
                     DBManager.getmInstance().saveGroups(groups, before);
 
-//                    Message msg = handler.obtainMessage(FIND_GROUP_MEMEBERLIST, groups);
-//                    handler.sendMessage(msg);
                     handler.sendEmptyMessageDelayed(GO_TO_MAIN,1000);
                 }
             }

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import butterknife.BindView;
 import studyim.cn.edu.cafa.studyim.R;
@@ -71,10 +71,15 @@ public class MainResourceFragment extends BaseFragment {
     @Override
     protected void initView() {
         mViewParent = (ViewGroup) mRootView.findViewById(R.id.webView1);
+        View childAt = mViewParent.getChildAt(0);
+        int childId = childAt.getId();
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        lp.addRule(RelativeLayout.BELOW, childId);
+
         mWebView = new X5WebView(mActivity, null);
-        mViewParent.addView(mWebView, new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
+        mViewParent.addView(mWebView, lp);
     }
 
     @Override

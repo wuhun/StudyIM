@@ -21,7 +21,6 @@ import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
 import tools.com.lvliangliang.wuhuntools.R;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 
 public class X5WebView extends WebView {
@@ -78,7 +77,7 @@ public class X5WebView extends WebView {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            TestLog.i("webview退出时执行");
+//            TestLog.i("webview退出时执行");
 //				if (Integer.parseInt(android.os.Build.VERSION.SDK) >= 16)
 //					changGoForwardButton(view);
         }

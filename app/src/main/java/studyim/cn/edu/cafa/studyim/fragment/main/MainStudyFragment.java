@@ -108,7 +108,7 @@ public class MainStudyFragment extends BaseFragment {
 //                    .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "true")//公共服务号， 非聚合显示
 //                    .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "true")//订阅号， 非聚合显示
 //                    .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统, 聚合显示
-                    .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "false")//讨论组, 聚合显示
+//                    .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "false")//讨论组, 聚合显示
                     .build();
             listFragment.setUri(uri);
             mConversationListFragment = listFragment;

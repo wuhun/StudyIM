@@ -122,6 +122,8 @@ public class DBManager {
         }
     }
 
+
+
     /** 保存群组信息 */
     public void saveGroups(List<GroupModel> groups, String beforeUri){
         if(groups == null) return;
@@ -140,6 +142,7 @@ public class DBManager {
 
     /** 更新群成员信息 */
     private void refreshGroupMemeber(final String groupId) {
+        deleteGroupMemeberByBroupId(groupId);
         HttpUtil.getGroupMemeberlist(String.valueOf(groupId), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {}
@@ -153,18 +156,27 @@ public class DBManager {
                     List<GroupMemeberModel> memeber = model.getResult();
 //                        TestLog.i("循环" + memeber);
                     for(GroupMemeberModel groupitem : memeber){
-                        TestLog.i("成员: " + groupId + " - " + groupitem.getGROUPID() + " - " + groupitem.getNICKNAME());
-
+//                        TestLog.i("成员: " + groupId + " - " + groupitem.getGROUPID() + " - " + groupitem.getNICKNAME());
                         String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
                         String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
                         String avatarUri = UserAvatarUtil.getAvatarUri(
                                 groupitem.getUSERID() + "", name, uri);
                         UserInfo userInfo = new UserInfo(groupitem.getRCID(), name, Uri.parse(avatarUri));
                         RongIM.getInstance().refreshUserInfoCache(userInfo);
+
+                        groupitem.save();
                     }
                 }
             }
         });
+    }
+
+    /** 删除群成员 */
+    private void deleteGroupMemeberByBroupId(String groupId) {
+        List<GroupMemeberModel> Memeberlist = findGroupMemeberByGroupId(groupId);
+        for(GroupMemeberModel model : Memeberlist){
+            model.delete();
+        }
     }
 
     /** 获取群成员 */
