@@ -72,8 +72,9 @@ public class UserAvatarUtil {
 
     public static void showAvatar(Context context, Friend friend, String beforeUrl, ImageView imgAvatar) {
         String uri = null;
-        if(friend != null) {
-            uri = initUri(beforeUrl, friend.getAVATAR());
+        if(friend != null && friend.getAVATAR() != null) {
+            String before = WuhunDataTool.isNullString(beforeUrl) ? Constant.HOME_URL : beforeUrl;
+            uri = initUri(before, friend.getAVATAR());
             String avatarUri = getAvatarUri(
                     friend.getUSERBUDDYID(),
                     friend.getREMARKNAME(),

@@ -23,6 +23,7 @@ import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.common.Constant;
+import studyim.cn.edu.cafa.studyim.db.DBManager;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendListModel;
 import studyim.cn.edu.cafa.studyim.ui.QuickIndexBar;
@@ -32,7 +33,7 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
+import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
@@ -73,32 +74,50 @@ public class GroupSelectFriendActivity extends BaseActivity {
     }
 
     private void initData() {
-        HttpUtil.getFriendList(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                TestLog.i("FriendGroupCreteActivity - initData: 访问好友列表失败");
-            }
+        /** 获取好友列表 */
+        final List<Friend> friends = DBManager.getmInstance().getFriends();
+        if (WuhunNetTools.isAvailable(mContext)) {
+            HttpUtil.getFriendList(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) { /* 请求失败 */ }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String result = response.body().string();
-                FriendListModel dataList = null;
-                if(result != null)
-                    dataList = getGson().fromJson(result, FriendListModel.class);
-                if (response.isSuccessful() && friendList != null && dataList.getCode() == 1) {
-                    final FriendListModel finalDataList = dataList;
-                    WuhunThread.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            friendList = finalDataList.getResult();
-                            adapter.setData(friendList);
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String result = response.body().string();
+                        FriendListModel resultModel = null;
+                        if(result != null)
+                            resultModel = getGson().fromJson(result, FriendListModel.class);
+                        if (null == resultModel || null == resultModel.getResult() || resultModel.getCode() != 1) {
+                            return;
+                        } else {
+                            if (resultModel.getResult().size() == friends.size()) {
+                                WuhunThread.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (friends != null)
+                                            updateFriens(friends);
+                                    }
+                                });
+                            } else {
+                                List<Friend> friends1 = resultModel.getResult();
+                                DBManager.getmInstance().setAllUserInfo(friends1);
+                                updateFriens(friends1);
+                            }
                         }
-                    });
-                } else {
-                    TestLog.i("FriendGroupCreteActivity - initData: 获取好友列表失败");
+                    } else { /* 请求失败 */ }
                 }
-            }
-        });
+            });
+        } else {
+            if (friends != null)
+                updateFriens(friends);
+        }
+    }
+
+    private void updateFriens(List<Friend> friends) {
+        friendList.clear();
+        friendList = friends;
+        adapter.setData(friendList);
     }
 
     /** 创建群组要添加的好友 */

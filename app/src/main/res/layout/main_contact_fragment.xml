@@ -123,7 +123,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:rv_divider_color="@color/line"
-            app:rv_divider_size="1px"/>
+            app:rv_divider_size="1px"
+            android:overScrollMode="never"/>
 
         <studyim.cn.edu.cafa.studyim.ui.QuickIndexBar
             android:id="@+id/qib"

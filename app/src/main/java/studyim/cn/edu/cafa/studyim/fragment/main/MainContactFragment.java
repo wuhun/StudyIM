@@ -48,8 +48,10 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
+import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
@@ -97,7 +99,9 @@ public class MainContactFragment extends BaseFragment {
     private static String HOME_URL;
 
 
-    /** 适配快速导航条 */
+    /**
+     * 适配快速导航条
+     */
     private QuickIndexBar.OnLetterUpdateListener mOnLetterUpdateListener = new QuickIndexBar.OnLetterUpdateListener() {
         @Override
         public void onLetterUpdate(String letter) {
@@ -105,9 +109,9 @@ public class MainContactFragment extends BaseFragment {
             showLetter(letter);
             //滑动到第一个对应字母开头的联系人
             if ("↑".equalsIgnoreCase(letter)) {
-                    rvContacts.moveToPosition(0);//集合中移除
+                rvContacts.moveToPosition(0);//集合中移除
             } else if ("☆".equalsIgnoreCase(letter)) {
-                    rvContacts.moveToPosition(0);//集合中移除
+                rvContacts.moveToPosition(0);//集合中移除
             } else {
                 List<Friend> data = ((LQRAdapterForRecyclerView) ((LQRHeaderAndFooterAdapter) rvContacts.getAdapter()).getInnerAdapter()).getData();
                 for (int i = 0; i < data.size(); i++) {
@@ -134,6 +138,7 @@ public class MainContactFragment extends BaseFragment {
         mTvLetter.setVisibility(View.VISIBLE);
         mTvLetter.setText(letter);
     }
+
     private void hideLetter() {
         mTvLetter.setVisibility(View.GONE);
     }
@@ -147,7 +152,7 @@ public class MainContactFragment extends BaseFragment {
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.img_more_pop) {
+            if (v.getId() == R.id.img_more_pop) {
 //                int screenWidth = WuhunDeviceTool.getScreenWidth(mActivity);
                 MorePopWindow morePopWindow = new MorePopWindow(mActivity);
 //                llAllBody.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -170,29 +175,46 @@ public class MainContactFragment extends BaseFragment {
 
     private void loadData() {
         /** 获取好友列表 */
-        HttpUtil.getFriendList(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                handler.sendEmptyMessage(REQUEST_ERROR);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String result = response.body().string();
-                    FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
-                    if (null == friendList || null == friendList.getResult()) {
-                        handler.sendEmptyMessage(REQUEST_FAIL);
-                        return;
-                    } else {
-                        Message msg = handler.obtainMessage(FRIEND_LIST_SUCCESS, friendList);
-                        handler.sendMessage(msg);
-                    }
-                } else {
-                    handler.sendEmptyMessage(REQUEST_FAIL);
+        final List<Friend> friends = DBManager.getmInstance().getFriends();
+        if (WuhunNetTools.isAvailable(mActivity)) {
+            HttpUtil.getFriendList(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    handler.sendEmptyMessage(REQUEST_ERROR);
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String result = response.body().string();
+                        FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
+                        if (null == friendList || null == friendList.getResult()) {
+                            handler.sendEmptyMessage(REQUEST_FAIL);
+                            return;
+                        } else {
+                            if (friendList.getResult().size() == friends.size()) {
+                                WuhunThread.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (friends != null)
+                                            updateBottom(friends);
+                                    }
+                                });
+                            } else {
+                                Message msg = handler.obtainMessage(FRIEND_LIST_SUCCESS, friendList);
+                                handler.sendMessage(msg);
+                            }
+                        }
+                    } else {
+                        handler.sendEmptyMessage(REQUEST_FAIL);
+                    }
+                }
+            });
+        } else {
+            TestLog.i("==> 本地数据库： " + friends.toString());
+            if (friends != null)
+                updateBottom(friends);
+        }
     }
 
     private void unregisterBR() {
@@ -223,15 +245,14 @@ public class MainContactFragment extends BaseFragment {
     public static final int FRIEND_LIST_SUCCESS = 0x01;
     public static final int REQUEST_FAIL = 0x02;
     public static final int REQUEST_ERROR = 0x03;
-    public static final int GET_ADD_FRIEND_LIST_SUCCESS = 0x03;
 
 
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == REQUEST_ERROR) {
+            if (msg.what == REQUEST_ERROR) {
                 WuhunToast.error(getResources().getString(R.string.request_error)).show();
-            }else if(msg.what == REQUEST_FAIL) {
+            } else if (msg.what == REQUEST_FAIL) {
 //                WuhunToast.warning(getResources().getString(R.string.request_fail)).show();
                 new AlertDialog.Builder(mActivity)
                         .setTitle("登录超时")
@@ -245,8 +266,8 @@ public class MainContactFragment extends BaseFragment {
                         })
                         .setPositiveButton("继续浏览", null)
                         .show();
-            }else if(msg.what == FRIEND_LIST_SUCCESS) {
-                FriendListModel model = (FriendListModel)msg.obj;
+            } else if (msg.what == FRIEND_LIST_SUCCESS) {
+                FriendListModel model = (FriendListModel) msg.obj;
                 HOME_URL = model.getBefore();
 //                WuhunDebug.debug("=success-获取好友列表=>" + model.getResult());
                 if (model.getCode() == 1) {
@@ -254,7 +275,6 @@ public class MainContactFragment extends BaseFragment {
                     friends.addAll(model.getResult());
                     updateBottom(friends);
                     DBManager.getmInstance().setAllUserInfo(friends);
-//                    WuhunDebug.debug("===>" + model.getResult());
                 } else {
                     if (!WuhunDataTool.isNullString(model.getMsg())) {
                         WuhunToast.normal(model.getMsg()).show();
@@ -276,11 +296,11 @@ public class MainContactFragment extends BaseFragment {
             TestLog.i("MainContactFragment - updateBottom:" + mData.size());
             if (mData.size() <= 0) {
 //                footerView.setVisibility(View.GONE);
-                footerView.setText("您还没有联系人，去添加吧！");
                 footerView.setVisibility(View.VISIBLE);
+                footerView.setText("您还没有联系人，去添加吧！");
             } else {
                 footerView.setVisibility(View.VISIBLE);
-                footerView.setText("联系人："+ mData.size());
+                footerView.setText("联系人：" + mData.size());
             }
             //整理排序
             SortUtils.sortContacts(mData);
@@ -296,7 +316,8 @@ public class MainContactFragment extends BaseFragment {
     }
 
     @Override
-    protected void getIntentData(Bundle arguments) { }
+    protected void getIntentData(Bundle arguments) {
+    }
 
     @Override
     protected int setLayoutResouceId() {
@@ -315,7 +336,6 @@ public class MainContactFragment extends BaseFragment {
 
                     String str = "";
                     //得到当前字母
-//                    String currentLetter = item.getDisplayNameSpelling().charAt(0) + "";
                     String currentLetter = WuhunPingyinTool.getPinYinFirstCharIsLetter(item.getREMARKNAME()) + "";
                     if (position == 0) {
                         str = currentLetter;
@@ -378,7 +398,7 @@ public class MainContactFragment extends BaseFragment {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         footerView.setLayoutParams(params);
         footerView.setGravity(Gravity.CENTER);
-        footerView.setPadding(0,10,0,10);
+        footerView.setPadding(0, 10, 0, 10);
         footerView.setTextColor(Color.parseColor("#FBFBFB"));
 //        footerView.setBackgroundResource(R.color.gray5);
         return footerView;
@@ -390,7 +410,9 @@ public class MainContactFragment extends BaseFragment {
         setNotificationBarVisibility(RongIM.getInstance().getCurrentConnectionStatus());
     }
 
-    /** 提示 */
+    /**
+     * 提示
+     */
     private void setNotificationBarVisibility(RongIMClient.ConnectionStatusListener.ConnectionStatus status) {
         if (this.getResources().getBoolean(io.rong.imkit.R.bool.rc_is_show_warning_notification)) {
             String content = null;
