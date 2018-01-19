@@ -115,21 +115,23 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.studyim.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
         <activity
             android:name=".activity.other.WebViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity android:name=".activity.other.GroupDetailMenuActivity"></activity>
         <activity android:name=".activity.other.GroupAddFriendActivity"></activity>
+
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="studyim.cn.edu.cafa.studyim.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/rc_file_path" />
+        </provider>
     </application>
 
 </manifest>

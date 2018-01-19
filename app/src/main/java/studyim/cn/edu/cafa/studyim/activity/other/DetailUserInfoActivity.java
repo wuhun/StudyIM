@@ -17,12 +17,14 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.rong.imkit.RongIM;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.model.UserInfo;
 import studyim.cn.edu.cafa.studyim.ui.OptionItemView;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 public class DetailUserInfoActivity extends BaseActivity {
@@ -82,8 +84,8 @@ public class DetailUserInfoActivity extends BaseActivity {
         setContentView(R.layout.activity_detaul_user_info);
         ButterKnife.bind(this);
 
-        getIntentData();
         initView();
+        getIntentData();
         initeListener();
     }
 
@@ -92,7 +94,9 @@ public class DetailUserInfoActivity extends BaseActivity {
         btnAddConstact.setOnClickListener(mOnClickListener);//添加好友
         llClickSetTag.setOnClickListener(mOnClickListener);//设置注备
         bodySearch.setOnClickListener(mOnClickListener);//
+        bodySearch.setVisibility(View.GONE);
         rlMenu.setOnClickListener(mOnClickListener);
+        btnSendMsg.setOnClickListener(mOnClickListener);
         
         oivAlias.setOnClickListener(mOnClickListener);
         oivDelete.setOnClickListener(mOnClickListener);
@@ -110,13 +114,21 @@ public class DetailUserInfoActivity extends BaseActivity {
                 showMenu();
             }else if(v.getId() == R.id.rlMenu) {
                 hideMenu();
-            }else if(v.getId() == R.id.oiv_alias) {
-                // TODO: 2017/12/4 设置注备名称 REMARKNAME
-                Intent intent = new Intent(mContext, SetUserRemarkName.class);
-                startActivityForResult(intent, USER_REMARK_NAME);
-            }else if(v.getId() == R.id.oiv_delete) {
-                // TODO: 2017/12/4 删除当前用户
+            }else if(v.getId() == R.id.btn_send_msg) {
+                /** 发起会话 */
+                String displayName = null;
+                displayName = userInfo.getNICKNAME();
+                if (RongIM.getInstance() != null)
+                    RongIM.getInstance().startPrivateChat(mContext, userInfo.getRCID(), displayName);
+                finish();
             }
+//            else if(v.getId() == R.id.oiv_alias) {
+//                // TODO: 2017/12/4 设置注备名称 REMARKNAME
+//                Intent intent = new Intent(mContext, SetUserRemarkName.class);
+//                startActivityForResult(intent, USER_REMARK_NAME);
+//            }else if(v.getId() == R.id.oiv_delete) {
+//                // TODO: 2017/12/4 删除当前用户
+//            }
 //            else if(v.getId() == R.id.btn_detail_me) {
 //                // TODO: 2017/12/5 查看个人信息
 //            }
@@ -190,28 +202,6 @@ public class DetailUserInfoActivity extends BaseActivity {
         userInfo = (UserInfo) intent.getSerializableExtra(PUT_USER_INFO);
         String url = intent.getStringExtra(BEFORE);
 
-//        String extraUserId = intent.getStringExtra(GET_USERID);
-//        if (extraUserId != null && userInfo == null) {
-//            HttpUtil.friend_getinfo(extraUserId, new Callback() {
-//                @Override
-//                public void onFailure(Call call, IOException e) {
-//                    handler.sendEmptyMessage(REQUEST_ERROR);
-//                }
-//
-//                @Override
-//                public void onResponse(Call call, final Response response) throws IOException {
-//                    if (response.isSuccessful()) {
-//                        String result = response.body().string();
-//                        WuhunDebug.debug("DetailUserInfoActivity:" + result);
-//                        BaseModel<UserInfo> model = getGson().fromJson(result, new TypeToken<BaseModel<UserInfo>>() {}.getType());
-//                        WuhunDebug.debug("DetailUserInfoActivity:" + model);
-//                    } else {
-//                        handler.sendEmptyMessage(REQUEST_FAIL);
-//                    }
-//                }
-//            });
-//        }
-
         if(userInfo == null)  return;
         tvNickname.setText(userInfo.getNICKNAME());
         tvSchool.setText(userInfo.getSCHOOL());
@@ -231,16 +221,20 @@ public class DetailUserInfoActivity extends BaseActivity {
 //        if(userInfo.getUSERID() >=0 && String.valueOf(userInfo.getUSERID()).equals(getSPUtil().getUSERID())) {
 //            return;
 //        }
-        if (isbuddy.equals("N")) {
-            btnAddConstact.setVisibility(View.VISIBLE);
-            btnSendMsg.setVisibility(View.GONE);
-        } else {
-            btnSendMsg.setVisibility(View.VISIBLE);
-            btnAddConstact.setVisibility(View.GONE);
-        }
+        TestLog.i("当前用户id：" + MyApplication.getSPUtil().getUSERID() + " = " + userInfo.getUSERID());
 
-//        tv.setText(userInfo.toString());
-        WuhunDebug.debug("DetailUserInfoActivity:" + userInfo.toString());
+        if ( MyApplication.getSPUtil().getUSERID().equals(userInfo.getUSERID()) ) {
+            btnSendMsg.setVisibility(View.GONE);
+            btnAddConstact.setVisibility(View.GONE);
+        } else {
+            if (isbuddy.equals("N")) {
+                btnAddConstact.setVisibility(View.VISIBLE);
+                btnSendMsg.setVisibility(View.GONE);
+            } else {
+                btnSendMsg.setVisibility(View.VISIBLE);
+                btnAddConstact.setVisibility(View.GONE);
+            }
+        }
     }
 
     private static final int REQUEST_ERROR = 0x01;

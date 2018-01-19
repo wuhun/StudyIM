@@ -33,7 +33,7 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/img_avater_item"
+            android:id="@+id/img_contact_avater_item"
             android:layout_width="38dp"
             android:layout_height="38dp"
             android:layout_marginLeft="6dp"

@@ -37,8 +37,9 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
@@ -86,6 +87,43 @@ public class StudyShearchActivity extends BaseActivity {
 
     private void initView() {
         mContext = this;
+
+        adapter = new LQRAdapterForRecyclerView<UserInfo>(mContext, userinfos, R.layout.search_user_info_item) {
+            @Override
+            public void convert(LQRViewHolderForRecyclerView helper, UserInfo item, int position) {
+                helper.setText(R.id.tvName, userinfos.get(position).getNICKNAME());
+                ImageView imgAvatar = helper.getView(R.id.img_avatar);
+                UserAvatarUtil.showAvatar(mContext, item, before, imgAvatar);
+            }
+        };
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
+                UserInfo userInfo = userinfos.get(position);
+                Intent intent = new Intent();
+                intent.putExtra(DetailUserInfoActivity.PUT_USER_INFO, userInfo);
+                intent.putExtra(DetailUserInfoActivity.BEFORE, before);
+                intent.setClass(mContext, DetailUserInfoActivity.class);
+                jumpToActivity(intent);
+            }
+        });
+        rvUserInfoList.setAdapter(adapter);
+    }
+
+    LQRAdapterForRecyclerView adapter;
+
+    List<UserInfo> userinfos = new ArrayList<>();
+    String before = null;
+
+    private void showUserInfoList(final List<UserInfo> model) {
+        if (model != null) {
+            List<UserInfo> result = model;
+            userinfos.clear();
+            userinfos.addAll(result);
+        } else {
+            userinfos.clear();
+        }
+        adapter.setData(userinfos);
     }
 
     private void initAdapter() {
@@ -164,19 +202,25 @@ public class StudyShearchActivity extends BaseActivity {
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String json = response.body().string();
-            BaseModel<UserInfo> model = getGson().fromJson(json, new TypeToken<BaseModel<UserInfo>>(){}.getType());
-//            List<UserInfo> result = model.getResult();
-//            TestLog.i("********debug↓********");
-//            for (int i=0;i<result.size();i++) {
-//                TestLog.i(result.get(i).toString());
-//            }
-//            TestLog.i("********debug↑********");
+            final BaseModel<UserInfo> model = getGson().fromJson(json, new TypeToken<BaseModel<UserInfo>>(){}.getType());
+            if (response.isSuccessful() && model != null && model.getCode() == 1) {
+                before = model.getBefore();
 
-            if (response.isSuccessful()) {
-                Message msg = handler.obtainMessage(REQUEST_SUCCESS, model);
+                TestLog.i("查询好友： " + model.getResult().toString());
+
+                Message msg = handler.obtainMessage(REQUEST_SUCCESS, model.getResult());
                 handler.sendMessage(msg);
             } else {
-                handler.sendEmptyMessage(REQUEST_FAIL);
+                WuhunThread.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!WuhunDataTool.isNullString(model.getMsg())) {
+                            WuhunToast.normal(model.getMsg()).show();
+                        } else {
+                            WuhunToast.normal(R.string.request_error_net).show();
+                        }
+                    }
+                });
             }
         }
     };
@@ -185,10 +229,9 @@ public class StudyShearchActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == REQUEST_SUCCESS) {
-                BaseModel<UserInfo> model = (BaseModel<UserInfo>)msg.obj;
-                if (model.getCode() == 1) {
-                    WuhunDebug.debug("result:" + (model.getResult() != null && model.getResult().size() <= 0));
-                    if (model.getResult() != null && model.getResult().size() <= 0) {
+                List<UserInfo> model = (List<UserInfo>)msg.obj;
+                    // WuhunDebug.debug("result:" + (model.getResult() != null && model.getResult().size() <= 0));
+                    if (model != null && model.size() <= 0) {
                         tvUserEmpty.setVisibility(View.VISIBLE);
                     } else {
                         tvUserEmpty.setVisibility(View.GONE);
@@ -196,13 +239,6 @@ public class StudyShearchActivity extends BaseActivity {
                     llDefaultContent.setVisibility(View.GONE);
                     // TODO: 2017/12/1 适配数据
                     showUserInfoList(model);
-                } else {
-                    if (!WuhunDataTool.isNullString(model.getMsg())) {
-                        WuhunToast.normal(model.getMsg()).show();
-                    } else {
-                        WuhunToast.normal("获取失败").show();
-                    }
-                }
             }else if(msg.what == REQUEST_FAIL) {
                 WuhunToast.normal(getResources().getString(R.string.request_fail)).show();
             }else if(msg.what == REQUEST_ERROR) {
@@ -212,28 +248,5 @@ public class StudyShearchActivity extends BaseActivity {
         }
     };
 
-    private void showUserInfoList(final BaseModel<UserInfo> model) {
-        final List<UserInfo> result = model.getResult();
-        LQRAdapterForRecyclerView adapter = new LQRAdapterForRecyclerView<UserInfo>(mContext, result, R.layout.search_user_info_item) {
-            @Override
-            public void convert(LQRViewHolderForRecyclerView helper, UserInfo item, int position) {
-                helper.setText(R.id.tvName, result.get(position).getNICKNAME());
-                ImageView imgAvatar = helper.getView(R.id.img_avatar);
-                UserAvatarUtil.showAvatar(mContext, item, model.getBefore(), imgAvatar);
-            }
-        };
-        adapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
-                UserInfo userInfo = result.get(position);
-                Intent intent = new Intent();
-                intent.putExtra(DetailUserInfoActivity.PUT_USER_INFO, userInfo);
-                intent.putExtra(DetailUserInfoActivity.BEFORE, model.getBefore());
-                intent.setClass(mContext, DetailUserInfoActivity.class);
-                jumpToActivity(intent);
-            }
-        });
-        rvUserInfoList.setAdapter(adapter);
-    }
 //    ll_default_content
 }

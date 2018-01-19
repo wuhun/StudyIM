@@ -1,7 +1,9 @@
 package studyim.cn.edu.cafa.studyim.activity.other;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,13 +36,13 @@ import studyim.cn.edu.cafa.studyim.model.ResultModel;
 import studyim.cn.edu.cafa.studyim.ui.OptionItemView;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionsUtil;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPhoneTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
@@ -157,26 +159,39 @@ public class FriendGetinfoActivity extends BaseActivity {
                 jumpToActivity(intent);
             }else if(v.getId() == R.id.oiv_delete) {
                 // TODO: 2017/12/4 删除当前用户
-                HttpUtil.friendDelete(friendUserInfo.getUserId()+"", new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        WuhunToast.normal(R.string.request_error).show();
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        String result = response.body().string();
-                        ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                        if (response.isSuccessful() && resultModel.getCode() == 1) {
-                            handler.sendEmptyMessage(DELETE_SUCCESS);
-                        } else {
-                            String msg = resultModel.getMsg();
-                            if(!WuhunDataTool.isNullString(msg))
-                                WuhunToast.normal(msg).show();
+                if (WuhunNetTools.isAvailable(mContext)) {
+                    HttpUtil.friendDelete(friendUserInfo.getUserId()+"", new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
                             WuhunToast.normal(R.string.request_error).show();
                         }
-                    }
-                });
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String result = response.body().string();
+                            final ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                            if (response.isSuccessful() && resultModel.getCode() == 1) {
+                                handler.sendEmptyMessage(DELETE_SUCCESS);
+                            } else {
+                                WuhunThread.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String msg = resultModel.getMsg();
+                                        if(!WuhunDataTool.isNullString(msg))
+                                            WuhunToast.normal(msg).show();
+                                        WuhunToast.normal(R.string.request_error_net).show();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    showNoNetDialog(mContext);
+//                    new AlertDialog.Builder(mContext)
+//                            .setTitle("请检查网络")
+//                            .setMessage("当前无网络连接，请检查网络状态")
+//                            .setPositiveButton("确定", null).show();
+                }
             }else if(v.getId() == R.id.btn_send_msg) {
                 // TODO: 2017/12/8 发送消息
 //                Intent intent = new Intent(mContext, SessionActivity.class);
@@ -267,7 +282,7 @@ public class FriendGetinfoActivity extends BaseActivity {
 
     public void getIntentData() {
         Intent intent = getIntent();
-
+//        extraUserId = (String) intent.getSerializableExtra(GET_USERID);
         extraUserId = intent.getStringExtra(GET_USERID);
         getUserInfo();
     }
@@ -288,11 +303,8 @@ public class FriendGetinfoActivity extends BaseActivity {
                     public void onResponse(Call call, final Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String result = response.body().string();
-
                             friendInfo = getGson().fromJson(result, FriendGetInfoModel.class);
-
-                            WuhunDebug.debug("DetailUserInfoActivity:" + friendInfo);
-
+//                            WuhunDebug.debug("DetailUserInfoActivity:" + friendInfo);
                             Message msg = handler.obtainMessage(REQUEST_SUCCESS, friendInfo);
                             handler.sendMessage(msg);
                             //                        BaseModel<UserInfo> model = getGson().fromJson(result, new TypeToken<BaseModel<UserInfo>>() {}.getType());
@@ -303,13 +315,15 @@ public class FriendGetinfoActivity extends BaseActivity {
                     }
                 });
             } else {
-                Integer userid = Integer.valueOf(extraUserId);
-                if (userid != null) {
-                    FriendUserInfo userinfo = DBManager.getmInstance().getFriendUserInfo(userid);
-                    showFriendInfo(userinfo);
-                } else {
-                    WuhunToast.normal("当前网络不可用").show();
-                }
+                new AlertDialog.Builder(mContext)
+                        .setTitle("请检查网络")
+                        .setMessage("当前无网络连接，请检查网络状态")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                FriendGetinfoActivity.this.finish();
+                            }
+                        }).show();
             }
         }
     }

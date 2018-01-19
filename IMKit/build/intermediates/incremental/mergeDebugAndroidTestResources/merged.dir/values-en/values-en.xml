@@ -38,7 +38,6 @@
     <string name="rc_android.permission.READ_EXTERNAL_STORAGE">Storage</string>
     <string name="rc_android.permission.RECORD_AUDIO">Microphone</string>
     <string name="rc_android.permission.WRITE_EXTERNAL_STORAGE">Storage</string>
-    <string name="rc_android.settings.action.MANAGE_OVERLAY_PERMISSION">Draw Overlay</string>
     <string name="rc_audio_input">Hold to Talk</string>
     <string name="rc_audio_input_hover">Release to Send</string>
     <string name="rc_blacklist_prompt">You have been added to blacklist</string>
@@ -105,7 +104,7 @@
     <string name="rc_fr_file_category_title_video">Video</string>
     <string name="rc_fr_file_list_most_selected_files">You can only choose 20 files</string>
     <string name="rc_fr_loading_file_message">Loading...</string>
-    <string name="rc_fr_no_file_message"> No file %1$scurrently</string>
+    <string name="rc_fr_no_file_message">%1$s file does not exist</string>
     <string name="rc_fr_storage_folder_list_no_files">"Can't read files in %1$s"</string>
     <string name="rc_fr_storage_folder_list_search">Search</string>
     <string name="rc_friday_format">Fri</string>
@@ -166,7 +165,7 @@
     <string name="rc_notice_enter_chatroom">Enter the chatroom</string>
     <string name="rc_notice_input_conversation_error">Activity was not created</string>
     <string name="rc_notice_load_data_fail">Failed to get the data</string>
-    <string name="rc_notice_network_unavailable">Network unavailable, please check your network</string>
+    <string name="rc_notice_network_unavailable">Network unavailable, check network</string>
     <string name="rc_notice_select_one_picture_at_last">Please select at least a picture</string>
     <string name="rc_notice_tick">The account has been logged in to other devices</string>
     <string name="rc_notification_new_msg">%1$s sent %2$d messages</string>

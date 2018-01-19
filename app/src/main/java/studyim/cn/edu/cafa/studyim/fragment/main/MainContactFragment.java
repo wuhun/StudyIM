@@ -196,8 +196,8 @@ public class MainContactFragment extends BaseFragment {
                                 WuhunThread.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (friends != null)
-                                            updateBottom(friends);
+                                        updateBottom(friends);
+                                        TestLog.i("==> 网络获取： " + friends.toString());
                                     }
                                 });
                             } else {
@@ -294,20 +294,21 @@ public class MainContactFragment extends BaseFragment {
             mData.addAll(friends);
 
             TestLog.i("MainContactFragment - updateBottom:" + mData.size());
-            if (mData.size() <= 0) {
-//                footerView.setVisibility(View.GONE);
-                footerView.setVisibility(View.VISIBLE);
-                footerView.setText("您还没有联系人，去添加吧！");
-            } else {
-                footerView.setVisibility(View.VISIBLE);
-                footerView.setText("联系人：" + mData.size());
-            }
+
+            footerView.setVisibility(View.VISIBLE);
+            footerView.setText("联系人：" + mData.size());
             //整理排序
-            SortUtils.sortContacts(mData);
-            if (mAdapter != null)
-                mAdapter.notifyDataSetChanged();
+            mData = SortUtils.sortContacts(mData);
+        } else {
+            footerView.setVisibility(View.VISIBLE);
+            footerView.setText("您还没有联系人，去添加吧！");
+            mData.clear();
         }
+        if (mAdapter != null)
+            mAdapter.notifyDataSetChanged();
+            adapter.setData(mData);
     }
+
 
     @Override
     protected void initView() {
@@ -324,14 +325,17 @@ public class MainContactFragment extends BaseFragment {
         return R.layout.main_contact_fragment;
     }
 
+
+    LQRAdapterForRecyclerView adapter;
     private void setAdapter() {
         if (mAdapter == null) {
-            LQRAdapterForRecyclerView adapter = new LQRAdapterForRecyclerView<Friend>(mActivity, mData, R.layout.item_contact) {
+            adapter = new LQRAdapterForRecyclerView<Friend>(mActivity, mData, R.layout.item_contact) {
                 @Override
                 public void convert(LQRViewHolderForRecyclerView helper, Friend item, int position) {
                     helper.setText(R.id.tvName, item.getREMARKNAME());
 
-                    ImageView imgAvatar = helper.getView(R.id.img_avater_item);
+                    ImageView imgAvatar = helper.getView(R.id.img_contact_avater_item);
+                    TestLog.i("friend: " + item);
                     UserAvatarUtil.showAvatar(mActivity, item, HOME_URL, imgAvatar);//头像
 
                     String str = "";
@@ -386,6 +390,7 @@ public class MainContactFragment extends BaseFragment {
                 Friend friend = mData.get(position);
                 String userid = friend.getUSERBUDDYID();
                 Intent intent = new Intent(mActivity, FriendGetinfoActivity.class);
+//                intent.putExtra(FriendGetinfoActivity.GET_USERID, userid);
                 intent.putExtra(FriendGetinfoActivity.GET_USERID, userid);
                 jumpToActivity(intent);
             }

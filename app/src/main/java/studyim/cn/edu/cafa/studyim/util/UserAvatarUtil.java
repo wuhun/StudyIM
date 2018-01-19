@@ -30,7 +30,7 @@ import tools.com.lvliangliang.wuhuntools.util.WuhunImgTool;
 public class UserAvatarUtil {
 
     public static void showAvatar(Context context, UserInfo userInfo, String beforeUrl, ImageView imgAvatar) {
-        if (userInfo.getAVATAR() != null) {
+        if (userInfo != null && userInfo.getAVATAR() != null) {
 //            WuhunDebug.debug(beforeUrl + userInfo.getAVATAR());
             Glide.with(context).load(beforeUrl + userInfo.getAVATAR())
                     .error(R.mipmap.default_useravatar)
@@ -49,7 +49,7 @@ public class UserAvatarUtil {
                         .dontAnimate()
                         .centerCrop().into(imgAvatar);
             } else {
-                Glide.with(context).load(context.getResources().getDrawable(R.mipmap.default_useravatar))
+                Glide.with(context).load(R.mipmap.default_useravatar)
                         .placeholder(R.mipmap.default_useravatar)
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .skipMemoryCache(true)
@@ -71,23 +71,21 @@ public class UserAvatarUtil {
     }
 
     public static void showAvatar(Context context, Friend friend, String beforeUrl, ImageView imgAvatar) {
-        String uri = null;
-        if(friend != null && friend.getAVATAR() != null) {
-            String before = WuhunDataTool.isNullString(beforeUrl) ? Constant.HOME_URL : beforeUrl;
-            uri = initUri(before, friend.getAVATAR());
-            String avatarUri = getAvatarUri(
-                    friend.getUSERBUDDYID(),
-                    friend.getREMARKNAME(),
-                    uri);
-            Glide.with(context).load(avatarUri)
-                    .error(R.mipmap.default_useravatar)
-                    .placeholder(R.mipmap.default_useravatar)
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .skipMemoryCache(true)
-                    .dontAnimate()
-                    .transform(new CenterCrop(context), new GlideRoundTransform(context))
-                    .into(imgAvatar);
-        }
+        String before = WuhunDataTool.isNullString(beforeUrl) ? Constant.HOME_URL : beforeUrl;
+        String uri = initUri(before, friend.getAVATAR());
+        //wuhuntest
+        String avatarUri = getAvatarUri(
+                friend.getUSERBUDDYID(),
+                WuhunDataTool.isNullString(friend.getREMARKNAME()) ? friend.getNICKNAME() : friend.getREMARKNAME(),
+                uri);
+        Glide.with(context).load(avatarUri)
+                .error(R.mipmap.default_useravatar)
+                .placeholder(R.mipmap.default_useravatar)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .skipMemoryCache(true)
+                .dontAnimate()
+                .transform(new CenterCrop(context), new GlideRoundTransform(context))
+                .into(imgAvatar);
     }
 
     public static String getAvatarUri(Friend friend) {
@@ -102,46 +100,23 @@ public class UserAvatarUtil {
     }
 
     public static void showAvatar(Context context, FriendGetAddList model, String beforeUrl, ImageView imgAvatar) {
-        if (model.getAVATAR() != null) {
-//            WuhunDebug.debug(beforeUrl + model.getAVATAR());
-            Glide.with(context).load(beforeUrl + model.getAVATAR())
-                    .error(R.mipmap.default_useravatar)
-                    .placeholder(R.mipmap.default_useravatar)
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .skipMemoryCache(true)
-                    .dontAnimate()
-                    .transform(new CenterCrop(context), new GlideRoundTransform(context))
-                    .into(imgAvatar);
-        } else {
-            if (model.getNICKNAME() != null && model.getUSERID() + "" != null) {
-                Glide.with(context).load(getAvatarUri(model))
-                        .error(R.mipmap.default_useravatar)
-                        .placeholder(R.mipmap.default_useravatar)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .skipMemoryCache(true)
-                        .dontAnimate()
-                        .centerCrop().into(imgAvatar);
-            } else {
-                Glide.with(context).load(context.getResources().getDrawable(R.mipmap.default_useravatar))
-                        .placeholder(R.mipmap.default_useravatar)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .skipMemoryCache(true)
-                        .dontAnimate()
-                        .centerCrop().into(imgAvatar);
-            }
-        }
+        String before = WuhunDataTool.isNullString(beforeUrl) ? Constant.HOME_URL : beforeUrl;
+        String uri = initUri(before, model.getAVATAR());
+        //wuhuntest
+        String avatarUri = getAvatarUri(
+                model.getUSERID()+"",
+                WuhunDataTool.isNullString(model.getREMARKNAME()) ? model.getNICKNAME() : model.getREMARKNAME(),
+                uri);
+        Glide.with(context).load(avatarUri)
+                .error(R.mipmap.default_useravatar)
+                .placeholder(R.mipmap.default_useravatar)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .skipMemoryCache(true)
+                .dontAnimate()
+                .centerCrop()
+                .into(imgAvatar);
     }
 
-    public static String getAvatarUri(FriendGetAddList model) {
-        String uri;
-        if(model == null) return null;
-        if (WuhunDataTool.isNullString(model.getAVATAR())) {
-            uri =  RongGenerate.generateDefaultAvatar(model.getNICKNAME(), model.getUSERID()+"");
-        } else {
-            uri = model.getAVATAR();
-        }
-        return uri;
-    }
 
     public static void showAvatar(Context context, FriendUserInfo model, String beforeUrl, ImageView imgAvatar) {
         String uri = initUri(beforeUrl,model.getAvatar());

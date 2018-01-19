@@ -13,7 +13,7 @@ import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
  */
 public class SortUtils {
 
-    public static void sortContacts(List<Friend> list) {
+    public static List<Friend> sortContacts(List<Friend> list) {
         Collections.sort(list);//排序后由于#号排在上面，故得把#号的部分集合移动到集合的最下面
 
         List<Friend> specialList = new ArrayList<>();
@@ -29,7 +29,7 @@ public class SortUtils {
             list.removeAll(specialList);//先移出掉顶部的#号部分
             list.addAll(list.size(), specialList);//将#号的集合添加到集合底部
         }
-
+        return list;
     }
 
 }

@@ -443,9 +443,7 @@
     <dimen name="rc_conversation_item_name_size">16sp</dimen>
     <dimen name="rc_conversation_item_time_size">13sp</dimen>
     <dimen name="rc_dimen_size_18">18dp</dimen>
-    <dimen name="rc_dimen_size_24">24dp</dimen>
     <dimen name="rc_dimen_size_3">3dp</dimen>
-    <dimen name="rc_dimen_size_40">40dp</dimen>
     <dimen name="rc_dimen_size_44">44dp</dimen>
     <dimen name="rc_dimen_size_5">5dp</dimen>
     <dimen name="rc_dimen_size_50">50dp</dimen>
@@ -552,7 +550,6 @@
     <string name="rc_android.permission.READ_EXTERNAL_STORAGE">存储空间</string>
     <string name="rc_android.permission.RECORD_AUDIO">麦克风</string>
     <string name="rc_android.permission.WRITE_EXTERNAL_STORAGE">存储空间</string>
-    <string name="rc_android.settings.action.MANAGE_OVERLAY_PERMISSION">悬浮窗</string>
     <string name="rc_audio_input">按住 说话</string>
     <string name="rc_audio_input_hover">松开 发送</string>
     <string name="rc_authorities_fileprovider">.FileProvider</string>
@@ -634,7 +631,7 @@
     <string name="rc_fr_file_category_title_video">视频</string>
     <string name="rc_fr_file_list_most_selected_files">您最多只能选择20个文件</string>
     <string name="rc_fr_loading_file_message">加载中...</string>
-    <string name="rc_fr_no_file_message">没有%1$s文件</string>
+    <string name="rc_fr_no_file_message">还没有%1$s文件</string>
     <string name="rc_fr_storage_folder_list_no_files">无法读取%1$s中的文件</string>
     <string name="rc_fr_storage_folder_list_search">搜索</string>
     <string name="rc_friday_format">周五</string>
@@ -677,7 +674,7 @@
     <string name="rc_message_unread_count">"···"</string>
     <string name="rc_monday_format">周一</string>
     <string name="rc_month_format">月</string>
-    <string name="rc_morning_format">上午</string>
+    <string name="rc_morning_format">早上</string>
     <string name="rc_name">融云</string>
     <string name="rc_network_error">网络连接错误</string>
     <string name="rc_network_exception">网络异常请稍后再试</string>

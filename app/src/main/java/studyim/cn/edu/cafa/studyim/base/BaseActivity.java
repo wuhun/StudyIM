@@ -1,6 +1,8 @@
 package studyim.cn.edu.cafa.studyim.base;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
@@ -96,5 +98,12 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         this.removeActivity(this);
         super.onDestroy();
+    }
+
+    public void showNoNetDialog(Context mContext){
+        new AlertDialog.Builder(mContext)
+                .setTitle("请检查网络")
+                .setMessage("当前无网络连接，请检查网络状态")
+                .setPositiveButton("确定", null).show();
     }
 }

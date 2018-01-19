@@ -25,6 +25,7 @@ public class Friend extends DataSupport implements Comparable<Friend>, Serializa
     private String REMARKNAME;//注备
     private String REMARKMSG;//注备信息
 
+
     public Friend(String USERBUDDYID, String NICKNAME, String STUDENTID, String RCID, String AVATAR, String NAME, String REMARKNAME, String REMARKMSG) {
         this.USERBUDDYID = USERBUDDYID;
         this.NICKNAME = NICKNAME;

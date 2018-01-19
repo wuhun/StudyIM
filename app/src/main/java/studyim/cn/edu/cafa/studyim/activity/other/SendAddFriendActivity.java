@@ -1,5 +1,6 @@
 package studyim.cn.edu.cafa.studyim.activity.other;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +25,6 @@ import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
-import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
 /**
  * 发送好友请求
@@ -52,6 +52,8 @@ public class SendAddFriendActivity extends BaseActivity {
 
     private String buddyUserId;
     private String sendType = "userId";
+
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +101,6 @@ public class SendAddFriendActivity extends BaseActivity {
                         }
                     }
                 });
-
-                WuhunDebug.debug("sendAddFriendActivity: - " + getSPUtil().getTokens() + "\n"
-                        + buddyUserId + " - " + getSPUtil().getUSERID() + " - " + msg + " - " + name );
             }
         }
     };
@@ -134,6 +133,7 @@ public class SendAddFriendActivity extends BaseActivity {
     };
 
     private void initView() {
+        mContext = this;
         headBg.setImageResource(R.mipmap.main_bg);
         bodyTvTitle.setText("发送验证请求");
         bodyImgMenu.setImageResource(R.drawable.icon_back);

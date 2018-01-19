@@ -58,11 +58,11 @@ public class DBManager {
 
     public void saveFriendUserInfo(FriendUserInfo friendInfo){
         TestLog.i("saveFriendUserInfo:" + friendInfo);
-        FriendUserInfo friendUserInfo = DataSupport.find(FriendUserInfo.class, friendInfo.getUserId());
-        if(friendUserInfo != null) {
+        FriendUserInfo info = DataSupport.find(FriendUserInfo.class, friendInfo.getUserId());
+        if(info != null) {
             DataSupport.delete(FriendUserInfo.class, friendInfo.getUserId());
-            friendInfo.save();
         }
+        friendInfo.save();
     }
 
     /** 同步好友详情信息 */
