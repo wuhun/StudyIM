@@ -23,6 +23,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.activity.main.StudyShearchActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.model.BaseModel;
@@ -83,6 +84,13 @@ public class FriendGetAddListActivity extends BaseActivity {
                 FriendGetAddListActivity.this.finish();
             }
         });
+        bodySearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                jumpToActivity(StudyShearchActivity.class);
+                FriendGetAddListActivity.this.finish();
+            }
+        });
     }
 
     private void initView() {
@@ -91,7 +99,8 @@ public class FriendGetAddListActivity extends BaseActivity {
         headBg.setImageResource(R.mipmap.main_bg);
         bodyImgMenu.setImageResource(R.drawable.icon_back);
         bodyTvTitle.setText("新的朋友");
-        bodySearch.setVisibility(View.GONE);
+        bodySearch.setVisibility(View.VISIBLE);
+        bodySearch.setImageResource(R.drawable.searchl);
 
         adapter = new LQRAdapterForRecyclerView<FriendGetAddList>(context, mData, R.layout.activity_friend_get_add_list_item) {
             @Override

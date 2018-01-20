@@ -102,6 +102,11 @@ public class StudyCommonFragment extends BaseFragment {
         groupList.clear();
         groupList = classGroup;
         madapter.setData(groupList);
+        if (groupList.size() <= 0) {
+            rcConversationListEmptyLayout.setVisibility(View.VISIBLE);
+        } else {
+            rcConversationListEmptyLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override

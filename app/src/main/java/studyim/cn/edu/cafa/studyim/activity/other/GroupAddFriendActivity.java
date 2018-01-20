@@ -58,6 +58,8 @@ public class GroupAddFriendActivity extends BaseActivity {
     QuickIndexBar mQib;
     @BindView(R.id.tvLetter)
     TextView tvLetter;
+    @BindView(R.id.tv_no_friend_hint)
+    TextView tv_no_friend_hint;
 
     private Context mContext;
     private List<Friend> friendList = new ArrayList<>();
@@ -102,6 +104,17 @@ public class GroupAddFriendActivity extends BaseActivity {
                         public void run() {
                             friendList = finalDataList.getResult();
                             adapter.setData(friendList);
+                            if (friendList.size() <= 0) {
+                                tv_no_friend_hint.setVisibility(View.VISIBLE);
+                                rvAddFriend.setVisibility(View.GONE);
+                                mQib.setVisibility(View.GONE);
+                                bodyOk.setVisibility(View.GONE);
+                            } else {
+                                tv_no_friend_hint.setVisibility(View.GONE);
+                                rvAddFriend.setVisibility(View.VISIBLE);
+                                mQib.setVisibility(View.VISIBLE);
+                                bodyOk.setVisibility(View.VISIBLE);
+                            }
                         }
                     });
                 } else {
@@ -197,27 +210,32 @@ public class GroupAddFriendActivity extends BaseActivity {
     List<String> addFriendResultList = new ArrayList<>();
 
     private void addSelectfriendList() {
-        for(Friend friend : groupList){
-            HttpUtil.groupJoin(grouid, friend.getUSERBUDDYID(), new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
+        if (groupList.size() <= 0) {
+            WuhunToast.info("请选择您要添加的好友").show();
+        } else {
+            for(Friend friend : groupList){
+                HttpUtil.groupJoin(grouid, friend.getUSERBUDDYID(), new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
 
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String result = response.body().string();
-                    ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                    if(response.isSuccessful()){
-                        addFriendResultList.add(resultModel.getCode()+"");
                     }
-                }
-            });
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String result = response.body().string();
+                        ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                        if(response.isSuccessful()){
+                            addFriendResultList.add(resultModel.getCode()+"");
+                        }
+                    }
+                });
+            }
         }
+
         if(addFriendResultList.contains("0") && addFriendResultList.contains("1")) {
             WuhunToast.info("部分添加成功").show();
         }else if(!addFriendResultList.contains("0")) {
-            WuhunToast.info("全部添加成功").show();
+            WuhunToast.info("添加成功").show();
         }else if(!addFriendResultList.contains("1")) {
             WuhunToast.info("添加失败").show();
         }

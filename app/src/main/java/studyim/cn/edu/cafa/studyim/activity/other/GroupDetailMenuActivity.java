@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
@@ -73,6 +74,9 @@ public class GroupDetailMenuActivity extends BaseActivity {
     @BindView(R.id.btn_manager_group_quit)
     Button btn_manager_group_quit;
 
+    @BindView(R.id.ll_group_files)
+    LinearLayout ll_group_files;
+
     List<GroupMemeberModel> dataList;
 
     Context mContext;
@@ -97,8 +101,10 @@ public class GroupDetailMenuActivity extends BaseActivity {
         btn_group_quit.setOnClickListener(mClickListener);
         btn_manager_group_quit.setOnClickListener(mClickListener);
         backActivity.setOnClickListener(mClickListener);
+        ll_group_files.setOnClickListener(mClickListener); // 文件下载列表
 
         adapter.setOnItemClickListener(mItemClickListener);
+
     }
 
     private OnItemClickListener mItemClickListener = new OnItemClickListener() {
@@ -178,6 +184,11 @@ public class GroupDetailMenuActivity extends BaseActivity {
                             }
                         }
                     });
+                    break;
+                case R.id.ll_group_files:
+                    Intent intent = new Intent(mContext, GroupFilesActivity.class);
+                    intent.putExtra(GroupFilesActivity.GROUP_ID, groupid);
+                    jumpToActivity(intent);
                     break;
             }
         }

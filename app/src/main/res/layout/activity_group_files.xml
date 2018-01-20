@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/content_bg"
+    tools:context="studyim.cn.edu.cafa.studyim.activity.other.GroupFilesActivity">
+
+    <include layout="@layout/head_title_bar" />
+
+    <LinearLayout
+        android:id="@+id/ll_sub_title"
+        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:id="@+id/rl_tab_photo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="图片"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="14sp" />
+        </RelativeLayout>
+        <View style="@style/yLine" />
+
+        <RelativeLayout
+            android:id="@+id/rl_tab_video"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="视频"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="14sp" />
+        </RelativeLayout>
+        <View style="@style/yLine" />
+
+        <RelativeLayout
+            android:id="@+id/rl_tab_document"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="文档"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="14sp" />
+        </RelativeLayout>
+        <View style="@style/yLine" />
+
+        <RelativeLayout
+            android:id="@+id/rl_tab_other"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="其他"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="14sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView
+        android:id="@+id/rv_group_file"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:rv_divider_size="1dp"
+        app:rv_orientation="vertical"
+        app:rv_divider_color="@color/line"/>
+
+</android.support.v7.widget.LinearLayoutCompat>

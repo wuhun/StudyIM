@@ -35,7 +35,6 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
@@ -75,7 +74,7 @@ public class StudyLeadFragment extends BaseFragment {
             @Override
             public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
                 GroupModel model = groupList.get(position);
-                TestLog.i("群聊 id：" + model.getGROUPID() + " - title：" + model.getNAME());
+//                TestLog.i("群聊 id：" + model.getGROUPID() + " - title：" + model.getNAME());
 //                RongIM.getInstance().startGroupChat(mActivity, model.getGROUPRCID(), model.getNAME());
                 if(RongContext.getInstance() != null && model != null) {
                     Uri uri = Uri.parse("rong://" + mActivity.getApplicationInfo().packageName).buildUpon()
@@ -98,10 +97,15 @@ public class StudyLeadFragment extends BaseFragment {
     }
 
     private void update() {
-        List<GroupModel> classGroup = DBManager.getmInstance().getGroupByCommon();
-        groupList.clear();
-        groupList = classGroup;
+//        List<GroupModel> classGroup = DBManager.getmInstance().getGroupByCommon();
+//        groupList.clear();
+//        groupList = classGroup;
         madapter.setData(groupList);
+        if (groupList.size() <= 0) {
+            rcConversationListEmptyLayout.setVisibility(View.VISIBLE);
+        } else {
+            rcConversationListEmptyLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override

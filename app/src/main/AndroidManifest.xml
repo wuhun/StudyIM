@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.READ_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
@@ -114,24 +113,23 @@
             android:name=".activity.other.GroupCreateActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity
             android:name=".activity.other.WebViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity android:name=".activity.other.GroupDetailMenuActivity"></activity>
-        <activity android:name=".activity.other.GroupAddFriendActivity"></activity>
-
+        <activity android:name=".activity.other.GroupDetailMenuActivity" />
+        <activity android:name=".activity.other.GroupAddFriendActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="studyim.cn.edu.cafa.studyim.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
-
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/rc_file_path" />
         </provider>
+
+        <activity android:name=".activity.other.GroupFilesActivity"></activity>
     </application>
 
 </manifest>

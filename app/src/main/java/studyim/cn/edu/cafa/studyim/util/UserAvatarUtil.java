@@ -179,6 +179,7 @@ public class UserAvatarUtil {
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .skipMemoryCache(true)
                 .dontAnimate()
+                .centerCrop()
                 .into(imageView);
     }
 }

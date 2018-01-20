@@ -25,6 +25,16 @@ import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
  */
 public class HttpUtil {
 
+    /** 获取群文件 */
+    public static void getGroupFiles(String groupId, String type, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/file/goup";
+        Map<String,String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        map.put("type", type);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
     /** 添加到群组 */
     public static void groupJoin(String groupId, String userId, Callback callback){
         String uri = Constant.indexUrl + "CAFA/group/join";
