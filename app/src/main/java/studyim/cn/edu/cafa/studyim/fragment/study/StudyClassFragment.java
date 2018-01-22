@@ -101,6 +101,10 @@ public class StudyClassFragment extends BaseFragment {
     @Override
     protected void initData() {
         BroadcastManager.getInstance(mActivity).sendBroadcast(Constant.UPDATE_GROUP_LIST);
+        updateList();
+    }
+
+    private void updateList() {
         List<GroupModel> classGroup = DBManager.getmInstance().getGroupByClass();
         groupList.clear();
         groupList = classGroup;
@@ -153,6 +157,7 @@ public class StudyClassFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         setNotificationBarVisibility(RongIM.getInstance().getCurrentConnectionStatus());
+        initData();
     }
 
     /** 提示 */

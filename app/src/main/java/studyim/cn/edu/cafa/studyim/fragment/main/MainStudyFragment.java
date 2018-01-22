@@ -202,4 +202,9 @@ public class MainStudyFragment extends BaseFragment {
         return R.layout.main_study_fragment;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        position = 0;
+    }
 }

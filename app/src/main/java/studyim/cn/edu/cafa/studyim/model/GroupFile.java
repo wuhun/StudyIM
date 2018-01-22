@@ -1,5 +1,7 @@
 package studyim.cn.edu.cafa.studyim.model;
 
+import java.io.Serializable;
+
 /**
  * ================================================
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
@@ -9,7 +11,7 @@ package studyim.cn.edu.cafa.studyim.model;
  * 修订历史：
  * ================================================
  */
-public class GroupFile {
+public class GroupFile implements Serializable {
 
     /**
      * FILESIZE : 1641
@@ -112,5 +114,21 @@ public class GroupFile {
 
     public void setTHUMBNAILPATH(String THUMBNAILPATH) {
         this.THUMBNAILPATH = THUMBNAILPATH;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupFile{" +
+                "FILESIZE=" + FILESIZE +
+                ", STS='" + STS + '\'' +
+                ", FILETIME=" + FILETIME +
+                ", FILEPATH='" + FILEPATH + '\'' +
+                ", FILETYPE='" + FILETYPE + '\'' +
+                ", CLASS='" + CLASS + '\'' +
+                ", FILEID=" + FILEID +
+                ", IOS_GROUP_FILE_ID=" + IOS_GROUP_FILE_ID +
+                ", FILENAME='" + FILENAME + '\'' +
+                ", THUMBNAILPATH='" + THUMBNAILPATH + '\'' +
+                '}';
     }
 }

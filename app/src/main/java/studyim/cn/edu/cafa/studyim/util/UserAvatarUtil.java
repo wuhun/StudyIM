@@ -151,11 +151,12 @@ public class UserAvatarUtil {
     }
 
     public static String initUri(String beforeUrl, String uri){
+        String head = WuhunDataTool.isNullString(beforeUrl) ? Constant.HOME_URL : beforeUrl;
         if (!WuhunDataTool.isNullString(uri)) {
             if (WuhunImgTool.isImage(uri) && uri.startsWith("http://")) {
                 return uri;
             } else {
-                return beforeUrl + uri;
+                return head + uri;
             }
         }else{
             return Constant.HOME_URL + "null";

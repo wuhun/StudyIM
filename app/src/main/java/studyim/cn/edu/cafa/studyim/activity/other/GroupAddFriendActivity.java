@@ -33,6 +33,7 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
+import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
@@ -197,7 +198,6 @@ public class GroupAddFriendActivity extends BaseActivity {
                         WuhunToast.info("没有获取到群信息").show();
                     } else{
                         addSelectfriendList();
-                        GroupAddFriendActivity.this.finish();
                     }
                     break;
                 default:
@@ -230,14 +230,17 @@ public class GroupAddFriendActivity extends BaseActivity {
                     }
                 });
             }
-        }
 
-        if(addFriendResultList.contains("0") && addFriendResultList.contains("1")) {
-            WuhunToast.info("部分添加成功").show();
-        }else if(!addFriendResultList.contains("0")) {
-            WuhunToast.info("添加成功").show();
-        }else if(!addFriendResultList.contains("1")) {
-            WuhunToast.info("添加失败").show();
+            if(addFriendResultList.contains("0") && addFriendResultList.contains("1")) {
+                WuhunToast.info("部分添加成功").show();
+            }else if(!addFriendResultList.contains("0")) {
+                WuhunToast.info("添加成功").show();
+            }else if(!addFriendResultList.contains("1")) {
+                WuhunToast.info("添加失败").show();
+            }
+
+            BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_MEMEBER);
+            GroupAddFriendActivity.this.finish();
         }
     }
 

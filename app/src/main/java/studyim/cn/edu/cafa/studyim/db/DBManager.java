@@ -207,4 +207,14 @@ public class DBManager {
             n.delete();
         }
     }
+
+    public void deleteGroupsById(String ids){
+        GroupModel group = findGroupByID(ids);
+        group.delete();
+    }
+
+    public GroupModel findGroupByID(String GROUPID){
+        List<GroupModel> groupModels = DataSupport.where("GROUPID = ?", GROUPID).find(GroupModel.class);
+        return groupModels.get(0);
+    }
 }

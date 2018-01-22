@@ -132,7 +132,8 @@ public class ConversationListActivity extends BaseActivity {
                 if(mGroupId != null){
                     Intent intent = new Intent(mContext, GroupDetailMenuActivity.class);
                     intent.putExtra(GroupDetailMenuActivity.GROUPID, mGroupId);
-                    jumpToActivity(intent);
+                    intent.putExtra(GroupDetailMenuActivity.TARGETID, mTargetId);
+                    startActivityForResult(intent, 500);
                 }
             }else if(v.getId() == R.id.rl_tab_chat) {
                 position = 0;
@@ -146,6 +147,14 @@ public class ConversationListActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == 501) {
+            ConversationListActivity.this.finish();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     private void initView() {
         mContext = this;

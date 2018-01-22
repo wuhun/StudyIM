@@ -272,7 +272,7 @@ public class MainMeFragment extends BaseFragment {
 
             @Override
             public void loginOver() {
-                progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override

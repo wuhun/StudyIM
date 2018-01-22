@@ -30,7 +30,6 @@ public class WuhunImgTool {
                 || path.endsWith(".jpeg") || path.endsWith(".bmp") || path.endsWith(".gif");
     }
 
-
     /**
      * 解析uri的地址:
      * @param context 上下文对象

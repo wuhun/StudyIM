@@ -135,6 +135,7 @@ public class StudyLeadFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         setNotificationBarVisibility(RongIM.getInstance().getCurrentConnectionStatus());
+        update();
     }
 
     /** 提示 */

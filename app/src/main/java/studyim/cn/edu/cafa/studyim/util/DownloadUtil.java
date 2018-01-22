@@ -37,6 +37,23 @@ public class DownloadUtil {
         okHttpClient = new OkHttpClient();
     }
 
+    public void download(final String url) {
+        Request request = new Request.Builder().url(url).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 下载失败
+                TestLog.i("==>onfailure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                TestLog.i("==>response \n" + response.body().string());
+            }
+        });
+    }
+
+
     /**
      * @param url      下载连接
      * @param saveDir  储存下载文件的SDCard目录
@@ -48,11 +65,14 @@ public class DownloadUtil {
             @Override
             public void onFailure(Call call, IOException e) {
                 // 下载失败
+                TestLog.i("==>onfailure");
+                e.printStackTrace();
                 listener.onDownloadFailed();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                TestLog.i("==>response");
                 InputStream is = null;
                 byte[] buf = new byte[2048];
                 int len = 0;
@@ -79,6 +99,7 @@ public class DownloadUtil {
                     // 下载完成
                     listener.onDownloadSuccess();
                 } catch (Exception e) {
+                    TestLog.i("==>" + e.getMessage());
                     e.printStackTrace();
                     listener.onDownloadFailed();
                 } finally {
@@ -88,6 +109,7 @@ public class DownloadUtil {
                         if (fos != null)
                             fos.close();
                     } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }

@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/img_avater"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="50dp"
         android:adjustViewBounds="true"
         android:layout_margin="4dp"

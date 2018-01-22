@@ -15,7 +15,8 @@
         android:layout_alignParentBottom="true"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/white">
         <RelativeLayout
             android:id="@+id/rl_tab_photo"
             android:layout_width="0dp"
@@ -93,6 +94,17 @@
                 android:textSize="14sp" />
         </RelativeLayout>
     </LinearLayout>
+    <View style="@style/Line" />
+
+    <TextView
+        android:id="@+id/tv_enpty_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="暂无文件"
+        android:gravity="center"
+        android:padding="26dp"
+        android:background="@color/white"
+        android:visibility="gone"/>
 
     <tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView
         android:id="@+id/rv_group_file"

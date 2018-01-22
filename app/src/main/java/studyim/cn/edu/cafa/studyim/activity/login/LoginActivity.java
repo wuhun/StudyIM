@@ -78,14 +78,14 @@ public class LoginActivity extends BaseActivity {
     private String password;
 
     private Context mContext;
-//    private Gson gson;
+    //    private Gson gson;
     private LoadDialog ld;
 
     private static int LOGIN_SUCCESS = 0x01;
     private static int LOGIN_FAIL = 0x02;
     private static int LOGIN_ERROR = 0x03;
     private static int BROWSE = 0x04;//预览
-//    private static int FIND_GROUP_MEMEBERLIST = 0x05;
+    //    private static int FIND_GROUP_MEMEBERLIST = 0x05;
     private static int GO_TO_MAIN = 0x06;
 
     @Override
@@ -95,6 +95,14 @@ public class LoginActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         initView();
+
+        PermissionsUtil.requestPermission(this, new PermissionListener() {
+            @Override
+            public void permissionGranted(@NonNull String[] permission) { }
+
+            @Override
+            public void permissionDenied(@NonNull String[] permission) { }
+        }, new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA});
     }
 
     private void initView() {
@@ -105,7 +113,7 @@ public class LoginActivity extends BaseActivity {
         etLoginNum.setText(getSPUtil().getUsername());
     }
 
-    @OnClick({R.id.btn_login_sign, R.id.tv_login_query_pwd, R.id.tv_login_register,R.id.tv_browse})
+    @OnClick({R.id.btn_login_sign, R.id.tv_login_query_pwd, R.id.tv_login_register, R.id.tv_browse})
     public void onClick(View view) {
         if (!WuhunNetTools.isAvailable(getContext())) {
             WuhunToast.error("网络无法访问，请检查网络连接").show();
@@ -151,7 +159,8 @@ public class LoginActivity extends BaseActivity {
                 }
 
                 @Override
-                public void permissionDenied(@NonNull String[] permissions) {}
+                public void permissionDenied(@NonNull String[] permissions) {
+                }
             }, new String[]{Manifest.permission.READ_PHONE_STATE});
         }
 
@@ -183,21 +192,21 @@ public class LoginActivity extends BaseActivity {
                     if (response.isSuccessful()) {
                         String result = response.body().string();
                         LoginUserModel loginModel = getGson().fromJson(result, LoginUserModel.class);
-                        if (null == loginModel){
+                        if (null == loginModel) {
                             handler.sendEmptyMessage(LOGIN_ERROR);
                             return;
                         }
 
                         if (loginModel.getCode() == 1) {//成功
-                            WuhunDebug.debug("登录成功=>"+ result);
+                            WuhunDebug.debug("登录成功=>" + result);
                             getSPUtil().setUSERID(loginModel.getResult().getUserId());
                             getSPUtil().setTokens(loginModel.getResult().getTokens());
                             getSPUtil().setRctoken(loginModel.getResult().getToken());
                             getSPUtil().setUsername(etLoginNum.getText().toString());
 
                             List<RolesModel> roles = loginModel.getResult().getRoles();
-                            getSPUtil().setRoletype(roles.get(roles.size()-1).getRoleType());
-                            TestLog.i("权限类型：" + roles.get(roles.size()-1).getRoleType() + " == " + roles.get(roles.size()-1).getRoleName());
+                            getSPUtil().setRoletype(roles.get(roles.size() - 1).getRoleType());
+                            TestLog.i("权限类型：" + roles.get(roles.size() - 1).getRoleType() + " == " + roles.get(roles.size() - 1).getRoleName());
 //                            WuhunDebug.debug("==>" + getSPUtil().getUsername());
                             Message msg = handler.obtainMessage();
                             msg.obj = loginModel;
@@ -218,8 +227,6 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-
-
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -234,12 +241,12 @@ public class LoginActivity extends BaseActivity {
                 }
             } else if (msg.what == LOGIN_ERROR) {
                 WuhunToast.normal(getResources().getString(R.string.request_error)).show();
-            }else if(msg.what == BROWSE) {
+            } else if (msg.what == BROWSE) {
                 jumpToActivity(MainActivity.class);
 //            }else if(msg.what == FIND_GROUP_MEMEBERLIST) {
 //                List<GroupModel> groups= (List<GroupModel>) msg.obj;
 //                initGroupMemeberList(groups);
-            }else if(msg.what == GO_TO_MAIN){
+            } else if (msg.what == GO_TO_MAIN) {
                 LoadDialog.dismiss(mContext);
                 jumpToActivity(MainActivity.class);
                 LoginActivity.this.finish();
@@ -254,19 +261,22 @@ public class LoginActivity extends BaseActivity {
         initGroupList();
     }
 
-    /** 同步好友列表 */
+    /**
+     * 同步好友列表
+     */
     private void initFriendList() {
         /** 获取好友列表 */
         HttpUtil.getFriendList(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String result = response.body().string();
                     FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
-                    if(friendList != null && friendList.getCode() == 1 && friendList.getResult() != null) {
+                    if (friendList != null && friendList.getCode() == 1 && friendList.getResult() != null) {
                         String HOME_URL = friendList.getBefore();
                         List<Friend> friends = friendList.getResult();
                         DBManager.getmInstance().setAllUserInfo(friends);
@@ -276,28 +286,32 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    /** 同步群组信息 */
+    /**
+     * 同步群组信息
+     */
     private void initGroupList() {
         HttpUtil.getGroupList(null, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
-                if(model != null && model.getCode() == 1 && response.isSuccessful()) {
+                BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>() {
+                }.getType());
+                if (model != null && model.getCode() == 1 && response.isSuccessful()) {
                     List<GroupModel> groups = model.getResult();
                     String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
                     DBManager.getmInstance().saveGroups(groups, before);
 
-                    handler.sendEmptyMessageDelayed(GO_TO_MAIN,1000);
+                    handler.sendEmptyMessageDelayed(GO_TO_MAIN, 1000);
                 }
             }
         });
     }
 
-    private void showLoadDialog(){
+    private void showLoadDialog() {
         ld = new LoadDialog(mContext, false, "正在加载中……");
         ld.show();
     }
@@ -306,7 +320,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(ld!=null && ld.isShowing()){
+        if (ld != null && ld.isShowing()) {
             ld.dismiss();
             ld = null;
         }

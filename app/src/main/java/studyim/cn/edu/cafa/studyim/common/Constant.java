@@ -28,6 +28,8 @@ public class Constant {
     public static java.lang.String USER_GETINFO_REFRESH = "user_getinfo_refresh";
     /** 更新群组列表信息 */
     public static java.lang.String UPDATE_GROUP_LIST = "update_group_list";
+    /** 更新群组成员列表信息 */
+    public static String UPDATE_GROUP_MEMEBER = "update_group_memeber";
     /** 主页 我的提示点 */
     public static final String ME_SHOW_RED = "show_red";
 
@@ -36,5 +38,6 @@ public class Constant {
     public static final int TEACHER = 4;
     /** 权限 - 学生 */
     public static final int STUDENT = 5;
+
 
 }

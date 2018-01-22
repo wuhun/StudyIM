@@ -1,9 +1,15 @@
 package tools.com.lvliangliang.wuhuntools.util;
 
+import android.app.Activity;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -12,27 +18,65 @@ import java.io.IOException;
  * 创建日期：2017/12/28 0028
  * 版    本：1.0
  * 描    述：
- *      sdCardIsAvailable           sd卡是否可用
+ * sdCardIsAvailable           sd卡是否可用
  * 修订历史：
- *
+ * <p>
  * 备份点：
- *      File.separator          代表"\"，用于拼接目录
+ * File.separator          代表"\"，用于拼接目录
  * ================================================
  */
 public class WuhunFileTool {
 
-    /** 文件名称 */
-    public static String getFileName(String FileName){
+    /** 根据uri获取文件路径 */
+    public static String getPathForUri(final Activity activity, final Uri uri) {
+        String str = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor actualimagecursor = activity.managedQuery(uri, proj, null, null, null);
+        int actual_image_column_index = actualimagecursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        actualimagecursor.moveToFirst();
+        String img_path = actualimagecursor.getString(actual_image_column_index);
+//        File file = new File(img_path);
+//        String path = uri.toString();
+        str = img_path;
+        return str;
+    }
+
+    public static byte[] File2byte(String filePath) {
+        byte[] buffer = null;
+        try {
+            File file = new File(filePath);
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] b = new byte[1024];
+            int n;
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+            fis.close();
+            bos.close();
+            buffer = bos.toByteArray();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return buffer;
+    }
+
+    /**
+     * 文件名称
+     */
+    public static String getFileName(String FileName) {
         String name = null;
         if (FileName.indexOf("/") != -1) {
-            name = FileName.substring(FileName.lastIndexOf("/")+1);
+            name = FileName.substring(FileName.lastIndexOf("/") + 1);
         } else {
             name = FileName;
         }
         return name;
     }
 
-    public static boolean deleteFileForUri(Uri FileUri){
+    public static boolean deleteFileForUri(Uri FileUri) {
         if (FileUri == null) return false;
 
         File file = new File(FileUri.getPath());
@@ -107,9 +151,10 @@ public class WuhunFileTool {
 
     /**
      * 获取sd卡根目录
+     *
      * @return
      */
-    public static File getSDPath(){
+    public static File getSDPath() {
         if (sdCardIsAvailable()) {
             return Environment.getExternalStorageDirectory();
         } else {
