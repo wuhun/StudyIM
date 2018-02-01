@@ -46,7 +46,7 @@ public class GroupInfoModel implements Serializable {
         this.code = code;
     }
 
-    public static class ResultBean {
+    public static class ResultBean implements Serializable {
         /**
          * GROUPID : 205
          * GROUPMANAGERID : 11
@@ -60,8 +60,8 @@ public class GroupInfoModel implements Serializable {
          */
 
         private int GROUPID;
-        private int GROUPMANAGERID;
-        private int GROUPMASTERID;
+        private int GROUPMANAGERID; //管理员id
+        private int GROUPMASTERID; // 群主id
         private String GROUPNAME;
         private String GROUPMANAGER;
         private String GROUPMSG;

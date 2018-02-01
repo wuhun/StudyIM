@@ -27,6 +27,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.db.DBManager;
@@ -389,13 +390,17 @@ public class FriendGetinfoActivity extends BaseActivity {
         }
 
         String isbuddy = friendInfo.getISBUDDYS();
-        if (isbuddy.equals("N")) {
+        if((friendInfo.getUserId()+"").equals(MyApplication.getSPUtil().getUSERID())) {
+            btnSendMsg.setVisibility(View.GONE);
+            btnAddConstact.setVisibility(View.GONE);
+        }else if (isbuddy.equals("N")) {
             btnAddConstact.setVisibility(View.VISIBLE);
             btnSendMsg.setVisibility(View.GONE);
         } else {
             btnSendMsg.setVisibility(View.VISIBLE);
             btnAddConstact.setVisibility(View.GONE);
         }
+
 
         tvSchool.setText(friendInfo.getSchool());
         tvMajor.setText(friendInfo.getMajor());

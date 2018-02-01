@@ -2,7 +2,9 @@ package studyim.cn.edu.cafa.studyim.activity.other;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +36,7 @@ import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.model.BaseModel;
 import studyim.cn.edu.cafa.studyim.model.GroupFile;
+import studyim.cn.edu.cafa.studyim.model.ResultModel;
 import studyim.cn.edu.cafa.studyim.util.DownloadUtil;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
@@ -41,12 +44,12 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
+import tools.com.lvliangliang.wuhuntools.adapter.OnItemLongClickListener;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionsUtil;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
-import tools.com.lvliangliang.wuhuntools.util.WuhunEncodeTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunFileTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunImgTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunOpenFileTool;
@@ -86,7 +89,11 @@ public class GroupFilesActivity extends BaseActivity {
 
     private Context mContext;
     public static final String GROUP_ID = "groupId";
+    public static final String GROUP_MASTER_ID = "group_master_id";
+    public static final String GROUP_MANAGER_ID = "group_manager_id";
     private String groupid;
+    private String groupMasterId;
+    private String groupManagerId;
 
     private String[] fileTypes = {"photo", "video", "document", "other"};
     private int position = 0;
@@ -97,8 +104,8 @@ public class GroupFilesActivity extends BaseActivity {
         setContentView(R.layout.activity_group_files);
         ButterKnife.bind(this);
 
-        initView();
         getIntentData();
+        initView();
         initListener();
 
         loadData();
@@ -137,49 +144,69 @@ public class GroupFilesActivity extends BaseActivity {
                     GroupFilesActivity.this.finish();
                     break;
                 case R.id.body_search:
-                    if (PermissionsUtil.hasPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType("*/*");//设置类型，我这里是任意类型，任意后缀的可以这样写。
-                        intent.addCategory(Intent.CATEGORY_OPENABLE);
-                        startActivityForResult(intent,1);
-                    } else {
-                        PermissionsUtil.requestPermission(mContext, new PermissionListener() {
-                            @Override
-                            public void permissionGranted(@NonNull String[] permission) {
-                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                                intent.setType("*/*");//设置类型，我这里是任意类型，任意后缀的可以这样写。
-                                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                                startActivityForResult(intent,1);
-                            }
-
-                            @Override
-                            public void permissionDenied(@NonNull String[] permission) {
-                                WuhunThread.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        WuhunToast.info("您拒绝了访问权限").show();
-                                    }
-                                });
-                            }
-                        }, Manifest.permission.READ_EXTERNAL_STORAGE);
-                    }
-
+                    showSelectDailog();
                     break;
             }
         }
     };
 
+    private AlertDialog alertDialog1;
+    final String[] uploadItem = {"上传图片", "上传视频", "上传文档", "上传其他"};
+    final String[] uploadType = {"photo", "video", "document", "other"};
+    String type = "other";
+
+    private void showSelectDailog() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
+        alertBuilder.setItems(uploadItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int index) {
+                type = uploadType[index];
+                if (PermissionsUtil.hasPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("*/*");//设置类型，我这里是任意类型，任意后缀的可以这样写。
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    startActivityForResult(intent, 1);
+                } else {
+                    PermissionsUtil.requestPermission(mContext, new PermissionListener() {
+                        @Override
+                        public void permissionGranted(@NonNull String[] permission) {
+                            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                            intent.setType("*/*");//设置类型，我这里是任意类型，任意后缀的可以这样写。
+                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                            startActivityForResult(intent, 1);
+                        }
+
+                        @Override
+                        public void permissionDenied(@NonNull String[] permission) {
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    WuhunToast.info("您拒绝了访问权限").show();
+                                }
+                            });
+                        }
+                    }, Manifest.permission.READ_EXTERNAL_STORAGE);
+                }
+                alertDialog1.dismiss();
+            }
+        });
+        alertDialog1 = alertBuilder.create();
+        alertDialog1.show();
+    }
+
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 1) {
                 Uri uri = data.getData();
-                String path = WuhunFileTool.getPathForUri(GroupFilesActivity.this, uri);
-                byte[] bytes = WuhunFileTool.File2byte(path);
-                String fileStr = WuhunEncodeTool.base64Encode2String(bytes);
-//                Uri uri = data.getData();
-//                String path = WuhunImgTool.getPathForUri(mContext, uri);
+                String path = WuhunFileTool.getPath2uri(GroupFilesActivity.this, uri);
+//                byte[] bytes = WuhunFileTool.File2byte(path);
+//                String fileStr = WuhunEncodeTool.base64Encode2String(bytes);
+                final File file = new File(path);
+                TestLog.i("==>" + path + " - " + file.getAbsolutePath());
 
-                HttpUtil.GroupUploadFile(groupid, fileStr, new Callback() {
+
+                HttpUtil.GroupUploadFile(groupid, file, type, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         TestLog.i("失败");
@@ -188,13 +215,16 @@ public class GroupFilesActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         final String result = response.body().string();
-                        TestLog.i("成功:" + result);
-                        WuhunThread.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                WuhunToast.info(result).show();
-                            }
-                        });
+                        ResultModel model = MyApplication.getGson().fromJson(result, ResultModel.class);
+                        if (response.isSuccessful() && model != null && model.getCode() == 1) {
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    WuhunToast.info(file.getName() + "上传成功").show();
+                                    loadData();
+                                }
+                            });
+                        }
                     }
                 });
             }
@@ -252,13 +282,16 @@ public class GroupFilesActivity extends BaseActivity {
             rlTabVideo.setBackgroundResource(R.drawable.study_tab_hover);
         } else if (position == 2) {
             rlTabDocument.setBackgroundResource(R.drawable.study_tab_hover);
-        }else if(position == 3) {
+        } else if (position == 3) {
             rlTabOther.setBackgroundResource(R.drawable.study_tab_hover);
         }
     }
 
     private void getIntentData() {
-        groupid = getIntent().getStringExtra(GROUP_ID);
+        Intent intent = getIntent();
+        groupid = intent.getStringExtra(GROUP_ID);
+        groupMasterId = intent.getStringExtra(GROUP_MASTER_ID);
+        groupManagerId = intent.getStringExtra(GROUP_MANAGER_ID);
     }
 
     LQRAdapterForRecyclerView<GroupFile> adapter;
@@ -308,8 +341,8 @@ public class GroupFilesActivity extends BaseActivity {
                         // TODO: 2018/1/21 0021
                         String uri = initDownUri(before, groupFile.getFILEPATH());
 //                        String uri = "http://192.168.1.24:8080/test/568d3921eeb149f39bbd901d5d07e6dc.docx";
-                        TestLog.i("下载地址：" + uri);
-                        TestLog.i("下载地址：" + downloadFile.toString());
+//                        TestLog.i("下载地址：" + uri);
+//                        TestLog.i("下载地址：" + downloadFile.toString());
                         if (!WuhunDataTool.isNullString(groupFile.getFILENAME())) {
                             DownloadUtil.getInstence().download(
                                     uri,
@@ -334,6 +367,7 @@ public class GroupFilesActivity extends BaseActivity {
                                                     pb_download.setVisibility(View.VISIBLE);
                                                     pb_download.setProgress(progress);
                                                     btnDownload.setClickable(false);
+                                                    btnDownload.setText("下载中...");
                                                 }
                                             });
                                         }
@@ -344,6 +378,9 @@ public class GroupFilesActivity extends BaseActivity {
                                                 @Override
                                                 public void run() {
                                                     btnDownload.setText("失败");
+                                                    if (downloadFile.exists()) {
+                                                        downloadFile.delete();
+                                                    }
                                                 }
                                             });
                                         }
@@ -368,6 +405,58 @@ public class GroupFilesActivity extends BaseActivity {
                 }
             }
         });
+
+        TestLog.i("userid: " + MyApplication.getSPUtil().getUSERID()
+                + "\n 群主:" + groupMasterId
+                + "\n 管理员:" + groupManagerId);
+
+        if (MyApplication.getSPUtil().getUSERID().equals(groupMasterId)
+                || MyApplication.getSPUtil().getUSERID().equals(groupManagerId)) {
+            adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
+                    final GroupFile groupFile = mdata.get(position);
+                    new AlertDialog.Builder(mContext)
+                            .setMessage("是否删除当前文件？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    HttpUtil.groupfiledelete(groupFile.getCLASS(), String.valueOf(groupFile.getFILEID()), "true", new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            WuhunThread.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    WuhunToast.info(R.string.request_error).show();
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onResponse(Call call, final Response response) throws IOException {
+                                            String result = response.body().string();
+                                            final ResultModel resultModel = MyApplication.getGson().fromJson(result, ResultModel.class);
+                                            WuhunThread.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (response.isSuccessful() && resultModel.getCode() == 1) {
+                                                        WuhunToast.info("删除成功").show();
+                                                        loadData();
+                                                    } else {
+                                                        if (!WuhunDataTool.isNullString(resultModel.getMsg())) {
+                                                            WuhunToast.info(resultModel.getMsg()).show();
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            }).setNegativeButton("取消", null).show();
+                    return false;
+                }
+            });
+        }
     }
 
     public static String initDownUri(String beforeUrl, String uri) {

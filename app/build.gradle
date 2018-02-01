@@ -1,4 +1,12 @@
 apply plugin: 'com.android.application'
+//apply plugin: "com.mob.sdk"
+//
+//MobSDK {
+//    appKey "d580ad56b4b5"
+//    appSecret "7fcae59a62342e7e2759e9e397c82bdd"
+//
+//    SMSSDK {}
+//}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -48,4 +56,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.8.1'
     implementation project(':IMKit')
     implementation files('libs/litepal-1.6.1.jar')
+    implementation project(':CallKit')
+    implementation project(':CallLib')
+    implementation 'com.android.support:multidex:1.0.2'
+    implementation project(':smssdk')
 }

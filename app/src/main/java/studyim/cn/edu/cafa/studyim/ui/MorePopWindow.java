@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.activity.other.FriendGetAddListActivity;
-import studyim.cn.edu.cafa.studyim.activity.other.GroupSelectFriendActivity;
+import studyim.cn.edu.cafa.studyim.activity.other.GroupCreateActivity;
 
 
 public class MorePopWindow extends PopupWindow {
@@ -67,7 +67,8 @@ public class MorePopWindow extends PopupWindow {
                 context.startActivity(intent);
             }else if(v.getId() == R.id.rl_create_group) {
                 // TODO: 2018/1/5 创建群组
-                Intent intent = new Intent(context, GroupSelectFriendActivity.class);
+//                Intent intent = new Intent(context, GroupSelectFriendActivity.class); //选择成员
+                Intent intent = new Intent(context, GroupCreateActivity.class);
                 context.startActivity(intent);
             }
             MorePopWindow.this.dismiss();

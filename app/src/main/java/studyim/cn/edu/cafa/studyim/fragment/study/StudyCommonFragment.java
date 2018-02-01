@@ -35,7 +35,6 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunState;
@@ -92,7 +91,6 @@ public class StudyCommonFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        BroadcastManager.getInstance(mActivity).sendBroadcast(Constant.UPDATE_GROUP_LIST);
         update();
     }
 

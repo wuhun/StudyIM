@@ -8,6 +8,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendGetAddList;
@@ -174,7 +175,7 @@ public class UserAvatarUtil {
     }
 
     public static void showImage(Context context, String uri, ImageView imageView){
-        Glide.with(context).load(uri)
+        Glide.with(MyApplication.getContext()).load(uri)
                 .error(R.mipmap.default_useravatar)
                 .placeholder(R.mipmap.default_useravatar)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)

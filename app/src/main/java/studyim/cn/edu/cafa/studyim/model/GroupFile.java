@@ -30,7 +30,7 @@ public class GroupFile implements Serializable {
     private long FILETIME; //文件上传时间
     private String FILEPATH; //文件地址
     private String FILETYPE; //文件类型 doc，pdf，zip等文档
-    private String CLASS;
+    private String CLASS; //文件类型
     private int FILEID; //文件id
     private int IOS_GROUP_FILE_ID;
     private String FILENAME; //文件名

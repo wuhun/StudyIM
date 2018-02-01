@@ -65,14 +65,14 @@ public class DownloadUtil {
             @Override
             public void onFailure(Call call, IOException e) {
                 // 下载失败
-                TestLog.i("==>onfailure");
+//                TestLog.i("==>onfailure");
                 e.printStackTrace();
                 listener.onDownloadFailed();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                TestLog.i("==>response");
+//                TestLog.i("==>response");
                 InputStream is = null;
                 byte[] buf = new byte[2048];
                 int len = 0;
@@ -80,26 +80,29 @@ public class DownloadUtil {
                 // 储存下载文件的目录
 //                String savePath = isExistDir(saveDir);
                 File file = new File(saveDir);
-
-                TestLog.i("=下载存储目录=>" + file.getAbsolutePath());
+//                TestLog.i("=下载存储目录=>" + file.getAbsolutePath());
                 try {
-                    is = response.body().byteStream();
-                    long total = response.body().contentLength();
+                    if (WuhunFileTool.createOrExistsFile(file)) {
+                        is = response.body().byteStream();
+                        long total = response.body().contentLength();
 //                    File file = new File(savePath, getNameFromUrl(url));
-                    fos = new FileOutputStream(file);
-                    long sum = 0;
-                    while ((len = is.read(buf)) != -1) {
-                        fos.write(buf, 0, len);
-                        sum += len;
-                        int progress = (int) (sum * 1.0f / total * 100);
-                        // 下载中
-                        listener.onDownloading(progress);
+                        fos = new FileOutputStream(file);
+                        long sum = 0;
+                        while ((len = is.read(buf)) != -1) {
+                            fos.write(buf, 0, len);
+                            sum += len;
+                            int progress = (int) (sum * 1.0f / total * 100);
+                            // 下载中
+                            listener.onDownloading(progress);
+                        }
+                        fos.flush();
+                        // 下载完成
+                        listener.onDownloadSuccess();
+                    } else {
+                        listener.onDownloadFailed();
                     }
-                    fos.flush();
-                    // 下载完成
-                    listener.onDownloadSuccess();
                 } catch (Exception e) {
-                    TestLog.i("==>" + e.getMessage());
+//                    TestLog.i("==>" + e.getMessage());
                     e.printStackTrace();
                     listener.onDownloadFailed();
                 } finally {

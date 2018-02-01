@@ -33,17 +33,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="20dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:background="@drawable/selector_common_item">
+                android:layout_marginTop="20dp">
 
                 <View style="@style/Line" />
                 <RelativeLayout
+                    android:id="@+id/rl_group_avater"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:padding="10dp"
+                    android:background="@drawable/selector_common_item">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -61,10 +59,11 @@
                 <View style="@style/Line" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_group_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:padding="10dp"
+                    android:background="@drawable/selector_common_item">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -83,10 +82,11 @@
                 <View style="@style/Line" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_group_introduce"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:padding="10dp"
+                    android:background="@drawable/selector_common_item">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -107,26 +107,22 @@
                         android:singleLine="true"/>
                 </RelativeLayout>
                 <View style="@style/Line" />
-
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_group_files"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="20dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:background="@drawable/selector_common_item">
+                android:layout_marginTop="20dp">
 
                 <View style="@style/Line" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_group_files"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:padding="10dp"
+                    android:background="@drawable/selector_common_item">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -144,6 +140,21 @@
                         android:lines="1"
                         android:ellipsize="end"
                         android:singleLine="true" />
+                </RelativeLayout>
+                <View style="@style/Line" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_appointManager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:background="@drawable/selector_common_item">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="设置管理"
+                        style="@style/tag_text"
+                        android:layout_centerVertical="true"/>
                 </RelativeLayout>
                 <View style="@style/Line" />
             </LinearLayout>

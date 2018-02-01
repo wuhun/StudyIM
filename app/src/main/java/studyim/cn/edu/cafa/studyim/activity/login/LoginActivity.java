@@ -125,11 +125,11 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.tv_login_query_pwd:
                 // TODO: 2017/11/8 忘记密码
-                WuhunToast.info("忘记密码").show();
+                jumpToActivity(fotgotPwdActivity.class);
                 break;
             case R.id.tv_login_register:
                 // TODO: 2017/11/8 注册
-                WuhunToast.info("注册").show();
+                jumpToActivity(RegistActivity.class);
                 break;
             case R.id.tv_browse:
 //                WuhunToast.info("游客方式浏览").show();

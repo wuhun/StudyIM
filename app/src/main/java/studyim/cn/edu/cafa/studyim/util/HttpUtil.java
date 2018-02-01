@@ -2,11 +2,14 @@ package studyim.cn.edu.cafa.studyim.util;
 
 import android.support.annotation.NonNull;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import studyim.cn.edu.cafa.studyim.common.Constant;
@@ -25,13 +28,83 @@ import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
  */
 public class HttpUtil {
 
-    /** 群文件上传 */
-    public static void GroupUploadFile(String groupId,String file,Callback callback){
-        String uri = Constant.indexUrl + "CAFA/file/upload";
+    /** 忘记密码 */
+    public static void changePassword(String userId, String telephone,String password,Callback callback){
+        String uri = Constant.indexUrl + "CAFA/user/forgetpassword";
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("telephone", telephone);
+        map.put("msgCode", "8888");
+        map.put("password", password);
+        Request request = getRequest(uri, map);
+        OkHttpUtil.enqueue(request, callback);
+    }
+
+    /** 删除群文件 */
+    public static void groupfiledelete(String type, String groupFileId,String IsGroupType,Callback callback) {
+        String uri = Constant.indexUrl + "CAFA/file/groupfiledelete";
+        Map<String, String> map = new HashMap<>();
+        map.put("type", type);
+        map.put("groupFileId", groupFileId);
+        map.put("IsGroupType", IsGroupType);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 群主修改群信息 */
+    public static void groupChangeMessage(String groupId, File headImage,String groupName,String groupIntroduce, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/changeMessage";
+
+        MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        requestBody.addFormDataPart("userId", getSPUtil().getUSERID());
+        requestBody.addFormDataPart("groupId", groupId);
+        if(!WuhunDataTool.isNullString(groupName)) {
+            requestBody.addFormDataPart("groupName", groupName);
+        }
+        if(!WuhunDataTool.isNullString(groupIntroduce)) {
+            requestBody.addFormDataPart("groupIntroduce", groupIntroduce);
+        }
+//        requestBody.addFormDataPart("groupType", groupType);
+        // 参数分别为， 请求key ，文件名称 ， RequestBody
+        if(headImage != null && headImage.isFile()) {
+            requestBody.addFormDataPart("file", "group_"+ System.currentTimeMillis() + ".jpg",
+                    RequestBody.create(MediaType.parse("image/*") , headImage));
+        }
+
+        Request.Builder reqBuilder = new Request.Builder().url(uri)
+                .addHeader("tokens", getSPUtil().getTokens())
+                .post(requestBody.build());
+
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 群主设置管理员 */
+    public static void GroupAppointManager(String groupId, String managerId, Callback callback) {
+        String uri = Constant.indexUrl + "CAFA/group/appointManager";
         Map<String, String> map = new HashMap<>();
         map.put("groupId",groupId);
-        map.put("file", file);
+        map.put("managerId", managerId);
         Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
+    /** 群文件上传 */
+    public static void GroupUploadFile(String groupId,File file,String type,Callback callback){
+        String uri = Constant.indexUrl + "CAFA/file/upload";
+
+        MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        requestBody.addFormDataPart("userId", getSPUtil().getUSERID());
+        requestBody.addFormDataPart("groupId", groupId);
+        requestBody.addFormDataPart("class", type);
+        // 参数分别为， 请求key ，文件名称 ， RequestBody
+        if(file != null && file.isFile()) {
+            requestBody.addFormDataPart("file", file.getName(),
+                    RequestBody.create(null , file));
+        }
+        Request.Builder reqBuilder = new Request.Builder().url(uri)
+                .addHeader("tokens", getSPUtil().getTokens())
+                .post(requestBody.build());
+
         OkHttpUtil.enqueue(reqBuilder.build(), callback);
     }
 
@@ -95,19 +168,29 @@ public class HttpUtil {
     /**
      * 创建群组
      * @param groupName     群名称
-     * @param groupImage    群图片
+     * @param groupImage    群图片 MediaType.parse("image/*")  "application/octet-stream"
      * @param groupType     群类型：（group//普通群组 --- class//班级群组）
      * @param callback
      */
-    public static void CreateGroup(String groupName,String groupImage,String groupType,Callback callback){
+    public static void CreateGroup(String groupName, File groupImage, String groupType, Callback callback){
         String uri = Constant.indexUrl + "CAFA/group/create";
-        Map<String,String> map = new HashMap<>();
-        map.put("groupName", groupName);
-        map.put("groupImage",groupImage);
-        map.put("groupType", groupType);
-        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+
+        // form 表单形式上传
+        MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        requestBody.addFormDataPart("userId", getSPUtil().getUSERID());
+        requestBody.addFormDataPart("groupName", groupName);
+        requestBody.addFormDataPart("groupType", groupType);
+        // 参数分别为， 请求key ，文件名称 ， RequestBody
+        requestBody.addFormDataPart("file", "group_"+ System.currentTimeMillis() + ".jpg",
+                RequestBody.create(MediaType.parse("image/*") , groupImage));
+
+        Request.Builder reqBuilder = new Request.Builder().url(uri)
+                .addHeader("tokens", getSPUtil().getTokens())
+                .post(requestBody.build());
+
         OkHttpUtil.enqueue(reqBuilder.build(), callback);
     }
+
 
     /** 获取群公告 */
     public static void getGroupNoticeList(String groupId, Callback callback){

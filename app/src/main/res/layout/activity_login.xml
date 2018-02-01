@@ -158,7 +158,8 @@
                 android:padding="15dp"
                 android:text="@string/regist"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:visibility="gone"/>
 
 
             <TextView

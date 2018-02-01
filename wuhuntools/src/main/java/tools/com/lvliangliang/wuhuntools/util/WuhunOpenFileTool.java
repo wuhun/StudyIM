@@ -176,6 +176,7 @@ public class WuhunOpenFileTool {
                     {".css", "text/css"},
                     {".cur", "application/octet-stream"},
                     {".doc", "application/msword"},
+                    {".docx", "application/msword"},
                     {".dcm", "x-lml/x-evm"},
                     {".dcr", "application/x-director"},
                     {".dcx", "image/x-dcx"},

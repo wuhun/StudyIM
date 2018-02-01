@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +33,18 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import studyim.cn.edu.cafa.studyim.common.Constant;
+import studyim.cn.edu.cafa.studyim.db.DBManager;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainContactFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainHomeFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainMeFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainResourceFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainStudyFragment;
+import studyim.cn.edu.cafa.studyim.model.BaseModel;
+import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import studyim.cn.edu.cafa.studyim.model.UserGetInfo;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
@@ -119,6 +125,12 @@ public class MainActivity extends BaseActivity {
                 initUserInfo(getSPUtil().getRctoken());
             }
         });
+        BroadcastManager.getInstance(getContext()).register(Constant.UPDATE_GROUP_LIST, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateGroupList();
+            }
+        });
 
         // 会话聊天界面，未读消息提醒
         final Conversation.ConversationType[] conversationTypes = {
@@ -135,6 +147,29 @@ public class MainActivity extends BaseActivity {
                 unreadMsg(count);
             }
         }, conversationTypes);
+    }
+
+    private void updateGroupList() {
+        HttpUtil.getGroupList(null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) { }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                TestLog.i("获取更新群列表:" + result);
+                if(response.isSuccessful()) {
+                    if(result == null) return;
+                    BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
+                    if(model != null && model.getCode() == 1){
+                        int size = DBManager.getmInstance().getAllGroup().size();
+                        if(model.getResult().size() != size) {
+                            DBManager.getmInstance().saveGroups(model.getResult(), model.getBefore());
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void unreadMsg(int count) {
@@ -348,7 +383,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        TestLog.i(TAG + " - onDestroy()");
+//        TestLog.i(TAG + " - onDestroy()");
         super.onDestroy();
         RongIM.getInstance().removeUnReadMessageCountChangedObserver(new IUnReadMessageObserver() {
             @Override
@@ -358,5 +393,6 @@ public class MainActivity extends BaseActivity {
         });
 
         BroadcastManager.getInstance(getContext()).unregister(Constant.ME_SHOW_RED);
+        BroadcastManager.getInstance(getContext()).unregister(Constant.UPDATE_GROUP_LIST);
     }
 }

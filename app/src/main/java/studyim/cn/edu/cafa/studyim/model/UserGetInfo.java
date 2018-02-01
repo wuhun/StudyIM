@@ -20,7 +20,6 @@ public class UserGetInfo {
      * result : {"birthday":1484668800000,"major":"计算机绘画","school":"中央美术学院","nickName":"小明","sex":"W","roles":[{"roleName":"教师","roleType":4}],"name":"冀志英","avatar":"http://124.127.38.214/null","userId":14,"class":"22"}
      * code : 1
      */
-
     private String msg;
     private ResultBean result;
     private int code;

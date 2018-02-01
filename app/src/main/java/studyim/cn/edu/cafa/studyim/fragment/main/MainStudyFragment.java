@@ -194,8 +194,7 @@ public class MainStudyFragment extends BaseFragment {
     }
 
     @Override
-    protected void getIntentData(Bundle arguments) {
-    }
+    protected void getIntentData(Bundle arguments) {}
 
     @Override
     protected int setLayoutResouceId() {

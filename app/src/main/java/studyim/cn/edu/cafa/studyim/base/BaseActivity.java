@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.smssdk.SMSSDK;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
@@ -57,6 +58,7 @@ public class BaseActivity extends AppCompatActivity {
         for (Activity activity : activityList) {
             activity.finish();
         }
+        activityList.clear();
     }
 
     public void jumpToActivity(Intent intent) {
@@ -94,16 +96,31 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        this.removeActivity(this);
-        super.onDestroy();
-    }
 
     public void showNoNetDialog(Context mContext){
         new AlertDialog.Builder(mContext)
                 .setTitle("请检查网络")
                 .setMessage("当前无网络连接，请检查网络状态")
                 .setPositiveButton("确定", null).show();
+    }
+
+    // 请求验证码，其中country表示国家代码，如“86”；phone表示手机号码，如“13800138000”
+    public void sendCode(String country, String phone) {
+        // 触发操作
+        SMSSDK.getVerificationCode(country, phone);
+    }
+
+    // 提交验证码，其中的code表示验证码，如“1357”
+    public void submitCode(String country, String phone, String code) {
+        // 触发操作
+        SMSSDK.submitVerificationCode(country, phone, code);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.removeActivity(this);
+        //用完回调要注销掉，否则可能会出现内存泄露
+        SMSSDK.unregisterAllEventHandler();
     }
 }

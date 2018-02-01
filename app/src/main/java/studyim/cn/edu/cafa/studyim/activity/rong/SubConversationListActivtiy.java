@@ -3,7 +3,6 @@ package studyim.cn.edu.cafa.studyim.activity.rong;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,8 +11,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.rong.imkit.fragment.SubConversationListFragment;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 
-public class SubConversationListActivtiy extends AppCompatActivity {
+public class SubConversationListActivtiy extends BaseActivity {
 
     @BindView(R.id.head_bg)
     ImageView headBg;

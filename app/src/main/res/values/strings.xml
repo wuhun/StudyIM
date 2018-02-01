@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">StudyIM</string>
+    <string name="app_name">中央美术学院</string>
 
     <string name="phone_number">请输入学号/绑定的手机号</string>
     <string name="password">请输入密码</string>
+    <string name="again_password">再次输入密码</string>
     <string name="Login">登录</string>
     <string name="regist"><u>注册</u></string>
     <string name="forgot_pwd">忘记密码</string>

@@ -2,33 +2,22 @@ package studyim.cn.edu.cafa.studyim.db;
 
 import android.net.Uri;
 
-import com.google.gson.reflect.TypeToken;
-
 import org.litepal.crud.DataSupport;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.rong.imkit.RongIM;
 import io.rong.imlib.model.Group;
 import io.rong.imlib.model.UserInfo;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.common.Constant;
-import studyim.cn.edu.cafa.studyim.model.BaseModel;
 import studyim.cn.edu.cafa.studyim.model.Friend;
 import studyim.cn.edu.cafa.studyim.model.FriendUserInfo;
-import studyim.cn.edu.cafa.studyim.model.GroupMemeberModel;
 import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import studyim.cn.edu.cafa.studyim.model.SettingModel;
-import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
-
-import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
 
 /**
  * ================================================
@@ -126,63 +115,62 @@ public class DBManager {
 
     /** 保存群组信息 */
     public void saveGroups(List<GroupModel> groups, String beforeUri){
-        if(groups == null) return;
         deleteGroups();
+        if(groups == null) return;
         for(GroupModel model : groups){
             if(model == null) return;
             String uri = UserAvatarUtil.initUri(beforeUri, model.getGROUPIMAGE());
             String portrait = UserAvatarUtil.getAvatarUri(model.getGROUPRCID(), model.getNAME(), uri);
             Group group = new Group(model.getGROUPRCID(), model.getNAME(), Uri.parse(portrait));
             RongIM.getInstance().refreshGroupInfoCache(group);
-
-            refreshGroupMemeber(model.getGROUPID() + "");
+//            refreshGroupMemeber(model.getGROUPID() + "");
         }
         DataSupport.saveAll(groups);
     }
 
-    /** 更新群成员信息 */
-    private void refreshGroupMemeber(final String groupId) {
-        deleteGroupMemeberByBroupId(groupId);
-        HttpUtil.getGroupMemeberlist(String.valueOf(groupId), new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {}
+//    /** 更新群成员信息 */
+//    private void refreshGroupMemeber(final String groupId) {
+//        deleteGroupMemeberByBroupId(groupId);
+//        HttpUtil.getGroupMemeberlist(String.valueOf(groupId), new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {}
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                String result = response.body().string();
+//                BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>(){}.getType());
+//                if(response.isSuccessful() && model != null && model.getCode() == 1){
+//                    String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
+//                    List<GroupMemeberModel> memeber = model.getResult();
+////                        TestLog.i("循环" + memeber);
+//                    for(GroupMemeberModel groupitem : memeber){
+////                        TestLog.i("成员: " + groupId + " - " + groupitem.getGROUPID() + " - " + groupitem.getNICKNAME());
+//                        String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
+//                        String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
+//                        String avatarUri = UserAvatarUtil.getAvatarUri(
+//                                groupitem.getUSERID() + "", name, uri);
+//                        UserInfo userInfo = new UserInfo(groupitem.getRCID(), name, Uri.parse(avatarUri));
+//                        RongIM.getInstance().refreshUserInfoCache(userInfo);
+//
+//                        groupitem.save();
+//                    }
+//                }
+//            }
+//        });
+//    }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String result = response.body().string();
-                BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>(){}.getType());
-                if(response.isSuccessful() && model != null && model.getCode() == 1){
-                    String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
-                    List<GroupMemeberModel> memeber = model.getResult();
-//                        TestLog.i("循环" + memeber);
-                    for(GroupMemeberModel groupitem : memeber){
-//                        TestLog.i("成员: " + groupId + " - " + groupitem.getGROUPID() + " - " + groupitem.getNICKNAME());
-                        String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
-                        String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
-                        String avatarUri = UserAvatarUtil.getAvatarUri(
-                                groupitem.getUSERID() + "", name, uri);
-                        UserInfo userInfo = new UserInfo(groupitem.getRCID(), name, Uri.parse(avatarUri));
-                        RongIM.getInstance().refreshUserInfoCache(userInfo);
+//    /** 删除群成员 */
+//    private void deleteGroupMemeberByBroupId(String groupId) {
+//        List<GroupMemeberModel> Memeberlist = findGroupMemeberByGroupId(groupId);
+//        for(GroupMemeberModel model : Memeberlist){
+//            model.delete();
+//        }
+//    }
 
-                        groupitem.save();
-                    }
-                }
-            }
-        });
-    }
-
-    /** 删除群成员 */
-    private void deleteGroupMemeberByBroupId(String groupId) {
-        List<GroupMemeberModel> Memeberlist = findGroupMemeberByGroupId(groupId);
-        for(GroupMemeberModel model : Memeberlist){
-            model.delete();
-        }
-    }
-
-    /** 获取群成员 */
-    public List<GroupMemeberModel> findGroupMemeberByGroupId(String groupId){
-        return DataSupport.where("GROUPID = ?", groupId).find(GroupMemeberModel.class);
-    }
+//    /** 获取群成员 */
+//    public List<GroupMemeberModel> findGroupMemeberByGroupId(String groupId){
+//        return DataSupport.where("GROUPID = ?", groupId).find(GroupMemeberModel.class);
+//    }
 
     public List<GroupModel> getGroupByClass(){
         return DataSupport.where("GROUPTYPE = ?", "G").find(GroupModel.class);
@@ -198,7 +186,11 @@ public class DBManager {
 
     public GroupModel findGroupByRCID(String GROUPRCID){
         List<GroupModel> groupModels = DataSupport.where("GROUPRCID = ?", GROUPRCID).find(GroupModel.class);
-        return groupModels.get(0);
+        if (groupModels != null && groupModels.size() > 0) {
+            return groupModels.get(0);
+        } else {
+            return null;
+        }
     }
 
     public void deleteGroups(){
@@ -216,5 +208,21 @@ public class DBManager {
     public GroupModel findGroupByID(String GROUPID){
         List<GroupModel> groupModels = DataSupport.where("GROUPID = ?", GROUPID).find(GroupModel.class);
         return groupModels.get(0);
+    }
+
+    public void updateGroup(GroupModel groupModel){
+        GroupModel groupByRCID = findGroupByRCID(groupModel.getGROUPID() + "");
+        if (groupByRCID != null) {
+            groupByRCID.setNAME(groupModel.getNAME());
+            groupByRCID.setGROUPIMAGE(groupModel.getGROUPIMAGE());
+            groupByRCID.update(groupModel.getGROUPID());
+
+            String uri = UserAvatarUtil.initUri(Constant.HOME_URL, groupModel.getGROUPIMAGE());
+            String portrait = UserAvatarUtil.getAvatarUri(groupByRCID.getGROUPRCID(), groupModel.getNAME(), uri);
+            Group group = new Group(groupByRCID.getGROUPRCID(), groupByRCID.getNAME(), Uri.parse(portrait));
+            RongIM.getInstance().refreshGroupInfoCache(group);
+        } else {
+            groupModel.save();
+        }
     }
 }

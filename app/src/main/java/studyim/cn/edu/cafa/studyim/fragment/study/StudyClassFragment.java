@@ -1,8 +1,6 @@
 package studyim.cn.edu.cafa.studyim.fragment.study;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +23,6 @@ import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.RongIMClient.ConnectionStatusListener.ConnectionStatus;
 import io.rong.imlib.model.Conversation;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
@@ -36,14 +30,11 @@ import studyim.cn.edu.cafa.studyim.common.Constant;
 import studyim.cn.edu.cafa.studyim.db.DBManager;
 import studyim.cn.edu.cafa.studyim.model.BaseModel;
 import studyim.cn.edu.cafa.studyim.model.GroupModel;
-import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
-import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunState;
@@ -82,7 +73,7 @@ public class StudyClassFragment extends BaseFragment {
             @Override
             public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
                 GroupModel model = groupList.get(position);
-                TestLog.i("群聊 id：" + model.getGROUPID() + " - title：" + model.getNAME());
+//                TestLog.i("群聊 id：" + model.getGROUPID() + " - title：" + model.getNAME());
 //                RongIM.getInstance().startGroupChat(mActivity, model.getGROUPRCID(), model.getNAME());
                 if(RongContext.getInstance() != null && model != null) {
                     Uri uri = Uri.parse("rong://" + mActivity.getApplicationInfo().packageName).buildUpon()
@@ -100,9 +91,10 @@ public class StudyClassFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        BroadcastManager.getInstance(mActivity).sendBroadcast(Constant.UPDATE_GROUP_LIST);
+//        BroadcastManager.getInstance(mActivity).sendBroadcast(Constant.UPDATE_GROUP_LIST);
         updateList();
     }
+
 
     private void updateList() {
         List<GroupModel> classGroup = DBManager.getmInstance().getGroupByClass();
@@ -134,12 +126,12 @@ public class StudyClassFragment extends BaseFragment {
         };
         rvGroupList.setAdapter(madapter);
 
-        BroadcastManager.getInstance(mActivity).register(Constant.UPDATE_GROUP_LIST, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                uploadGroupList();
-            }
-        });
+//        BroadcastManager.getInstance(mActivity).register(Constant.UPDATE_GROUP_LIST, new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                uploadGroupList();
+//            }
+//        });
     }
 
     @Override
@@ -210,36 +202,34 @@ public class StudyClassFragment extends BaseFragment {
         super.onDestroy();
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
-//            handler = null;
         }
-        BroadcastManager.getInstance(mActivity).unregister(Constant.UPDATE_GROUP_LIST);
     }
 
-    private void uploadGroupList(){
-        HttpUtil.getGroupList(null, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                handler.sendEmptyMessage(WuhunState.REQUEST_ERROR);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String result = response.body().string();
-
-                TestLog.i("群列表:" + result);
-                if(response.isSuccessful()) {
-                    if(result == null) return;
-                    BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
-                    if(model != null && model.getCode() == 1){
-                        int size = DBManager.getmInstance().getAllGroup().size();
-                        if(model.getResult().size() != size) {
-                            DBManager.getmInstance().saveGroups(model.getResult(), model.getBefore());
-                        }
-                    }
-                }
-            }
-        });
-    }
+//    private void uploadGroupList(){
+//        HttpUtil.getGroupList(null, new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                handler.sendEmptyMessage(WuhunState.REQUEST_ERROR);
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                String result = response.body().string();
+//
+//                TestLog.i("群列表:" + result);
+//                if(response.isSuccessful()) {
+//                    if(result == null) return;
+//                    BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
+//                    if(model != null && model.getCode() == 1){
+//                        int size = DBManager.getmInstance().getAllGroup().size();
+//                        if(model.getResult().size() != size) {
+//                            DBManager.getmInstance().saveGroups(model.getResult(), model.getBefore());
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler(){

@@ -1,9 +1,11 @@
 package studyim.cn.edu.cafa.studyim.app;
 
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mob.MobSDK;
 
 import java.io.File;
 
@@ -31,8 +33,13 @@ public class MyApplication extends RongApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-
         init();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     private void init() {
@@ -45,6 +52,7 @@ public class MyApplication extends RongApplication {
     private void initData() {
         isDebug = false;
         gson = new GsonBuilder().setLenient().create();
+        MobSDK.init(this, "2409fdff977a5", "78d9694ad5afe70d33e3d8fea2cd63f8"); //mob初始化
     }
 
     public static Gson getGson() {

@@ -238,8 +238,8 @@ public class GroupAddFriendActivity extends BaseActivity {
             }else if(!addFriendResultList.contains("1")) {
                 WuhunToast.info("添加失败").show();
             }
-
             BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_MEMEBER);
+            setResult(200);
             GroupAddFriendActivity.this.finish();
         }
     }
