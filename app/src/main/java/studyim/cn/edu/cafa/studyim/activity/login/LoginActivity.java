@@ -125,7 +125,7 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.tv_login_query_pwd:
                 // TODO: 2017/11/8 忘记密码
-                jumpToActivity(fotgotPwdActivity.class);
+                jumpToActivity(FotgotPwdActivity.class);
                 break;
             case R.id.tv_login_register:
                 // TODO: 2017/11/8 注册

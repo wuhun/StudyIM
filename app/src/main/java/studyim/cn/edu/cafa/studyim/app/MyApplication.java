@@ -87,6 +87,13 @@ public class MyApplication extends RongApplication {
         return file;
     }
 
+    /** 获取下载文件目录 */
+    public static File getUploadFile(String backSpace, String fileName){
+        String pic = WuhunFileTool.getRootPath() + File.separator + WuhunAppTool.getAppName(mContext) + File.separator + backSpace + File.separator;
+        File file = new File(pic, fileName);
+        return file;
+    }
+
     //    private void initOKGo() {
 //        OkHttpClient.Builder builder = new OkHttpClient.Builder()
 //                .readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)

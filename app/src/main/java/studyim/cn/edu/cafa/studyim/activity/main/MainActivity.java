@@ -1,8 +1,12 @@
 package studyim.cn.edu.cafa.studyim.activity.main;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +14,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,8 +49,10 @@ import studyim.cn.edu.cafa.studyim.fragment.main.MainMeFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainResourceFragment;
 import studyim.cn.edu.cafa.studyim.fragment.main.MainStudyFragment;
 import studyim.cn.edu.cafa.studyim.model.BaseModel;
+import studyim.cn.edu.cafa.studyim.model.CheckVersionModel;
 import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import studyim.cn.edu.cafa.studyim.model.UserGetInfo;
+import studyim.cn.edu.cafa.studyim.service.UpdateService;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
@@ -53,6 +60,8 @@ import tools.com.lvliangliang.wuhuntools.adapter.lazyViewPgaerAdapter.LazyFragme
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunDeviceTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getContext;
@@ -98,6 +107,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         init();
+        checkVersion();
     }
 
     private void init() {
@@ -391,8 +401,105 @@ public class MainActivity extends BaseActivity {
                 unreadMsg(i);
             }
         });
-
         BroadcastManager.getInstance(getContext()).unregister(Constant.ME_SHOW_RED);
         BroadcastManager.getInstance(getContext()).unregister(Constant.UPDATE_GROUP_LIST);
+    }
+
+    /** 版本检测更新 */
+    private void checkVersion() {
+        HttpUtil.checkServiceVersion(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                WuhunThread.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        WuhunToast.error(R.string.request_error_net).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                CheckVersionModel model = getGson().fromJson(result, CheckVersionModel.class);
+                if(response.isSuccessful()) {
+                    final CheckVersionModel.ResultBean versionModel = model.getResult();
+                    if(versionModel != null) {
+                        String serviceCode = versionModel.getVersionCode();
+                        if(serviceCode == null)
+                            serviceCode = "1";
+                        int versionNo = WuhunDeviceTool.getAppVersionNo(MainActivity.this);
+                        if(versionNo < Integer.valueOf(serviceCode)) {
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateDialog(versionModel);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /** 提示更新
+     * @param versionModel*/
+    private void updateDialog(final CheckVersionModel.ResultBean versionModel) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(versionModel.getVersionDesc());
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //进入下一步，去确定是WiFi还是流量
+                confirmWifi(versionModel);
+            }
+        });
+        builder.setCancelable(false);//让对话框不能通过点击返回按钮或者其他区域让对话框消失
+        builder.create().show();
+    }
+
+    /** 网络判断
+     * @param versionModel*/
+    private void confirmWifi(final CheckVersionModel.ResultBean versionModel) {
+        if (isWifi()) {
+            Intent intent = new Intent(MainActivity.this, UpdateService.class);
+            intent.putExtra(UpdateService.SERVICE_VERSION_INFO, versionModel);
+            startService(intent);
+            Log.i("wuhun","开始下载");
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("提示");
+            builder.setMessage("是否要用流量进行下载更新");
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(MainActivity.this, UpdateService.class);
+                    intent.putExtra(UpdateService.SERVICE_VERSION_INFO, versionModel);
+                    startService(intent);
+                }
+            });
+            builder.setCancelable(false);
+            builder.create().show();
+        }
+    }
+    private boolean isWifi(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo.State state = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
+        return NetworkInfo.State.CONNECTED == state;
     }
 }

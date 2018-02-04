@@ -41,6 +41,7 @@
         <!-- android:name="com.amap.api.v2.apikey" -->
         <!-- android:value="高德地图的 AppKey" /> -->
 
+
         <!-- 欢迎界面 -->
         <activity
             android:name=".activity.login.WelcomeActivity"
@@ -139,7 +140,12 @@
         <activity android:name=".activity.other.DetailImgActivity" />
         <activity android:name=".activity.other.GroupAppointManagerActivity" />
         <activity android:name=".activity.login.RegistActivity" />
-        <activity android:name=".activity.login.fotgotPwdActivity"></activity>
+        <activity android:name=".activity.login.FotgotPwdActivity" />
+
+        <service
+            android:name=".service.UpdateService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>

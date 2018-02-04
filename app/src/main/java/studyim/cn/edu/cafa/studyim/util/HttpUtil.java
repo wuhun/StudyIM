@@ -28,8 +28,15 @@ import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
  */
 public class HttpUtil {
 
+    /** 检查版本 */
+    public static void checkServiceVersion(Callback callback){
+        String uri = Constant.CHECK_SERVICE_VERSION;
+        Request request = getRequest(uri, null);
+        OkHttpUtil.enqueue(request, callback);
+    }
+
     /** 忘记密码 */
-    public static void changePassword(String userId, String telephone,String password,Callback callback){
+    public static void forgetpassword(String userId, String telephone,String password,Callback callback){
         String uri = Constant.indexUrl + "CAFA/user/forgetpassword";
         Map<String, String> map = new HashMap<>();
         map.put("userId", userId);
