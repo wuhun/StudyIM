@@ -38,6 +38,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.activity.login.LoginActivity;
 import studyim.cn.edu.cafa.studyim.app.MyApplication;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
@@ -59,6 +60,7 @@ import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
 import tools.com.lvliangliang.wuhuntools.adapter.lazyViewPgaerAdapter.LazyFragmentPagerAdapter;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
+import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDeviceTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
@@ -344,6 +346,38 @@ public class MainActivity extends BaseActivity {
                 //取消红点
                 ImageView img = (ImageView) mTabHost.getCurrentTabView().findViewById(R.id.img_red_dot);
                 img.setVisibility(View.GONE);
+                if(position == 0) {
+                    //聊天列表
+                    if(WuhunDataTool.isNullString(getSPUtil().getTokens())) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("提示")
+                                .setMessage("游客无法预览，是否登录？")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        jumpToActivity(LoginActivity.class);
+                                        MainActivity.this.finish();
+                                    }
+                                }).setNegativeButton("取消", null)
+                                .show();
+//                        mTabHost.setCurrentTab(3);
+                    }
+                }else if(position == 2) {
+                    //通讯录
+                    if(WuhunDataTool.isNullString(getSPUtil().getTokens())) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("提示")
+                                .setMessage("游客无法预览，是否登录？")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        jumpToActivity(LoginActivity.class);
+                                        MainActivity.this.finish();
+                                    }
+                                }).setNegativeButton("取消", null)
+                                .show();
+                    }
+                }
             }
 
             @Override
@@ -488,9 +522,13 @@ public class MainActivity extends BaseActivity {
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent intent = new Intent(MainActivity.this, UpdateService.class);
-                    intent.putExtra(UpdateService.SERVICE_VERSION_INFO, versionModel);
-                    startService(intent);
+                    if (WuhunNetTools.isAvailable(context)) {
+                        Intent intent = new Intent(MainActivity.this, UpdateService.class);
+                        intent.putExtra(UpdateService.SERVICE_VERSION_INFO, versionModel);
+                        startService(intent);
+                    } else {
+                        WuhunToast.info("请检查网络状态").show();
+                    }
                 }
             });
             builder.setCancelable(false);

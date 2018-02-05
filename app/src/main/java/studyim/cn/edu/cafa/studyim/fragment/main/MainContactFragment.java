@@ -1,9 +1,7 @@
 package studyim.cn.edu.cafa.studyim.fragment.main;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,7 +27,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
-import studyim.cn.edu.cafa.studyim.activity.login.LoginActivity;
 import studyim.cn.edu.cafa.studyim.activity.other.FriendGetinfoActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import studyim.cn.edu.cafa.studyim.common.Constant;
@@ -184,30 +181,33 @@ public class MainContactFragment extends BaseFragment {
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        String result = response.body().string();
-                        FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
-                        if (null == friendList || null == friendList.getResult()) {
-                            handler.sendEmptyMessage(REQUEST_FAIL);
-                            return;
-                        } else {
-                            if (friendList.getResult().size() == friends.size()) {
-                                WuhunThread.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
+                public void onResponse(Call call, final Response response) throws IOException {
+                    String result = response.body().string();
+                    final FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (response.isSuccessful()) {
+                                if (null == friendList || null == friendList.getResult()) {
+                                    updateBottom(null);
+//                                  handler.sendEmptyMessage(REQUEST_FAIL);
+                                    return;
+                                } else {
+                                    if (friendList.getResult().size() == friends.size()) {
                                         updateBottom(friends);
-                                        TestLog.i("==> 网络获取： " + friends.toString());
+//                                        TestLog.i("==> 网络获取： " + friends.toString());
+                                    } else {
+                                        Message msg = handler.obtainMessage(FRIEND_LIST_SUCCESS, friendList);
+                                        handler.sendMessage(msg);
                                     }
-                                });
+                                }
                             } else {
-                                Message msg = handler.obtainMessage(FRIEND_LIST_SUCCESS, friendList);
-                                handler.sendMessage(msg);
+                                if(!TextUtils.isEmpty(friendList.getMsg())) {
+                                    WuhunToast.info(friendList.getMsg()).show();
+                                }
                             }
                         }
-                    } else {
-                        handler.sendEmptyMessage(REQUEST_FAIL);
-                    }
+                    });
                 }
             });
         } else {
@@ -243,7 +243,6 @@ public class MainContactFragment extends BaseFragment {
     }
 
     public static final int FRIEND_LIST_SUCCESS = 0x01;
-    public static final int REQUEST_FAIL = 0x02;
     public static final int REQUEST_ERROR = 0x03;
 
 
@@ -251,21 +250,7 @@ public class MainContactFragment extends BaseFragment {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == REQUEST_ERROR) {
-                WuhunToast.error(getResources().getString(R.string.request_error)).show();
-            } else if (msg.what == REQUEST_FAIL) {
-//                WuhunToast.warning(getResources().getString(R.string.request_fail)).show();
-                new AlertDialog.Builder(mActivity)
-                        .setTitle("登录超时")
-                        .setMessage("是否以游客方式继续浏览？")
-                        .setNegativeButton("去登陆", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                jumpToActivity(LoginActivity.class);
-                                mActivity.finish();
-                            }
-                        })
-                        .setPositiveButton("继续浏览", null)
-                        .show();
+                WuhunToast.error(getResources().getString(R.string.request_error_net)).show();
             } else if (msg.what == FRIEND_LIST_SUCCESS) {
                 FriendListModel model = (FriendListModel) msg.obj;
                 HOME_URL = model.getBefore();

@@ -125,7 +125,7 @@ public class UserAvatarUtil {
                 model.getUserId() + "",
                 WuhunDataTool.isNullString(model.getRemarkName()) ? model.getNickName() : model.getRemarkName(),
                 uri);
-        Glide.with(context).load(avatarUri)
+        Glide.with(MyApplication.mContext).load(avatarUri)
                 .error(R.mipmap.default_useravatar)
                 .placeholder(R.mipmap.default_useravatar)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)

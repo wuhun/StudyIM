@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -109,6 +110,8 @@ public class GroupDetailMenuActivity extends BaseActivity {
     RelativeLayout rl_group_name;
     @BindView(R.id.rl_group_introduce)
     RelativeLayout rl_group_introduce;
+    @BindView(R.id.rl_history)
+    RelativeLayout rl_history;
 
     List<GroupMemeberModel> dataList;
 
@@ -118,7 +121,11 @@ public class GroupDetailMenuActivity extends BaseActivity {
     private String targetid;
     public static final String GROUPID = "groupId";
     public static final String TARGETID = "targetId";
+    public static final String CONVERSTATIONTYPE = "converstationType";
+    private Conversation.ConversationType mConverstationType;
+
     private LQRAdapterForRecyclerView<GroupMemeberModel> adapter;
+    public static Conversation.ConversationType mConversationType;//会话类型
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +145,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
         backActivity.setOnClickListener(mClickListener);
         rl_group_files.setOnClickListener(mClickListener); // 文件下载列表
         rl_appointManager.setOnClickListener(mClickListener);
+        rl_history.setOnClickListener(mClickListener);
 
         adapter.setOnItemClickListener(mItemClickListener);
     }
@@ -408,6 +416,19 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                 }
                             }).setNegativeButton("取消", null).show();
                     break;
+                case R.id.rl_history:
+                    TestLog.i("历史消息=》"+ groupid + " - " + groupmasterid + " - " + groupmanagerid);
+
+                    TestLog.i("converstionType 1:" + GroupDetailMenuActivity.mConversationType);
+
+                    mConversationType = Conversation.ConversationType.valueOf(getIntent().getData().getLastPathSegment().toUpperCase(Locale.getDefault()));
+                    TestLog.i("converstionType 2:" + mConversationType);
+//                    Intent historyIntent = new Intent(mContext, GroupHistoryActivity.class);
+//                    historyIntent.putExtra(GroupAppointManagerActivity.GROUP_ID, groupid);
+//                    historyIntent.putExtra(GroupAppointManagerActivity.GROUP_MASTER_ID, groupmasterid);
+//                    historyIntent.putExtra(GroupAppointManagerActivity.GROUP_MANAGER_ID, groupmanagerid);
+//                    jumpToActivity(historyIntent);
+                    break;
             }
         }
     };
@@ -503,7 +524,8 @@ public class GroupDetailMenuActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-//                    TestLog.i("查询群成员result: " + result);
+                TestLog.i("查询群成员result: " + result);
+
                 final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
                 }.getType());
                 if (response.isSuccessful() && model != null && model.getCode() == 1) {
@@ -566,6 +588,9 @@ public class GroupDetailMenuActivity extends BaseActivity {
         Intent intent = getIntent();
         groupid = intent.getStringExtra(GROUPID);
         targetid = intent.getStringExtra(TARGETID);
+        mConverstationType = (Conversation.ConversationType) intent.getSerializableExtra(CONVERSTATIONTYPE);
+
+        TestLog.i("GroupDetailMenuActivity - getIntentDate() :" + mConversationType);
     }
 
     private void initView() {

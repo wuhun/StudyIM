@@ -75,8 +75,8 @@ public class FriendGetinfoActivity extends BaseActivity {
     @BindView(R.id.tv_class)
     TextView tvClass;
 
-    @BindView(R.id.ll_click_set_tag)
-    LinearLayout llClickSetTag;
+//    @BindView(R.id.ll_click_set_tag)
+//    LinearLayout llClickSetTag;
     @BindView(R.id.btn_add_constact)
     Button btnAddConstact;
     @BindView(R.id.btn_send_msg)
@@ -126,7 +126,7 @@ public class FriendGetinfoActivity extends BaseActivity {
     private void initeListener() {
         bodyImgMenu.setOnClickListener(mOnClickListener);//返回
         btnAddConstact.setOnClickListener(mOnClickListener);//添加好友
-        llClickSetTag.setOnClickListener(mOnClickListener);//设置注备
+        llRemarkMsg.setOnClickListener(mOnClickListener);//设置注备
         imgCallPhone.setOnClickListener(mOnClickListener);
         bodySearch.setOnClickListener(mOnClickListener);//右边菜单
         rlMenu.setOnClickListener(mOnClickListener);//隐藏菜单
@@ -152,7 +152,7 @@ public class FriendGetinfoActivity extends BaseActivity {
             }else if(v.getId() == R.id.rlMenu) {
                 // 隐藏菜单
                 hideMenu();
-            }else if(v.getId() == R.id.oiv_alias || v.getId() == R.id.ll_click_set_tag) {
+            }else if(v.getId() == R.id.oiv_alias || v.getId() == R.id.ll_remark_msg) {
                 // TODO: 2017/12/4 设置注备名称 REMARKNAME
                 Intent intent = new Intent(mContext, SetUserRemarkName.class);
                 intent.putExtra(SetUserRemarkName.FRIEND_INFO, friendInfo.getResult());
@@ -338,9 +338,11 @@ public class FriendGetinfoActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == REQUEST_ERROR) {
+                FriendGetinfoActivity.this.finish();
                 WuhunToast.normal("获取失败").show();
             }else if(msg.what == REQUEST_FAIL) {
                 WuhunToast.normal(getResources().getString(R.string.request_fail)).show();
+                FriendGetinfoActivity.this.finish();
             }else if(msg.what == REQUEST_SUCCESS) {
                 FriendGetInfoModel model = ((FriendGetInfoModel)msg.obj);
                 if (model.getCode() == 1) {
@@ -350,6 +352,7 @@ public class FriendGetinfoActivity extends BaseActivity {
                     showFriendInfo(friendInfo);
                 } else {
                     WuhunToast.normal("获取失败").show();
+                    FriendGetinfoActivity.this.finish();
                 }
             }else if(msg.what == DELETE_SUCCESS) {
                 hideMenu();

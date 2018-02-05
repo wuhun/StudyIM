@@ -133,6 +133,11 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.tv_browse:
 //                WuhunToast.info("游客方式浏览").show();
+                getSPUtil().setUSERID("");
+                getSPUtil().setTokens("");
+                getSPUtil().setRctoken("");
+                getSPUtil().setUsername("");
+
                 showLoadDialog();
                 handler.sendEmptyMessageDelayed(BROWSE, 500);
                 break;

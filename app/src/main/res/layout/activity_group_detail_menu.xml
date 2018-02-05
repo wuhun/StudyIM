@@ -156,6 +156,20 @@
                         style="@style/tag_text"
                         android:layout_centerVertical="true"/>
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:background="@drawable/selector_common_item">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="查看历史记录"
+                        style="@style/tag_text"
+                        android:layout_centerVertical="true"/>
+                </RelativeLayout>
                 <View style="@style/Line" />
             </LinearLayout>
 

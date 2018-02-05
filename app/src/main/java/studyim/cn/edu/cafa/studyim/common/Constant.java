@@ -18,7 +18,7 @@ public class Constant {
     /** 我的界面侧滑菜单-同步设置 下载地址 */
     public static final String ME_FRAGMENT_UPDATE_SETTINGS = "http://10.10.10.107:8080/test/mySettingList.json";
     /** 检查版本更新地址 */
-    public static final String CHECK_SERVICE_VERSION = "http://192.168.1.24:8080/test/checkServiceVersion.json";
+    public static final String CHECK_SERVICE_VERSION = "http://10.10.10.107:8080/test/checkServiceVersion.json";
 
     /////////////////////////////////////////////////////////////////////////////////
     /**  */
