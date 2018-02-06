@@ -60,7 +60,7 @@ public class RongGenerate {
         int textLeft = (int) ((width - paint.measureText(s)) / 2);
         int textTop = (int) (height - width / 2 + Math.abs(fm.ascent) / 2 - 25);
         canvas.drawText(s, textLeft, textTop, paint);
-        return saveBitmap(bitmap, string + "_" + userid);
+        return saveBitmap(bitmap, string + "_" + userid + ".jpg");
     }
 
 //    public static String generateDefaultAvatar(UserInfo userInfo) {

@@ -46,6 +46,9 @@ import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
 
+/**
+ * 查看历史记录
+ */
 public class GroupAppointManagerActivity extends BaseActivity {
 
     @BindView(R.id.head_bg)
@@ -73,6 +76,7 @@ public class GroupAppointManagerActivity extends BaseActivity {
     private String groupId = "";
     private String groupMasterId = "";
     private String groupManagerId = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

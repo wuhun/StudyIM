@@ -196,15 +196,19 @@ public class ConversationListActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
                 ArrayList<String> userIds = new ArrayList<>();
-                BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>(){}.getType());
-                if (response.isSuccessful() && model != null && model.getCode() == 1) {
-                    List<GroupMemeberModel> memeber = model.getResult();
-                    for (GroupMemeberModel groupitem : memeber) {
-                        if (groupitem != null) {
-                            userIds.add(groupitem.getRCID());
+                if (response.isSuccessful()) {
+                    BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>(){}.getType());
+                    if (model != null && model.getCode() == 1) {
+                        List<GroupMemeberModel> memeber = model.getResult();
+                        for (GroupMemeberModel groupitem : memeber) {
+                            if (groupitem != null) {
+                                userIds.add(groupitem.getRCID());
+                            }
                         }
+                        mCallMemberResult.onGotMemberList(userIds);
+                    }else {
+                        mCallMemberResult.onGotMemberList(null);
                     }
-                    mCallMemberResult.onGotMemberList(userIds);
                 } else {
                     mCallMemberResult.onGotMemberList(null);
                 }
@@ -262,7 +266,7 @@ public class ConversationListActivity extends BaseActivity {
                     Intent intent = new Intent(mContext, GroupDetailMenuActivity.class);
                     intent.putExtra(GroupDetailMenuActivity.GROUPID, mGroupId);
                     intent.putExtra(GroupDetailMenuActivity.TARGETID, mTargetId);
-                    intent.putExtra(GroupDetailMenuActivity.CONVERSTATIONTYPE, mConversationType);
+                    intent.putExtra(GroupDetailMenuActivity.CONVERSTATIONTYPE, mConversationType.getValue());
                     startActivityForResult(intent, 500);
                 }
             } else if (v.getId() == R.id.rl_tab_chat) {
@@ -344,8 +348,6 @@ public class ConversationListActivity extends BaseActivity {
 //        TestLog.i("对话界面ConversationListActivity： id:" + mTargetId + " - title:" + mTitle);
 //        mTargetIds = intent.getData().getQueryParameter("targetIds");
         mConversationType = Conversation.ConversationType.valueOf(intent.getData().getLastPathSegment().toUpperCase(Locale.getDefault()));
-
-        TestLog.i("ConversationListActivity:" + mConversationType);
 
         setActionBarTitle(mConversationType, mTargetId);
         bodyTvTitle.setText(mTitle);

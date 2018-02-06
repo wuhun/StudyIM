@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -122,7 +121,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
     public static final String GROUPID = "groupId";
     public static final String TARGETID = "targetId";
     public static final String CONVERSTATIONTYPE = "converstationType";
-    private Conversation.ConversationType mConverstationType;
+    private int mConverstationType;
 
     private LQRAdapterForRecyclerView<GroupMemeberModel> adapter;
     public static Conversation.ConversationType mConversationType;//会话类型
@@ -417,17 +416,13 @@ public class GroupDetailMenuActivity extends BaseActivity {
                             }).setNegativeButton("取消", null).show();
                     break;
                 case R.id.rl_history:
-                    TestLog.i("历史消息=》"+ groupid + " - " + groupmasterid + " - " + groupmanagerid);
+                    TestLog.i("历史消息=》"+ groupid + " - " + groupmasterid + " - "
+                            + groupmanagerid + " - " + mConverstationType );
+                    GroupModel mGroup = DBManager.getmInstance().findGroupByID(groupid);
 
-                    TestLog.i("converstionType 1:" + GroupDetailMenuActivity.mConversationType);
-
-                    mConversationType = Conversation.ConversationType.valueOf(getIntent().getData().getLastPathSegment().toUpperCase(Locale.getDefault()));
-                    TestLog.i("converstionType 2:" + mConversationType);
-//                    Intent historyIntent = new Intent(mContext, GroupHistoryActivity.class);
-//                    historyIntent.putExtra(GroupAppointManagerActivity.GROUP_ID, groupid);
-//                    historyIntent.putExtra(GroupAppointManagerActivity.GROUP_MASTER_ID, groupmasterid);
-//                    historyIntent.putExtra(GroupAppointManagerActivity.GROUP_MANAGER_ID, groupmanagerid);
-//                    jumpToActivity(historyIntent);
+                    Intent historyIntent = new Intent(mContext, GroupHistoryActivity.class);
+                    // TODO: 2018/2/6 查看历史记录跳转
+                    jumpToActivity(historyIntent);
                     break;
             }
         }
@@ -477,6 +472,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                 public void onClick(View v) {
                                     String[] imgs = {avatarUri};
                                     Intent intent = new Intent(mContext, DetailImgActivity.class);
+                                    intent.putExtra(DetailImgActivity.ICON, imgs);
                                     intent.putExtra(DetailImgActivity.ICON, imgs);
                                     jumpToActivity(intent);
                                 }
@@ -606,7 +602,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
         Intent intent = getIntent();
         groupid = intent.getStringExtra(GROUPID);
         targetid = intent.getStringExtra(TARGETID);
-        mConverstationType = (Conversation.ConversationType) intent.getSerializableExtra(CONVERSTATIONTYPE);
+        mConverstationType = (int) intent.getSerializableExtra(CONVERSTATIONTYPE);
 
         TestLog.i("GroupDetailMenuActivity - getIntentDate() :" + mConversationType);
     }

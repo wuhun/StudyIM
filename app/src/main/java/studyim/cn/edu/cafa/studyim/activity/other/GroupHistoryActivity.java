@@ -39,6 +39,15 @@ public class GroupHistoryActivity extends AppCompatActivity {
     public static final String RCTOKEN = "rc_token";
     private String GroupRcid;
 
+    public static final String GROUP_ID = "group_id";
+    public static final String GROUP_MASTER_ID = "group_master_id";
+    public static final String GROUP_MANAGER_ID = "group_manager_id";
+    public static final String CONVERSTATION_TYPE = "converstation_type";
+    private String converstationType= "";
+    private String groupId = "";
+    private String groupMasterId = "";
+    private String groupManagerId = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

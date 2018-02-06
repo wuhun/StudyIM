@@ -14,6 +14,7 @@ import java.util.List;
 
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.fragment.other.DetailImgFragment;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 public class DetailImgActivity extends AppCompatActivity {
 
@@ -46,6 +47,8 @@ public class DetailImgActivity extends AppCompatActivity {
         String[] imgurls = getIntent().getStringArrayExtra(ICON);
         iIndex = getIntent().getIntExtra(PAGE,0);
 
+        TestLog.i("===>pictrue:" + imgurls[0]);
+
         // 数组 --> List集合
         for(String url:imgurls){
             imgLists.add(url);
@@ -73,7 +76,8 @@ public class DetailImgActivity extends AppCompatActivity {
             return;
         }
         tv_page.setText((iIndex+1) + "/" + imgLists.size());
-        String title = imgLists.get(iIndex).substring(imgLists.get(iIndex).lastIndexOf("/")+1);
+        String title =(imgLists.get(iIndex).indexOf("/") != -1) ?
+                (imgLists.get(iIndex).substring(imgLists.get(iIndex).lastIndexOf("/")+1) ): imgLists.get(iIndex).toString();
         tv_title.setText(title);
     }
 
@@ -101,7 +105,8 @@ public class DetailImgActivity extends AppCompatActivity {
             return;
         }
         tv_page.setText((position+1) + "/" + imgLists.size());
-        String title = imgLists.get(position).substring(imgLists.get(position).lastIndexOf("/")+1);
+        String title = (imgLists.get(position).indexOf("/") != -1) ?
+                (imgLists.get(position).substring(imgLists.get(position).lastIndexOf("/")+1) ): imgLists.get(position).toString();
         tv_title.setText(title);
 
         iIndex = position;

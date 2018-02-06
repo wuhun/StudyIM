@@ -157,6 +157,7 @@
                         android:layout_centerVertical="true"/>
                 </RelativeLayout>
 
+                <View style="@style/Line" />
                 <RelativeLayout
                     android:id="@+id/rl_history"
                     android:layout_width="match_parent"

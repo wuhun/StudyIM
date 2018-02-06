@@ -7,10 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.polites.android.GestureImageView;
 
 import studyim.cn.edu.cafa.studyim.R;
-import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDeviceTool;
 
 
@@ -82,8 +83,12 @@ public class DetailImgFragment extends Fragment {
         if (null != imgResourceURL || !"".equals(imgResourceURL)) {
             imageView.setVisibility(View.VISIBLE);
             //ImageLoader.getInstance().displayImage(imgResourceURL, imageView);
-            UserAvatarUtil.showImage(getContext(), imgResourceURL, imageView);
-
+//            UserAvatarUtil.showImage(get, imgResourceURL, imageView);
+            Glide.with(getActivity()).load(imgResourceURL)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.default_user)
+                    .into(imageView);
         }
     }
 
