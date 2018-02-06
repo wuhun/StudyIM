@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/IMLib/IMLib.iml" filepath="$PROJECT_DIR$/IMLib/IMLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/StudyIM.iml" filepath="$PROJECT_DIR$/StudyIM.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gestureimageview/gestureimageview.iml" filepath="$PROJECT_DIR$/gestureimageview/gestureimageview.iml" />
       <module fileurl="file://$PROJECT_DIR$/smssdk/smssdk.iml" filepath="$PROJECT_DIR$/smssdk/smssdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/wuhuntools/wuhuntools.iml" filepath="$PROJECT_DIR$/wuhuntools/wuhuntools.iml" />
     </modules>

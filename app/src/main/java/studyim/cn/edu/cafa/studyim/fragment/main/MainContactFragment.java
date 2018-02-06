@@ -375,8 +375,8 @@ public class MainContactFragment extends BaseFragment {
                 Friend friend = mData.get(position);
                 String userid = friend.getUSERBUDDYID();
                 Intent intent = new Intent(mActivity, FriendGetinfoActivity.class);
-//                intent.putExtra(FriendGetinfoActivity.GET_USERID, userid);
                 intent.putExtra(FriendGetinfoActivity.GET_USERID, userid);
+//                intent.putExtra(FriendGetinfoActivity.GET_USERID, userid);
                 jumpToActivity(intent);
             }
         });

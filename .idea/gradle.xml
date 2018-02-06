@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/IMKit" />
             <option value="$PROJECT_DIR$/IMLib" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/gestureimageview" />
             <option value="$PROJECT_DIR$/smssdk" />
             <option value="$PROJECT_DIR$/wuhuntools" />
           </set>

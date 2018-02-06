@@ -1,9 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="studyim.cn.edu.cafa.studyim.activity.other.DetailImgActivity">
+    tools:context="studyim.cn.edu.cafa.studyim.activity.other.DetailImgActivity"
+    android:background="#222222">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_img_prev_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
+
+    <TextView
+        android:id="@+id/tv_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1/1"
+        android:textColor="#ffffff"
+        android:padding="10dp"
+        android:background="@drawable/toast_frame"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="xxxxx.jpg"
+        android:textColor="#fff"
+        android:background="@drawable/toast_frame"/>
+
+</RelativeLayout>

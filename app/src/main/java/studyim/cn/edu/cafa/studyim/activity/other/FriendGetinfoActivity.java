@@ -154,10 +154,11 @@ public class FriendGetinfoActivity extends BaseActivity {
                 hideMenu();
             }else if(v.getId() == R.id.oiv_alias || v.getId() == R.id.ll_remark_msg) {
                 // TODO: 2017/12/4 设置注备名称 REMARKNAME
-                Intent intent = new Intent(mContext, SetUserRemarkName.class);
-                intent.putExtra(SetUserRemarkName.FRIEND_INFO, friendInfo.getResult());
-//                startActivityForResult(intent, USER_REMARK_NAME);
-                jumpToActivity(intent);
+                if(friendInfo!=null && friendInfo.getResult()!=null) {
+                    Intent intent = new Intent(mContext, SetUserRemarkName.class);
+                    intent.putExtra(SetUserRemarkName.FRIEND_INFO, friendInfo.getResult());
+                    jumpToActivity(intent);
+                }
             }else if(v.getId() == R.id.oiv_delete) {
                 // TODO: 2017/12/4 删除当前用户
                 if (WuhunNetTools.isAvailable(mContext)) {
@@ -279,6 +280,9 @@ public class FriendGetinfoActivity extends BaseActivity {
         bodyTvTitle.setText("详细资料");
 //        bodySearch.setVisibility(View.GONE);
         bodySearch.setImageResource(R.mipmap.head_menu_more);
+//        if(!TextUtils.isEmpty(extraIsFriend) && extraIsFriend.toLowerCase().equals("n")) {
+//            bodySearch.setVisibility(View.GONE);
+//        }
     }
 
     public void getIntentData() {
@@ -350,6 +354,9 @@ public class FriendGetinfoActivity extends BaseActivity {
                     DBManager.getmInstance().saveFriendUserInfo(friendInfo);
                     friendUserInfo = friendInfo;
                     showFriendInfo(friendInfo);
+                    if(friendInfo.getISBUDDYS().toLowerCase().equals("n")) {
+                        bodySearch.setVisibility(View.GONE);
+                    }
                 } else {
                     WuhunToast.normal("获取失败").show();
                     FriendGetinfoActivity.this.finish();
@@ -409,7 +416,22 @@ public class FriendGetinfoActivity extends BaseActivity {
         tvMajor.setText(friendInfo.getMajor());
         tvClass.setText(friendInfo.getClassX());
 //        RongGenerate.generateDefaultAvatar(nickname, friendInfo.getUserId()+"");
-        UserAvatarUtil.showAvatar(this, friendInfo, Constant.HOME_URL, imgAvatar);
+        String uri = UserAvatarUtil.initUri(Constant.HOME_URL, friendInfo.getAvatar());
+        final String avatarUri = UserAvatarUtil.getAvatarUri(
+                friendInfo.getUserId() + "",
+                WuhunDataTool.isNullString(friendInfo.getRemarkName()) ? friendInfo.getNickName() : friendInfo.getRemarkName(),
+                uri);
+        UserAvatarUtil.showImage(this, avatarUri, imgAvatar);
+
+        imgAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] avaters = {avatarUri};
+                Intent intent = new Intent(mContext, DetailImgActivity.class);
+                intent.putExtra(DetailImgActivity.ICON, avaters);
+                jumpToActivity(intent);
+            }
+        });
     }
 
 

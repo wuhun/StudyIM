@@ -443,14 +443,7 @@ public class MainActivity extends BaseActivity {
     private void checkVersion() {
         HttpUtil.checkServiceVersion(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                WuhunThread.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        WuhunToast.error(R.string.request_error_net).show();
-                    }
-                });
-            }
+            public void onFailure(Call call, IOException e) {}
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {

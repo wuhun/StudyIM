@@ -469,8 +469,18 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                 tv_groupmsg.setText(groupInfo.getGROUPMSG());
                             String groupimage = groupInfo.getGROUPIMAGE();
                             String uri = UserAvatarUtil.initUri(Constant.HOME_URL, groupimage);
-                            String avatarUri = UserAvatarUtil.getAvatarUri(groupInfo.getGROUPID() + "", groupInfo.getGROUPNAME(), uri);
+                            final String avatarUri = UserAvatarUtil.getAvatarUri(groupInfo.getGROUPID() + "", groupInfo.getGROUPNAME(), uri);
                             UserAvatarUtil.showImage(mContext, avatarUri, img_group_avater);
+
+                            img_group_avater.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String[] imgs = {avatarUri};
+                                    Intent intent = new Intent(mContext, DetailImgActivity.class);
+                                    intent.putExtra(DetailImgActivity.ICON, imgs);
+                                    jumpToActivity(intent);
+                                }
+                            });
 
                             //更新缓存
                             GroupModel groupModel = new GroupModel();
@@ -525,44 +535,52 @@ public class GroupDetailMenuActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
                 TestLog.i("查询群成员result: " + result);
-
-                final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
-                }.getType());
-                if (response.isSuccessful() && model != null && model.getCode() == 1) {
-                    before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
-                    final List<GroupMemeberModel> memeber = model.getResult();
+                if (response.isSuccessful()) {
+                    final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
+                    }.getType());
+                    if(model != null && model.getCode() == 1) {
+                        before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
+                        final List<GroupMemeberModel> memeber = model.getResult();
 //                        TestLog.i("循环" + memeber);
-                    WuhunThread.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dataList.clear();
-                            dataList = memeber;
-                            LastAddMemeber();//添加最后的添加按钮
-                            adapter.setData(dataList);
-                            bodyTvTitle.setText("群组信息(" + (dataList.size() - 1) + ")");
-                            for (GroupMemeberModel groupitem : memeber) {
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dataList.clear();
+                                dataList = memeber;
+                                LastAddMemeber();//添加最后的添加按钮
+                                adapter.setData(dataList);
+                                bodyTvTitle.setText("群组信息(" + (dataList.size() - 1) + ")");
+                                for (GroupMemeberModel groupitem : memeber) {
 //                            TestLog.i("成员: " + groupitem);
-                                if (WuhunDataTool.isNullString(groupitem.getType())) {
-                                    String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
-                                    String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
-                                    String avatarUri = UserAvatarUtil.getAvatarUri(
-                                            groupitem.getUSERID() + "", name, uri);
-                                    UserInfo userInfo = new UserInfo(groupitem.getRCID(), name, Uri.parse(avatarUri));
-                                    RongIM.getInstance().refreshUserInfoCache(userInfo);
+                                    if (WuhunDataTool.isNullString(groupitem.getType())) {
+                                        String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
+                                        String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
+                                        String avatarUri = UserAvatarUtil.getAvatarUri(
+                                                groupitem.getUSERID() + "", name, uri);
+                                        UserInfo userInfo = new UserInfo(groupitem.getRCID(), name, Uri.parse(avatarUri));
+                                        RongIM.getInstance().refreshUserInfoCache(userInfo);
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }else {
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String msg = model.getMsg();
+                                if (!WuhunDataTool.isNullString(msg)) {
+                                    WuhunToast.info(msg).show();
+                                } else {
+                                    WuhunToast.info("登录超时，请重新登录").show();
+                                }
+                            }
+                        });
+                    }
                 } else {
                     WuhunThread.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            String msg = model.getMsg();
-                            if (!WuhunDataTool.isNullString(msg)) {
-                                WuhunToast.info(msg).show();
-                            } else {
-                                WuhunToast.info("登录超时，请重新登录").show();
-                            }
+                            WuhunToast.info(R.string.request_error_net).show();
                         }
                     });
                 }
@@ -613,7 +631,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
                 if (!WuhunDataTool.isNullString(memeberModel.getType())) {
                     // 添加好友,删除好友
                     if (memeberModel.getType().equals(ADD_MEMEBER_TYPE)) {
-                        tvUsername.setVisibility(View.GONE);
+                        tvUsername.setVisibility(View.INVISIBLE);
                         imageAvater.setImageResource(R.drawable.add_group_head);
                     }
                 } else {
