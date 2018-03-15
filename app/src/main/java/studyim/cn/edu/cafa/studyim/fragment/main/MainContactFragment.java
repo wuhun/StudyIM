@@ -250,7 +250,8 @@ public class MainContactFragment extends BaseFragment {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == REQUEST_ERROR) {
-                WuhunToast.error(getResources().getString(R.string.request_error_net)).show();
+                if(MainContactFragment.this.isAdded())
+                    WuhunToast.error(getResources().getString(R.string.request_error_net)).show();
             } else if (msg.what == FRIEND_LIST_SUCCESS) {
                 FriendListModel model = (FriendListModel) msg.obj;
                 HOME_URL = model.getBefore();

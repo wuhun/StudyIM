@@ -301,8 +301,13 @@ public class FotgotPwdActivity extends BaseActivity {
                 case R.id.btn_ok:
                     mPhoneNum = phoneNum.getText().toString().trim();
                     mCode = regCode.getText().toString().trim();
-                    if(!isCheckPhone) {
-                        submitCode("+86", mPhoneNum, mCode);
+                    if (!isCheckPhone) {
+                        if(WuhunELUtil.isMobile(mPhoneNum)) {
+                            submitCode("+86", mPhoneNum, mCode);
+                        } else {
+                            WuhunToast.info("请先验证手机").show();
+                            return;
+                        }
                     }
                     handler.sendEmptyMessageDelayed(1, 300);
                     LoadDialog.show(mContext);

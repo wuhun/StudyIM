@@ -266,7 +266,7 @@ public class ConversationListActivity extends BaseActivity {
                     Intent intent = new Intent(mContext, GroupDetailMenuActivity.class);
                     intent.putExtra(GroupDetailMenuActivity.GROUPID, mGroupId);
                     intent.putExtra(GroupDetailMenuActivity.TARGETID, mTargetId);
-                    intent.putExtra(GroupDetailMenuActivity.CONVERSTATIONTYPE, mConversationType.getValue());
+                    intent.putExtra(GroupDetailMenuActivity.CONVERSTATIONTYPE, mConversationType);
                     startActivityForResult(intent, 500);
                 }
             } else if (v.getId() == R.id.rl_tab_chat) {

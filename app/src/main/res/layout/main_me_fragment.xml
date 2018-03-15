@@ -52,7 +52,8 @@
                 android:layout_height="@dimen/dp_40"
                 android:padding="8dp"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/add"/>
+                android:src="@drawable/add"
+                android:visibility="gone"/>
         </RelativeLayout>
         <!-- 内容 -->
         <RelativeLayout

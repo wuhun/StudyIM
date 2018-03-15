@@ -11,10 +11,7 @@ import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.MessageContent;
 import io.rong.message.ContactNotificationMessage;
-import io.rong.message.RecallNotificationMessage;
-import studyim.cn.edu.cafa.studyim.common.Constant;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
-import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 import static tools.com.lvliangliang.wuhuntools.app.WuhunApplication.getCurProcessName;
 
@@ -27,7 +24,7 @@ import static tools.com.lvliangliang.wuhuntools.app.WuhunApplication.getCurProce
  * 修订历史：
  * ================================================
  */
-public class RongApplication extends Application implements RongIMClient.OnRecallMessageListener {
+public class RongApplication extends Application implements RongIMClient.OnReceiveMessageListener {
 
     @Override
     public void onCreate() {
@@ -64,50 +61,26 @@ public class RongApplication extends Application implements RongIMClient.OnRecal
             RongIM.init(this);
         }
         //监听
-        RongIMClient.setOnRecallMessageListener(this);
+//        RongIMClient.setOnRecallMessageListener(this);//撤回
+        RongIM.setOnReceiveMessageListener(this); // 接收消息的监听器
     }
 
-
     @Override
-    public boolean onMessageRecalled(Message message, RecallNotificationMessage recallNotificationMessage) {
+    public boolean onReceived(Message message, int i) {
         MessageContent messageContent = message.getContent();
+        TestLog.i("onMessageRecalled _ 消息监听");
         if (messageContent instanceof ContactNotificationMessage) {
             ContactNotificationMessage contactNotificationMessage = (ContactNotificationMessage) messageContent;
-            if (contactNotificationMessage.getOperation().equals(ContactNotificationMessage.CONTACT_OPERATION_REQUEST)) {
-                //对方发来好友邀请
-                WuhunDebug.debug("对方发来好友邀请");
-                BroadcastManager.getInstance(getApplicationContext()).sendBroadcast(Constant.ADD_FRIEND_RED_DOT);
-            } else {
-                WuhunDebug.debug("对方同意我的好友请求" + contactNotificationMessage.getExtra());
-//                //对方同意我的好友请求
-//                ContactNotificationMessageData c = null;
-//                try {
-//                    c = JsonMananger.jsonToBean(contactNotificationMessage.getExtra(), ContactNotificationMessageData.class);
-//                } catch (HttpException e) {
-//                    e.printStackTrace();
-//                    return false;
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    return false;
-//                }
-//                if (c != null) {
-//                    if (DBManager.getInstance().isMyFriend(contactNotificationMessage.getSourceUserId()))
-//                        return false;
-//                    DBManager.getInstance().saveOrUpdateFriend(
-//                            new Friend(contactNotificationMessage.getSourceUserId(),
-//                                    c.getSourceUserNickname(),
-//                                    null, c.getSourceUserNickname(), null, null,
-//                                    null, null,
-//                                    PinyinUtils.getPinyin(c.getSourceUserNickname()),
-//                                    PinyinUtils.getPinyin(c.getSourceUserNickname())
-//                            )
-//                    );
-//                    BroadcastManager.getInstance(UIUtils.getContext()).sendBroadcast(AppConst.UPDATE_FRIEND);
-//                    BroadcastManager.getInstance(UIUtils.getContext()).sendBroadcast(AppConst.UPDATE_RED_DOT);
-//                }
-            }
+
+//            if (contactNotificationMessage.getOperation().equals(ContactNotificationMessage.CONTACT_OPERATION_REQUEST)) {
+//                //对方发来好友邀请
+//                WuhunDebug.debug("对方发来好友邀请");
+//                BroadcastManager.getInstance(getApplicationContext()).sendBroadcast(Constant.ADD_FRIEND_RED_DOT);
+//            } else {
+//                WuhunDebug.debug("对方同意我的好友请求" + contactNotificationMessage.getExtra());
+//                TestLog.i("请求监听==>" + contactNotificationMessage.getExtra());
+//            }
         }
         return false;
     }
-
 }

@@ -102,7 +102,7 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void permissionDenied(@NonNull String[] permission) { }
-        }, new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA});
+        }, new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO});
     }
 
     private void initView() {

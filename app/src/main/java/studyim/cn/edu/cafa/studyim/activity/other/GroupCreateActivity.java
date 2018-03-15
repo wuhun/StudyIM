@@ -62,6 +62,7 @@ import tools.com.lvliangliang.wuhuntools.util.WuhunFileTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunImgTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunState;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
+import tools.com.lvliangliang.wuhuntools.widget.loadDialog.LoadDialog;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getContext;
 
@@ -168,11 +169,11 @@ public class GroupCreateActivity extends BaseActivity {
                     showPhotoDialog();//拍照 - 本地 - 取消 菜单
                     break;
                 case R.id.create_ok:
-                    // 1、创建群 2、添加好友
+                    // 1、创建群
                     String groupName = createGroupname.getText().toString();
-                    TestLog.i("输入的内容：" + groupName);
                     if (groupName.length() >= 2 && groupName.length() <= 10) {
                         createGroup(groupName);//创建群组
+                        LoadDialog.show(mContext);
                     } else {
                         WuhunToast.info("群名称不符合要求").show();
                     }
@@ -190,6 +191,7 @@ public class GroupCreateActivity extends BaseActivity {
     private void createGroup(String groupname) {
         if (cropUri == null || cropUri.getPath() == null) {
             WuhunToast.info("请上传群头像").show();
+            LoadDialog.dismiss(mContext);
             return;
         }
 //        TestLog.i("群名称：" + groupname + " - 头像：" + picUri.getPath() + " - 类型：" + groupType);
@@ -202,6 +204,7 @@ public class GroupCreateActivity extends BaseActivity {
                             GroupCreateActivity.this.finish();
                         }
                     }).show();
+            LoadDialog.dismiss(mContext);
             return;
         }
 
@@ -209,6 +212,7 @@ public class GroupCreateActivity extends BaseActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 handler.sendEmptyMessage(WuhunState.REQUEST_ERROR);
+                LoadDialog.dismiss(mContext);
             }
 
             @Override
@@ -217,8 +221,8 @@ public class GroupCreateActivity extends BaseActivity {
                 TestLog.i("result: " + result);
                 if (result != null && response.isSuccessful()) {
                     GroupCreateModel model = MyApplication.getGson().fromJson(result, GroupCreateModel.class);
-                    if(model.getCode() == 1) {
-                        if(RongContext.getInstance() != null && model != null) {
+                    if (model.getCode() == 1) {
+                        if (RongContext.getInstance() != null && model != null) {
                             // TODO: 2018/1/9 更新群列表信息
                             BroadcastManager.getInstance(getContext()).sendBroadcast(Constant.UPDATE_GROUP_LIST);
                             // 跳转到群聊界面
@@ -231,11 +235,15 @@ public class GroupCreateActivity extends BaseActivity {
                                     .appendQueryParameter("groupId", rcid.substring(rcid.indexOf("group") + 5))
                                     .build();
                             startActivity(new Intent("android.intent.action.VIEW", uri));
+                            LoadDialog.dismiss(mContext);
                             GroupCreateActivity.this.finish();
                         }
+                    } else {
+                        LoadDialog.dismiss(mContext);
                     }
                 } else {
                     WuhunToast.info(R.string.request_error_net).show();
+                    LoadDialog.dismiss(mContext);
                 }
             }
         });

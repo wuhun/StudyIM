@@ -58,6 +58,7 @@
         <!-- 登录 -->
         <activity
             android:name=".activity.login.LoginActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <!-- 主页 -->
@@ -68,18 +69,46 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.main.StudyShearchActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_study_shearch"
             android:screenOrientation="portrait"
-            android:theme="@style/MyTheme" />
+            android:theme="@style/MyTheme"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name="tools.com.lvliangliang.wuhuntools.permission.PermissionActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.other.DetailUserInfoActivity" />
-        <activity android:name=".activity.other.SetUserRemarkName" />
-        <activity android:name=".activity.other.SendAddFriendActivity" />
-        <activity android:name=".activity.other.FriendGetAddListActivity" />
-        <activity android:name=".activity.other.FriendGetinfoActivity" />
-        <activity android:name=".activity.other.SessionActivity" />
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.DetailUserInfoActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.SetUserRemarkName"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.SendAddFriendActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.FriendGetAddListActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.FriendGetinfoActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.SessionActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <!-- 会话页面 -->
         <activity
             android:name=".activity.rong.ConversationListActivity"
@@ -114,17 +143,69 @@
         </activity>
         <activity
             android:name=".activity.other.GroupSelectFriendActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".activity.other.GroupCreateActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".activity.other.WebViewActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity android:name=".activity.other.GroupDetailMenuActivity" />
-        <activity android:name=".activity.other.GroupAddFriendActivity" />
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.GroupDetailMenuActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.GroupAddFriendActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.GroupDeleteFriendActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".activity.other.GroupFilesActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.DetailImgActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.other.GroupAppointManagerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.login.RegistActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.login.FotgotPwdActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activity.other.GroupHistoryActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
+
+        <service
+            android:name=".service.UpdateService"
+            android:enabled="true"
+            android:exported="false" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -135,19 +216,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/rc_file_path" />
         </provider>
-
-        <activity android:name=".activity.other.GroupFilesActivity" />
-        <activity android:name=".activity.other.DetailImgActivity" />
-        <activity android:name=".activity.other.GroupAppointManagerActivity" />
-        <activity android:name=".activity.login.RegistActivity" />
-        <activity android:name=".activity.login.FotgotPwdActivity" />
-
-        <service
-            android:name=".service.UpdateService"
-            android:enabled="true"
-            android:exported="false" />
-
-        <activity android:name=".activity.other.GroupHistoryActivity"></activity>
     </application>
 
 </manifest>

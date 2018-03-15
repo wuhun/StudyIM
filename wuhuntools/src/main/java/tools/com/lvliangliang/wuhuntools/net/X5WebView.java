@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -12,9 +13,11 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
+import com.tencent.smtt.export.external.interfaces.JsPromptResult;
 import com.tencent.smtt.export.external.interfaces.JsResult;
 import com.tencent.smtt.sdk.CookieSyncManager;
 import com.tencent.smtt.sdk.DownloadListener;
+import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
@@ -55,7 +58,7 @@ public class X5WebView extends WebView {
         webSetting.setBuiltInZoomControls(true);//出现缩放工具
         webSetting.setUseWideViewPort(true);//推荐使用的窗口
         webSetting.setSupportMultipleWindows(true);//新窗口
-        // webSetting.setLoadWithOverviewMode(true);//充满全屏(webview加载的页面的模式)
+         webSetting.setLoadWithOverviewMode(true);//充满全屏(webview加载的页面的模式)
         webSetting.setAppCacheEnabled(true);// 开启 Application Caches 功能
         // webSetting.setDatabaseEnabled(true);
         webSetting.setDomStorageEnabled(true);
@@ -88,14 +91,17 @@ public class X5WebView extends WebView {
 
         @Override
         public boolean onJsConfirm(WebView arg0, String arg1, String arg2, JsResult arg3) {
-            Log.i("wuhun","confirm对话框");
             return super.onJsConfirm(arg0, arg1, arg2, arg3);
         }
 
         @Override
         public boolean onJsAlert(WebView arg0, String arg1, String arg2, JsResult arg3) {
-            Log.i("wuhun","alert对话框");
             return super.onJsAlert(null, arg1, arg2, arg3);
+        }
+
+        @Override
+        public boolean onJsPrompt(WebView webView, String s, String s1, String s2, JsPromptResult jsPromptResult) {
+            return super.onJsPrompt(webView, s, s1, s2, jsPromptResult);
         }
 
         /////////////////////////////////////【视屏全屏方法】/////////////////////////////////////
@@ -147,7 +153,37 @@ public class X5WebView extends WebView {
 //            bodyTvTitle.setText(title);
             loding.setTitle(title);
         }
+        /////////////////////////////////////【调用系统相册】/////////////////////////////////////
+        // For Android < 3.0
+        public void openFileChooser(ValueCallback<Uri> valueCallback) {
+            uploadMessage = valueCallback;
+            imgSelect.openImageChooserActivity();
+        }
+
+        // For Android  >= 3.0
+        public void openFileChooser(ValueCallback valueCallback, String acceptType) {
+            uploadMessage = valueCallback;
+            imgSelect.openImageChooserActivity();
+        }
+
+        //For Android  >= 4.1
+        public void openFileChooser(ValueCallback<Uri> valueCallback, String acceptType, String capture) {
+            uploadMessage = valueCallback;
+            imgSelect.openImageChooserActivity();
+        }
+
+        // For Android >= 5.0
+        @Override
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+            uploadMessageAboveL = filePathCallback;
+            imgSelect.openImageChooserActivity();
+            return true;
+        }
     };
+
+    public ValueCallback<Uri> uploadMessage;
+    public ValueCallback<Uri[]> uploadMessageAboveL;
+
 
 
     private DownloadListener mDownloadListener = new DownloadListener() {
@@ -189,7 +225,11 @@ public class X5WebView extends WebView {
     }
 
     private WebLoding loding;
+    private ImageSelect imgSelect;
 
+    public void setImgSelect(ImageSelect imgSelect) {
+        this.imgSelect = imgSelect;
+    }
 
     public void setOnloding(WebLoding loding) {
         this.loding = loding;
@@ -203,4 +243,7 @@ public class X5WebView extends WebView {
         void setTitle(String title);
     }
 
+    public interface ImageSelect{
+        void openImageChooserActivity();
+    }
 }

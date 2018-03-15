@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
@@ -64,6 +66,7 @@ import tools.com.lvliangliang.wuhuntools.util.WuhunFileTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunImgTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
+import tools.com.lvliangliang.wuhuntools.widget.loadDialog.LoadDialog;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getContext;
@@ -112,7 +115,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
     @BindView(R.id.rl_history)
     RelativeLayout rl_history;
 
-    List<GroupMemeberModel> dataList;
+    List<GroupMemeberModel> dataList = new ArrayList<>();;
 
     Context mContext;
     private String before; //头像前缀
@@ -121,7 +124,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
     public static final String GROUPID = "groupId";
     public static final String TARGETID = "targetId";
     public static final String CONVERSTATIONTYPE = "converstationType";
-    private int mConverstationType;
+//    private Conversation.ConversationType mConverstationType;
 
     private LQRAdapterForRecyclerView<GroupMemeberModel> adapter;
     public static Conversation.ConversationType mConversationType;//会话类型
@@ -144,9 +147,19 @@ public class GroupDetailMenuActivity extends BaseActivity {
         backActivity.setOnClickListener(mClickListener);
         rl_group_files.setOnClickListener(mClickListener); // 文件下载列表
         rl_appointManager.setOnClickListener(mClickListener);
-        rl_history.setOnClickListener(mClickListener);
+//        rl_history.setOnClickListener(mClickListener);
+        rl_history.setVisibility(View.GONE);
 
         adapter.setOnItemClickListener(mItemClickListener);
+
+        bodyTvTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                updateGroupMemeber();
+//                adapter.setData(dataList);
+                TestLog.i("列表：" + dataList.toString());
+            }
+        });
     }
 
     private OnItemClickListener mItemClickListener = new OnItemClickListener() {
@@ -157,6 +170,12 @@ public class GroupDetailMenuActivity extends BaseActivity {
             if (memeberModel != null && !WuhunDataTool.isNullString(memeberModel.getType())
                     && memeberModel.getType().equals(ADD_MEMEBER_TYPE)) {
                 Intent intent = new Intent(mContext, GroupAddFriendActivity.class);
+                intent.putExtra(GroupAddFriendActivity.GROUPID, groupid);
+                startActivityForResult(intent, 200);
+            }else if(memeberModel != null && !WuhunDataTool.isNullString(memeberModel.getType())
+                    && memeberModel.getType().equals(DELETE_MEMEBER_TYPE)){
+                TestLog.i("删除==》界面");
+                Intent intent = new Intent(mContext, GroupDeleteFriendActivity.class);
                 intent.putExtra(GroupAddFriendActivity.GROUPID, groupid);
                 startActivityForResult(intent, 200);
             } else {
@@ -179,6 +198,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
                     GroupDetailMenuActivity.this.finish();
                     break;
                 case R.id.btn_group_quit://退出群
+                    LoadDialog.show(mContext);
                     HttpUtil.groupQuit(groupid, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
@@ -186,6 +206,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     WuhunToast.info(R.string.request_error).show();
+                                    LoadDialog.dismiss(mContext);
                                 }
                             });
                         }
@@ -233,10 +254,12 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                     }
                                 });
                             }
+                            LoadDialog.dismiss(mContext);
                         }
                     });
                     break;
                 case R.id.btn_manager_group_quit:
+                    LoadDialog.show(mContext);
                     HttpUtil.groupDismiss(groupid, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
@@ -244,6 +267,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     WuhunToast.info(R.string.request_error).show();
+                                    LoadDialog.dismiss(mContext);
                                 }
                             });
                         }
@@ -291,6 +315,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                     }
                                 });
                             }
+                            LoadDialog.dismiss(mContext);
                         }
                     });
                     break;
@@ -416,11 +441,15 @@ public class GroupDetailMenuActivity extends BaseActivity {
                             }).setNegativeButton("取消", null).show();
                     break;
                 case R.id.rl_history:
-                    TestLog.i("历史消息=》"+ groupid + " - " + groupmasterid + " - "
-                            + groupmanagerid + " - " + mConverstationType );
                     GroupModel mGroup = DBManager.getmInstance().findGroupByID(groupid);
-
+                    if (mGroup == null) {
+                        return;
+                    }
                     Intent historyIntent = new Intent(mContext, GroupHistoryActivity.class);
+                    historyIntent.putExtra(GroupHistoryActivity.RCTOKEN, mGroup);
+//                    historyIntent.putExtra(GroupHistoryActivity.CONVERSTATION_TYPE, mConverstationType);
+
+//                    historyIntent.putExtra()
                     // TODO: 2018/2/6 查看历史记录跳转
                     jumpToActivity(historyIntent);
                     break;
@@ -429,6 +458,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
     };
 
     private void initData() {
+        LoadDialog.show(mContext);
         //更新群成员
         updateGroupMemeber();
 
@@ -443,6 +473,12 @@ public class GroupDetailMenuActivity extends BaseActivity {
         HttpUtil.getGroupInfo(groupid, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                WuhunThread.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadDialog.dismiss(mContext);
+                    }
+                });
             }
 
             @Override
@@ -450,70 +486,85 @@ public class GroupDetailMenuActivity extends BaseActivity {
                 String result = response.body().string();
                 TestLog.i("群详情信息=>" + result);
 
-                final GroupInfoModel groupInfoModel = getGson().fromJson(result, GroupInfoModel.class);
-                if (response.isSuccessful() && groupInfoModel != null && (groupInfoModel.getCode() == 1)) {
-                    final GroupInfoModel.ResultBean groupInfo = groupInfoModel.getResult();
-                    if (groupInfo == null)
-                        return;
-                    WuhunThread.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!WuhunDataTool.isNullString(groupInfo.getGROUPNAME()))
-                                tv_groupname.setText(groupInfo.getGROUPNAME());
-                            if (!WuhunDataTool.isNullString(groupInfo.getGROUPMSG()))
-                                tv_groupmsg.setText(groupInfo.getGROUPMSG());
-                            String groupimage = groupInfo.getGROUPIMAGE();
-                            String uri = UserAvatarUtil.initUri(Constant.HOME_URL, groupimage);
-                            final String avatarUri = UserAvatarUtil.getAvatarUri(groupInfo.getGROUPID() + "", groupInfo.getGROUPNAME(), uri);
-                            UserAvatarUtil.showImage(mContext, avatarUri, img_group_avater);
+                if (response.isSuccessful()) {
+                    final GroupInfoModel groupInfoModel = getGson().fromJson(result, GroupInfoModel.class);
+                    if (groupInfoModel != null && (groupInfoModel.getCode() == 1)) {
+                        final GroupInfoModel.ResultBean groupInfo = groupInfoModel.getResult();
 
-                            img_group_avater.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String[] imgs = {avatarUri};
-                                    Intent intent = new Intent(mContext, DetailImgActivity.class);
-                                    intent.putExtra(DetailImgActivity.ICON, imgs);
-                                    intent.putExtra(DetailImgActivity.ICON, imgs);
-                                    jumpToActivity(intent);
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (groupInfo == null){
+                                    LoadDialog.dismiss(mContext);
+                                    return;
                                 }
-                            });
+                                if (!WuhunDataTool.isNullString(groupInfo.getGROUPNAME()))
+                                    tv_groupname.setText(groupInfo.getGROUPNAME());
+                                if (!WuhunDataTool.isNullString(groupInfo.getGROUPMSG()))
+                                    tv_groupmsg.setText(groupInfo.getGROUPMSG());
+                                String groupimage = groupInfo.getGROUPIMAGE();
+                                String uri = UserAvatarUtil.initUri(Constant.HOME_URL, groupimage);
+                                final String avatarUri = UserAvatarUtil.getAvatarUri(groupInfo.getGROUPID() + "", groupInfo.getGROUPNAME(), uri);
+                                UserAvatarUtil.showImage(mContext, avatarUri, img_group_avater);
 
-                            //更新缓存
-                            GroupModel groupModel = new GroupModel();
-                            groupModel.setGROUPID(groupInfo.getGROUPID());
-                            groupModel.setGROUPIMAGE(groupInfo.getGROUPIMAGE());
-                            groupModel.setNAME(groupInfo.getGROUPNAME());
-                            DBManager.getmInstance().updateGroup(groupModel);
+                                img_group_avater.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        String[] imgs = {avatarUri};
+                                        Intent intent = new Intent(mContext, DetailImgActivity.class);
+                                        intent.putExtra(DetailImgActivity.ICON, imgs);
+                                        intent.putExtra(DetailImgActivity.ICON, imgs);
+                                        jumpToActivity(intent);
+                                    }
+                                });
 
-                            groupmasterid = groupInfo.getGROUPMASTERID() + "";
-                            groupmanagerid = groupInfo.getGROUPMANAGERID() + "";
+                                //更新缓存
+                                GroupModel groupModel = new GroupModel();
+                                groupModel.setGROUPID(groupInfo.getGROUPID());
+                                groupModel.setGROUPIMAGE(groupInfo.getGROUPIMAGE());
+                                groupModel.setNAME(groupInfo.getGROUPNAME());
+                                DBManager.getmInstance().updateGroup(groupModel);
 
-                            String userid = getSPUtil().getUSERID().trim();
-                            if (groupmasterid.equals(userid)) { //群组
-                                btn_group_quit.setVisibility(View.GONE);
-                                btn_manager_group_quit.setVisibility(View.VISIBLE);
-                                rl_appointManager.setVisibility(View.VISIBLE);
-                                // 群消息设置
-                                rl_group_avater.setOnClickListener(mClickListener);
-                                rl_group_name.setOnClickListener(mClickListener);
-                                rl_group_introduce.setOnClickListener(mClickListener);
-                            } else {
-                                btn_group_quit.setVisibility(View.VISIBLE);
-                                btn_manager_group_quit.setVisibility(View.GONE);
-                                rl_appointManager.setVisibility(View.GONE);
+                                groupmasterid = groupInfo.getGROUPMASTERID() + "";
+                                groupmanagerid = groupInfo.getGROUPMANAGERID() + "";
+
+                                String userid = getSPUtil().getUSERID().trim();
+                                if (groupmasterid.equals(userid)) { //群组
+                                    btn_group_quit.setVisibility(View.GONE);
+                                    btn_manager_group_quit.setVisibility(View.VISIBLE);
+                                    rl_appointManager.setVisibility(View.VISIBLE);
+                                    // 群消息设置
+                                    rl_group_avater.setOnClickListener(mClickListener);
+                                    rl_group_name.setOnClickListener(mClickListener);
+                                    rl_group_introduce.setOnClickListener(mClickListener);
+                                } else {
+                                    btn_group_quit.setVisibility(View.VISIBLE);
+                                    btn_manager_group_quit.setVisibility(View.GONE);
+                                    rl_appointManager.setVisibility(View.GONE);
+                                }
+                                LoadDialog.dismiss(mContext);
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String msg = groupInfoModel.getMsg();
+                                if (!WuhunDataTool.isNullString(msg)) {
+                                    WuhunToast.info(msg).show();
+                                } else {
+                                    WuhunToast.info("登录超时，请重新登录").show();
+                                }
+                                LoadDialog.dismiss(mContext);
+                            }
+                        });
+                    }
                 } else {
                     WuhunThread.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            String msg = groupInfoModel.getMsg();
-                            if (!WuhunDataTool.isNullString(msg)) {
-                                WuhunToast.info(msg).show();
-                            } else {
-                                WuhunToast.info("登录超时，请重新登录").show();
-                            }
+                            WuhunToast.info("获取详情信息失败，请稍后再试。").show();
+                            LoadDialog.dismiss(mContext);
                         }
                     });
                 }
@@ -521,10 +572,17 @@ public class GroupDetailMenuActivity extends BaseActivity {
         });
     }
 
+
     private void updateGroupMemeber() {
         HttpUtil.getGroupMemeberlist(groupid, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                WuhunThread.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadDialog.dismiss(mContext);
+                    }
+                });
             }
 
             @Override
@@ -534,18 +592,22 @@ public class GroupDetailMenuActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
                     }.getType());
-                    if(model != null && model.getCode() == 1) {
+                    if (model != null && model.getCode() == 1) {
                         before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
                         final List<GroupMemeberModel> memeber = model.getResult();
 //                        TestLog.i("循环" + memeber);
+
+//                        Message message = handler.obtainMessage(UPDATE_MEMEBER_LIST, memeber);
+//                        handler.sendMessage(message);
+
                         WuhunThread.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 dataList.clear();
-                                dataList = memeber;
+                                dataList.addAll(memeber);
                                 LastAddMemeber();//添加最后的添加按钮
+                                bodyTvTitle.setText("群组信息(" + (dataList.size() - 2) + ")");
                                 adapter.setData(dataList);
-                                bodyTvTitle.setText("群组信息(" + (dataList.size() - 1) + ")");
                                 for (GroupMemeberModel groupitem : memeber) {
 //                            TestLog.i("成员: " + groupitem);
                                     if (WuhunDataTool.isNullString(groupitem.getType())) {
@@ -557,9 +619,10 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                         RongIM.getInstance().refreshUserInfoCache(userInfo);
                                     }
                                 }
+                                LoadDialog.dismiss(mContext);
                             }
                         });
-                    }else {
+                    } else {
                         WuhunThread.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -569,6 +632,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                 } else {
                                     WuhunToast.info("登录超时，请重新登录").show();
                                 }
+                                LoadDialog.dismiss(mContext);
                             }
                         });
                     }
@@ -577,6 +641,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
                         @Override
                         public void run() {
                             WuhunToast.info(R.string.request_error_net).show();
+                            LoadDialog.dismiss(mContext);
                         }
                     });
                 }
@@ -584,10 +649,56 @@ public class GroupDetailMenuActivity extends BaseActivity {
         });
     }
 
+    public static final int UPDATE_MEMEBER_LIST = 1000;
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case UPDATE_MEMEBER_LIST:
+                    updateGroupMemeber();
+
+//                    List<GroupMemeberModel> memeber = (List<GroupMemeberModel>)msg.obj;
+//
+//                    dataList.clear();
+//                    dataList.addAll(memeber);
+//                    LastAddMemeber();//添加最后的添加按钮
+//
+//                    if(WuhunDataTool.isNullString(groupmasterid)) {
+//                        return;
+//                    }
+//                    String userid = getSPUtil().getUSERID();
+//                    if (groupmasterid.equals(userid) || groupmanagerid.equals(userid)) { //群组
+//                        bodyTvTitle.setText("群组信息(" + (dataList.size() - 2) + ")");
+//                    } else {
+//                        bodyTvTitle.setText("群组信息(" + (dataList.size() - 1) + ")");
+//                    }
+//
+//                    adapter.setData(dataList);
+//                    for (GroupMemeberModel groupitem : memeber) {
+////                            TestLog.i("成员: " + groupitem);
+//                        if (WuhunDataTool.isNullString(groupitem.getType())) {
+//                            String name = WuhunDataTool.isNullString(groupitem.getREMARKNAME()) ? groupitem.getNICKNAME() : groupitem.getREMARKNAME();
+//                            String uri = UserAvatarUtil.initUri(before, groupitem.getAVATAR());
+//                            String avatarUri = UserAvatarUtil.getAvatarUri(
+//                                    groupitem.getUSERID() + "", name, uri);
+//                            UserInfo userInfo = new UserInfo(groupitem.getRCID(), name, Uri.parse(avatarUri));
+//                            RongIM.getInstance().refreshUserInfoCache(userInfo);
+//                        }
+//                    }
+
+                    break;
+            }
+        }
+    };
+
     /**
      * 添加好友的类型
      */
     public static final String ADD_MEMEBER_TYPE = "add_memeber_type";
+    /** 删除 */
+    public static final String DELETE_MEMEBER_TYPE = "delete_memeber_type";
 
     /**
      * 添加末尾的添加好友
@@ -596,13 +707,24 @@ public class GroupDetailMenuActivity extends BaseActivity {
         GroupMemeberModel memeber = new GroupMemeberModel();
         memeber.setType(ADD_MEMEBER_TYPE);
         dataList.add(memeber);
+
+        String userid = getSPUtil().getUSERID().trim();
+
+        if(WuhunDataTool.isNullString(groupmasterid)) {
+           return;
+        }
+        if (groupmasterid.equals(userid) || groupmanagerid.equals(userid)) { //群组
+            GroupMemeberModel memeber2 = new GroupMemeberModel();
+            memeber2.setType(DELETE_MEMEBER_TYPE);
+            dataList.add(memeber2);
+        }
     }
 
     private void getIntentData() {
         Intent intent = getIntent();
         groupid = intent.getStringExtra(GROUPID);
         targetid = intent.getStringExtra(TARGETID);
-        mConverstationType = (int) intent.getSerializableExtra(CONVERSTATIONTYPE);
+//        mConverstationType = (Conversation.ConversationType) intent.getSerializableExtra(CONVERSTATIONTYPE);
 
         TestLog.i("GroupDetailMenuActivity - getIntentDate() :" + mConversationType);
     }
@@ -615,7 +737,6 @@ public class GroupDetailMenuActivity extends BaseActivity {
         bodySearch.setVisibility(View.GONE);
         bodyOk.setVisibility(View.GONE);
 
-        dataList = new ArrayList<>();
         adapter = new LQRAdapterForRecyclerView<GroupMemeberModel>(mContext, dataList, R.layout.group_gradview_item) {
             @Override
             public void convert(LQRViewHolderForRecyclerView helper, GroupMemeberModel item, int position) {
@@ -626,19 +747,19 @@ public class GroupDetailMenuActivity extends BaseActivity {
 
                 if (!WuhunDataTool.isNullString(memeberModel.getType())) {
                     // 添加好友,删除好友
+                    tvUsername.setVisibility(View.INVISIBLE);
                     if (memeberModel.getType().equals(ADD_MEMEBER_TYPE)) {
-                        tvUsername.setVisibility(View.INVISIBLE);
-                        imageAvater.setImageResource(R.drawable.add_group_head);
+                        imageAvater.setImageResource(R.drawable.group_add_icon);
+                    }else if(memeberModel.getType().equals(DELETE_MEMEBER_TYPE)) {
+                        imageAvater.setImageResource(R.drawable.group_delete_icon);
                     }
                 } else {
-                    String username = WuhunDataTool.isNullString(memeberModel.getREMARKNAME()) ?
-                            memeberModel.getNICKNAME() : memeberModel.getREMARKNAME();
 //                    helper.setText(R.id.tv_username, username);
-                    tvUsername.setText(username);
+                    tvUsername.setText(memeberModel.getREMARKNAME());
                     //头像
                     String uri = UserAvatarUtil.initUri(before, memeberModel.getAVATAR());
                     String userid = memeberModel.getUSERID() + "";
-                    String avatarUri = UserAvatarUtil.getAvatarUri(userid, username, uri);
+                    String avatarUri = UserAvatarUtil.getAvatarUri(userid, memeberModel.getREMARKNAME(), uri);
                     UserAvatarUtil.showImage(mContext, avatarUri, imageAvater);
                 }
             }
@@ -649,7 +770,6 @@ public class GroupDetailMenuActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        initData();
     }
 
 
@@ -795,10 +915,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        TestLog.i("数据回调:" + requestCode);
-        if (resultCode == 200) {
-            updateGroupMemeber();
-        }
+        TestLog.i("数据回调:" + requestCode + " - " + resultCode);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CODE_CAMERA_REQUEST://相机回调
@@ -856,6 +973,9 @@ public class GroupDetailMenuActivity extends BaseActivity {
                             corp(path, cropUri);
                         }
                     }
+                    break;
+                case 200:
+                    handler.sendEmptyMessageDelayed(UPDATE_MEMEBER_LIST, 1000);
                     break;
             }
         }

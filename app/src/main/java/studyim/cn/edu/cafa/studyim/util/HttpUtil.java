@@ -144,6 +144,15 @@ public class HttpUtil {
         OkHttpUtil.enqueue(reqBuilder.build(), callback);
     }
 
+    public static void groupQuit(String groupId, String userid, Callback callback){
+        String uri = Constant.indexUrl + "CAFA/group/quit";
+        Map<String,String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        map.put("userId", userid);
+        Request.Builder reqBuilder = getLoginReqBuilder(uri, map);
+        OkHttpUtil.enqueue(reqBuilder.build(), callback);
+    }
+
     /** 解散群聊 */
     public static void groupDismiss(String groupId, Callback callback){
         String uri = Constant.indexUrl + "CAFA/group/dismiss";

@@ -10,6 +10,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,8 @@ import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.common.Constant;
-import studyim.cn.edu.cafa.studyim.model.Friend;
-import studyim.cn.edu.cafa.studyim.model.FriendListModel;
+import studyim.cn.edu.cafa.studyim.model.BaseModel;
+import studyim.cn.edu.cafa.studyim.model.GroupMemeberModel;
 import studyim.cn.edu.cafa.studyim.model.ResultModel;
 import studyim.cn.edu.cafa.studyim.ui.QuickIndexBar;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
@@ -41,8 +43,9 @@ import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
+import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
-public class GroupAddFriendActivity extends BaseActivity {
+public class GroupDeleteFriendActivity extends BaseActivity {
 
     @BindView(R.id.head_bg)
     ImageView headBg;
@@ -63,7 +66,7 @@ public class GroupAddFriendActivity extends BaseActivity {
     TextView tv_no_friend_hint;
 
     private Context mContext;
-    private List<Friend> friendList = new ArrayList<>();
+    private List<GroupMemeberModel> friendList = new ArrayList<>();
 
     public static final String GROUPID = "groupId";
     private String grouid;
@@ -86,47 +89,92 @@ public class GroupAddFriendActivity extends BaseActivity {
     }
 
     private void initData() {
-        HttpUtil.getFriendList(new Callback() {
+        HttpUtil.getGroupMemeberlist(grouid, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                TestLog.i("FriendGroupCreteActivity - initData: 访问好友列表失败");
-            }
+            public void onFailure(Call call, IOException e) { /* 请求失败 */ }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                FriendListModel dataList = null;
-                if(result != null)
-                    dataList = getGson().fromJson(result, FriendListModel.class);
-                if (response.isSuccessful() && friendList != null && dataList.getCode() == 1) {
-                    final FriendListModel finalDataList = dataList;
+//                    TestLog.i("查询群成员result: " + result);
+                final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
+                }.getType());
+                if (response.isSuccessful() && model != null && model.getCode() == 1) {
+//                    final List<GroupMemeberModel> Gmobel = new ArrayList<>();
+
+                    final List<GroupMemeberModel> memeber = model.getResult();
+
+                    for (int i=0; i<memeber.size(); i++) {
+                        TestLog.i("成员是否为自己？");
+                        if((memeber.get(i).getUSERID()+"").equals(getSPUtil().getUSERID())) {
+                            memeber.remove(i);
+                        }
+                    }
+
+//                    for (int i=0;i<memeber.size();i++) {
+//                        GroupMemeberModel memeberModel = memeber.get(i);
+//                        if(!WuhunDataTool.isNullString(groupMasterId) && (memeberModel.getUSERID()+"").equals(groupMasterId)) {
+//                            continue;
+//                        }
+//                        if(!WuhunDataTool.isNullString(groupManagerId) && (memeberModel.getUSERID()+"").equals(groupManagerId)) {
+//                            continue;
+//                        }
+//                        Gmobel.add(memeberModel);
+//                    }
+
+//                        TestLog.i("循环" + memeber);
                     WuhunThread.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            friendList = finalDataList.getResult();
+                            friendList.clear();
+                            friendList = memeber;
                             adapter.setData(friendList);
-                            if (friendList.size() <= 0) {
-                                tv_no_friend_hint.setVisibility(View.VISIBLE);
-                                rvAddFriend.setVisibility(View.GONE);
-                                mQib.setVisibility(View.GONE);
-                                bodyOk.setVisibility(View.GONE);
-                            } else {
-                                tv_no_friend_hint.setVisibility(View.GONE);
-                                rvAddFriend.setVisibility(View.VISIBLE);
-                                mQib.setVisibility(View.VISIBLE);
-                                bodyOk.setVisibility(View.VISIBLE);
-                            }
                         }
                     });
-                } else {
-                    TestLog.i("FriendGroupCreteActivity - initData: 获取好友列表失败");
                 }
             }
         });
+//        HttpUtil.getFriendList(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                TestLog.i("FriendGroupCreteActivity - initData: 访问好友列表失败");
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                String result = response.body().string();
+//                FriendListModel dataList = null;
+//                if(result != null)
+//                    dataList = getGson().fromJson(result, FriendListModel.class);
+//                if (response.isSuccessful() && friendList != null && dataList.getCode() == 1) {
+//                    final FriendListModel finalDataList = dataList;
+//                    WuhunThread.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            friendList = finalDataList.getResult();
+//                            adapter.setData(friendList);
+//                            if (friendList.size() <= 0) {
+//                                tv_no_friend_hint.setVisibility(View.VISIBLE);
+//                                rvAddFriend.setVisibility(View.GONE);
+//                                mQib.setVisibility(View.GONE);
+//                                bodyOk.setVisibility(View.GONE);
+//                            } else {
+//                                tv_no_friend_hint.setVisibility(View.GONE);
+//                                rvAddFriend.setVisibility(View.VISIBLE);
+//                                mQib.setVisibility(View.VISIBLE);
+//                                bodyOk.setVisibility(View.VISIBLE);
+//                            }
+//                        }
+//                    });
+//                } else {
+//                    TestLog.i("FriendGroupCreteActivity - initData: 获取好友列表失败");
+//                }
+//            }
+//        });
     }
 
     /** 创建群组要添加的好友 */
-    private List<Friend> groupList = new ArrayList<>();
+    private List<GroupMemeberModel> groupList = new ArrayList<>();
 
     private void initListener() {
         headLeft.setOnClickListener(mClickListener);
@@ -135,6 +183,11 @@ public class GroupAddFriendActivity extends BaseActivity {
             @Override
             public void onItemClick(LQRViewHolder helper, ViewGroup parent, View itemView, int position) {
                 CheckBox disSelect = helper.getView(R.id.dis_select);
+
+                if((friendList.get(position).getUSERID()+"").equals(getSPUtil().getUSERID())) {
+                    disSelect.setChecked(false);
+                }
+
                 if (disSelect.isChecked() == true) { //取消
                     disSelect.setChecked(false);
                     groupList.remove(friendList.get(position));
@@ -142,7 +195,7 @@ public class GroupAddFriendActivity extends BaseActivity {
                     disSelect.setChecked(true);
                     groupList.add(friendList.get(position));
                 }
-                bodyOk.setText("确定(" + groupList.size() + ")");
+                bodyOk.setText("删除(" + groupList.size() + ")");
             }
         });
         bodyOk.setOnClickListener(mClickListener);
@@ -162,9 +215,9 @@ public class GroupAddFriendActivity extends BaseActivity {
                 rvAddFriend.moveToPosition(0);//集合中移除
             } else {
 //                List<Friend> data = ((LQRAdapterForRecyclerView) ((LQRHeaderAndFooterAdapter) rvAddFriend.getAdapter()).getInnerAdapter()).getData();
-                List<Friend> data = ((LQRAdapterForRecyclerView)rvAddFriend.getAdapter()).getData();
+                List<GroupMemeberModel> data = ((LQRAdapterForRecyclerView)rvAddFriend.getAdapter()).getData();
                 for (int i = 0; i < data.size(); i++) {
-                    Friend friend = data.get(i);
+                    GroupMemeberModel friend = data.get(i);
                     String noteName = WuhunPingyinTool.getPinYinFirstCharIsLetter(friend.getREMARKNAME()) + "";
                     if (WuhunDataTool.isNullString(noteName)) {
                         noteName = WuhunPingyinTool.getPinYinFirstCharIsLetter(friend.getNAME()) + "";
@@ -188,7 +241,7 @@ public class GroupAddFriendActivity extends BaseActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.body_img_menu://左侧按钮
-                    GroupAddFriendActivity.this.finish();
+                    GroupDeleteFriendActivity.this.finish();
                     break;
                 case R.id.body_ok://添加到群中
 //                    Intent intent = new Intent(mContext, GroupCreateActivity.class);
@@ -197,7 +250,7 @@ public class GroupAddFriendActivity extends BaseActivity {
                     if(WuhunDataTool.isNullString(grouid)){
                         WuhunToast.info("没有获取到群信息").show();
                     } else{
-                        addSelectfriendList();
+                        deleteSelectfriendList();
                     }
                     break;
                 default:
@@ -209,16 +262,14 @@ public class GroupAddFriendActivity extends BaseActivity {
     /** 添加结果集合类 */
     List<String> addFriendResultList = new ArrayList<>();
 
-    private void addSelectfriendList() {
+    private void deleteSelectfriendList() {
         if (groupList.size() <= 0) {
-            WuhunToast.info("请选择您要添加的好友").show();
+            WuhunToast.info("请选择您要删除的好友").show();
         } else {
-            for(Friend friend : groupList){
-                HttpUtil.groupJoin(grouid, friend.getUSERBUDDYID(), new Callback() {
+            for(GroupMemeberModel friend : groupList){
+                HttpUtil.groupQuit(grouid, friend.getUSERID()+"", new Callback() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
-
-                    }
+                    public void onFailure(Call call, IOException e) { }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
@@ -232,36 +283,44 @@ public class GroupAddFriendActivity extends BaseActivity {
             }
 
             if(addFriendResultList.contains("0") && addFriendResultList.contains("1")) {
-                WuhunToast.info("部分添加成功").show();
+                WuhunToast.info("部分删除成功").show();
             }else if(!addFriendResultList.contains("0")) {
-                WuhunToast.info("添加成功").show();
+                WuhunToast.info("删除成功").show();
             }else if(!addFriendResultList.contains("1")) {
-                WuhunToast.info("添加失败").show();
+                WuhunToast.info("删除失败").show();
             }
             BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_MEMEBER);
             setResult(RESULT_OK);
-            GroupAddFriendActivity.this.finish();
+            GroupDeleteFriendActivity.this.finish();
         }
     }
 
-    LQRAdapterForRecyclerView<Friend> adapter;
+    LQRAdapterForRecyclerView<GroupMemeberModel> adapter;
     private void initView() {
         mContext = this;
         headBg.setImageResource(R.drawable.main_bg);
         headLeft.setImageResource(R.drawable.icon_back);
         bodyRight.setVisibility(View.GONE);
-        bodyOk.setText(R.string.rc_action_bar_ok);
+        bodyOk.setText("删除");
         bodyOk.setVisibility(View.VISIBLE);
 
-        adapter = new LQRAdapterForRecyclerView<Friend>(mContext, friendList, R.layout.group_friend_list_item) {
+        adapter = new LQRAdapterForRecyclerView<GroupMemeberModel>(mContext, friendList, R.layout.group_friend_list_item) {
             @Override
-            public void convert(LQRViewHolderForRecyclerView helper, Friend item, int position) {
+            public void convert(LQRViewHolderForRecyclerView helper, GroupMemeberModel item, int position) {
                 helper.setText(R.id.dis_friendname, item.getREMARKNAME());
                 CheckBox disSelect = helper.getView(R.id.dis_select);
                 disSelect.setVisibility(View.VISIBLE);
-
+                
+                if((item.getUSERID()+"").equals(getSPUtil().getUSERID())) {
+                    disSelect.setVisibility(View.GONE);
+                }
+                
                 ImageView imgAvatar = helper.getView(R.id.dis_frienduri);
-                UserAvatarUtil.showAvatar(mContext, item, Constant.HOME_URL, imgAvatar);//头像
+
+                String uri = UserAvatarUtil.initUri(null, item.getAVATAR());
+                String avatarUri = UserAvatarUtil.getAvatarUri(item.getUSERID() + "", item.getNICKNAME(), uri);
+                UserAvatarUtil.showImage(mContext, avatarUri, imgAvatar);
+                //UserAvatarUtil.showAvatar(mContext, item, Constant.HOME_URL, imgAvatar);//头像
 
                 String str = "";
                 String currentLetter = WuhunPingyinTool.getPinYinFirstCharIsLetter(item.getREMARKNAME()) + "";

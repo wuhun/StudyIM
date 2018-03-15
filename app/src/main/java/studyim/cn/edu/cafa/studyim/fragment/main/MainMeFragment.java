@@ -1,5 +1,11 @@
 package studyim.cn.edu.cafa.studyim.fragment.main;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,6 +48,7 @@ import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
+import static android.app.Activity.RESULT_OK;
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getSPUtil;
 
@@ -58,6 +65,7 @@ public class MainMeFragment extends BaseFragment {
 
     //    private static String XS_HOME = "file:///android_res/raw/xs_home.htm";
     private static String XS_HOME = "http://www.cafa.com.cn/wapcafa/xs_home.htm";
+//    private static String XS_HOME = "http://10.10.10.102/TestWebProject/upload.jsp";
 
     @BindView(R.id.ll_content)
     LinearLayout llContent;
@@ -85,6 +93,15 @@ public class MainMeFragment extends BaseFragment {
     private List<SettingModel> settingsData;
 
     public int currentSettingVersion = 1;
+
+    private static final String TONG_BU = "load_setting";
+    private static final String EXIT_APP = "exit_app";
+
+    private static final int REQUEST_ERROR = 0x01;
+    private static final int REQUEST_SUCCESS = 0x02;
+    private static final int VERSION_REQUEST_ERROR = 0x03;
+    private final static int FILE_CHOOSER_RESULT_CODE = 10000;
+
 
     private View.OnKeyListener myOnKeyListener = new View.OnKeyListener() {
         @Override
@@ -190,10 +207,6 @@ public class MainMeFragment extends BaseFragment {
         });
     }
 
-    private static final int REQUEST_ERROR = 0x01;
-    private static final int REQUEST_SUCCESS = 0x02;
-    private static final int VERSION_REQUEST_ERROR = 0x03;
-
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -278,10 +291,61 @@ public class MainMeFragment extends BaseFragment {
             @Override
             public void setTitle(String title) {}
         });
+
+        mWebView.setImgSelect(new X5WebView.ImageSelect() {
+            @Override
+            public void openImageChooserActivity() {
+                MainMeFragment.this.openImageChooserActivity();
+            }
+        });
     }
 
-    private static final String TONG_BU = "load_setting";
-    private static final String EXIT_APP = "exit_app";
+    private void openImageChooserActivity() {
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("image/*");
+        startActivityForResult(Intent.createChooser(i, "Image Chooser"), FILE_CHOOSER_RESULT_CODE);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FILE_CHOOSER_RESULT_CODE) {
+            if (null == mWebView.uploadMessage && null == mWebView.uploadMessageAboveL) return;
+            Uri result = data == null || resultCode != RESULT_OK ? null : data.getData();
+            if (mWebView.uploadMessageAboveL != null) {
+                onActivityResultAboveL(requestCode, resultCode, data);
+            } else if (mWebView.uploadMessage != null) {
+                mWebView.uploadMessage.onReceiveValue(result);
+                mWebView.uploadMessage = null;
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void onActivityResultAboveL(int requestCode, int resultCode, Intent intent) {
+        if (requestCode != FILE_CHOOSER_RESULT_CODE || mWebView.uploadMessageAboveL == null)
+            return;
+        Uri[] results = null;
+        if (resultCode == Activity.RESULT_OK) {
+            if (intent != null) {
+                String dataString = intent.getDataString();
+                ClipData clipData = intent.getClipData();
+                if (clipData != null) {
+                    results = new Uri[clipData.getItemCount()];
+                    for (int i = 0; i < clipData.getItemCount(); i++) {
+                        ClipData.Item item = clipData.getItemAt(i);
+                        results[i] = item.getUri();
+                    }
+                }
+                if (dataString != null)
+                    results = new Uri[]{Uri.parse(dataString)};
+            }
+        }
+        mWebView.uploadMessageAboveL.onReceiveValue(results);
+        mWebView.uploadMessageAboveL = null;
+    }
 
     @Override
     protected void initData() {
@@ -387,9 +451,11 @@ public class MainMeFragment extends BaseFragment {
 
                         String img = settingsData.get(position).getImg();
                         if (!WuhunDataTool.isNullString(img)) {
-                            Glide.with(mActivity).load(img).fitCenter().into(iv_icon);
+                            Glide.with(mActivity).load(img)
+                                    .error(R.drawable.sideicon).fitCenter().into(iv_icon);
                         } else {
-                            Glide.with(mActivity).load(settingsData.get(position).getReserceId()).fitCenter().into(iv_icon);
+                            Glide.with(mActivity).load(settingsData.get(position).getReserceId())
+                                    .error(R.drawable.sideicon).fitCenter().into(iv_icon);
                         }
                     }
                 }

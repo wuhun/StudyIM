@@ -57,6 +57,13 @@ public abstract class BaseFragment extends Fragment {
         initListener();
     }
 
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        initData();
+//        initListener();
+//    }
+
     /////////////////////////////////////////////////////////////////////////////////
 //    @Override
 //    public void onDestroyView() {

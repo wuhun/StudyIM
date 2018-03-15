@@ -4,6 +4,8 @@ import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
 
+import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+
 /**
  * ================================================
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
@@ -45,6 +47,9 @@ public class GroupMemeberModel extends DataSupport implements Serializable{
     private String type; // 自定义： 1(添加群成员)， 2(删除群成员)
 
     public String getREMARKNAME() {
+        if(WuhunDataTool.isNullString(REMARKNAME)) {
+            return NICKNAME;
+        }
         return REMARKNAME;
     }
 
