@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.smssdk.SMSSDK;
+import studyim.cn.edu.cafa.studyim.R;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
@@ -92,16 +93,16 @@ public class BaseActivity extends AppCompatActivity {
         if (WuhunDataTool.isNullString(msg)) {
             WuhunToast.normal(msg).show();
         } else {
-            WuhunToast.normal("获取失败").show();
+            WuhunToast.normal(R.string.request_fail).show();
         }
     }
 
 
     public void showNoNetDialog(Context mContext){
         new AlertDialog.Builder(mContext)
-                .setTitle("请检查网络")
-                .setMessage("当前无网络连接，请检查网络状态")
-                .setPositiveButton("确定", null).show();
+                .setTitle(R.string.check_net)
+                .setMessage(R.string.nonet_check_please)
+                .setPositiveButton(R.string.positive, null).show();
     }
 
     // 请求验证码，其中country表示国家代码，如“86”；phone表示手机号码，如“13800138000”

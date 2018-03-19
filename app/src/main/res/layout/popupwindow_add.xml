@@ -33,7 +33,7 @@
                 android:layout_toRightOf="@id/img_request_list"
                 android:drawablePadding="10dp"
                 android:paddingLeft="14dp"
-                android:text="请求列表"
+                android:text="@string/request_list"
                 android:textColor="@color/tag_text_color"
                 android:textSize="16sp" />
         </RelativeLayout>
@@ -59,7 +59,7 @@
                 android:layout_toRightOf="@id/img_create_group"
                 android:drawablePadding="10dp"
                 android:paddingLeft="14dp"
-                android:text="创建群组"
+                android:text="@string/create_group"
                 android:textColor="@color/tag_text_color"
                 android:textSize="16sp" />
         </RelativeLayout>

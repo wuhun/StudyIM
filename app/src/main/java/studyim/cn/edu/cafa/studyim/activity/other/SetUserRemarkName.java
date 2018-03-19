@@ -31,6 +31,7 @@ import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 public class SetUserRemarkName extends BaseActivity {
@@ -174,22 +175,29 @@ public class SetUserRemarkName extends BaseActivity {
                     HttpUtil.setNote(userId, alias, phone, desc, null, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            WuhunToast.normal("修改备注失败").show();
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    WuhunToast.normal("修改备注失败").show();
+                                }
+                            });
                         }
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String result = response.body().string();
-                            TestLog.i("修改注备==>" + result);
-                            ResultModel resultModel = MyApplication.getGson().fromJson(result, ResultModel.class);
-                            if (resultModel.getCode() == 1) {
-                                WuhunToast.normal("修改备注成功").show();
-                                UserInfo info = new UserInfo(friendinfo.getUserId()+"", etAlias.getText().toString(), Uri.parse(friendinfo.getAvatar()));
-                                BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
-                                RongIM.getInstance().refreshUserInfoCache(info);
-                                SetUserRemarkName.this.finish();
-                            } else {
-                                WuhunToast.normal("修改备注失败").show();
+//                            TestLog.i("修改注备==>" + result);
+                            if (response.isSuccessful()) {
+                                ResultModel resultModel = MyApplication.getGson().fromJson(result, ResultModel.class);
+                                if (resultModel.getCode() == 1) {
+                                    WuhunToast.normal("修改备注成功").show();
+                                    UserInfo info = new UserInfo(friendinfo.getUserId() + "", etAlias.getText().toString(), Uri.parse(friendinfo.getAvatar()));
+                                    BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
+                                    RongIM.getInstance().refreshUserInfoCache(info);
+                                    SetUserRemarkName.this.finish();
+                                } else {
+                                    WuhunToast.normal("修改备注失败").show();
+                                }
                             }
                         }
                     });

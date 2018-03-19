@@ -165,26 +165,42 @@ public class FriendGetinfoActivity extends BaseActivity {
                     HttpUtil.friendDelete(friendUserInfo.getUserId()+"", new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            WuhunToast.normal(R.string.request_error).show();
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    WuhunToast.normal(R.string.request_error).show();
+                                }
+                            });
                         }
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String result = response.body().string();
-                            final ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                            if (response.isSuccessful() && resultModel.getCode() == 1) {
-                                handler.sendEmptyMessage(DELETE_SUCCESS);
+                            if (response.isSuccessful()) {
+                                final ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                                if (resultModel.getCode() == 1) {
+                                    handler.sendEmptyMessage(DELETE_SUCCESS);
+                                } else {
+                                    WuhunThread.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            String msg = resultModel.getMsg();
+                                            if(!WuhunDataTool.isNullString(msg))
+                                                WuhunToast.normal(msg).show();
+                                            WuhunToast.normal(R.string.request_error_net).show();
+                                        }
+                                    });
+                                }
                             } else {
                                 WuhunThread.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        String msg = resultModel.getMsg();
-                                        if(!WuhunDataTool.isNullString(msg))
-                                            WuhunToast.normal(msg).show();
-                                        WuhunToast.normal(R.string.request_error_net).show();
+                                        WuhunToast.info(R.string.server_connection_error).show();
                                     }
                                 });
                             }
+                            
+
                         }
                     });
                 } else {
@@ -223,7 +239,7 @@ public class FriendGetinfoActivity extends BaseActivity {
 
                         @Override
                         public void permissionDenied(@NonNull String[] permission) {
-                            WuhunToast.info("您拒绝了拨打电话权限").show();
+                            WuhunToast.info(R.string.refuse_call_permission).show();
                         }
                     }, Manifest.permission.CALL_PHONE);
                 }
@@ -277,7 +293,7 @@ public class FriendGetinfoActivity extends BaseActivity {
         mContext = this;
         headBg.setImageResource(R.mipmap.main_bg);
         bodyImgMenu.setImageResource(R.drawable.icon_back);
-        bodyTvTitle.setText("详细资料");
+        bodyTvTitle.setText(R.string.detail_info);
 //        bodySearch.setVisibility(View.GONE);
         bodySearch.setImageResource(R.mipmap.head_menu_more);
 //        if(!TextUtils.isEmpty(extraIsFriend) && extraIsFriend.toLowerCase().equals("n")) {
@@ -321,9 +337,9 @@ public class FriendGetinfoActivity extends BaseActivity {
                 });
             } else {
                 new AlertDialog.Builder(mContext)
-                        .setTitle("请检查网络")
-                        .setMessage("当前无网络连接，请检查网络状态")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.check_net)
+                        .setMessage(R.string.nonet_check_please)
+                        .setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 FriendGetinfoActivity.this.finish();
@@ -343,7 +359,7 @@ public class FriendGetinfoActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             if(msg.what == REQUEST_ERROR) {
                 FriendGetinfoActivity.this.finish();
-                WuhunToast.normal("获取失败").show();
+                WuhunToast.normal(R.string.get_fail).show();
             }else if(msg.what == REQUEST_FAIL) {
                 WuhunToast.normal(getResources().getString(R.string.request_fail)).show();
                 FriendGetinfoActivity.this.finish();
@@ -358,13 +374,13 @@ public class FriendGetinfoActivity extends BaseActivity {
                         bodySearch.setVisibility(View.GONE);
                     }
                 } else {
-                    WuhunToast.normal("获取失败").show();
+                    WuhunToast.normal(R.string.get_fail).show();
                     FriendGetinfoActivity.this.finish();
                 }
             }else if(msg.what == DELETE_SUCCESS) {
                 hideMenu();
                 BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
-                WuhunToast.normal("删除成功").show();
+                WuhunToast.normal(R.string.delete_success).show();
                 FriendGetinfoActivity.this.finish();
             }
             super.handleMessage(msg);
@@ -381,14 +397,14 @@ public class FriendGetinfoActivity extends BaseActivity {
         }
         tvUsername.setText(nickname);
 
-        tvNickname.setText("昵称：" + friendInfo.getNickName());
+        tvNickname.setText(getString(R.string.nick) + friendInfo.getNickName());
         if (!WuhunDataTool.isNullString(friendInfo.getRemarkMSG())) {
-            tvRemarkMsg.setText("备注信息：" + friendInfo.getRemarkMSG());
+            tvRemarkMsg.setText(getString(R.string.remark) + friendInfo.getRemarkMSG());
         } else {
             llRemarkMsg.setVisibility(View.GONE);
         }
         if (!WuhunDataTool.isNullString(friendInfo.getRemarkTelephone())) {
-            tvRemarkPhone.setText("备注电话：" + friendInfo.getRemarkTelephone());
+            tvRemarkPhone.setText(getString(R.string.remark_phone) + friendInfo.getRemarkTelephone());
         } else {
             llRemarkPhone.setVisibility(View.GONE);
         }

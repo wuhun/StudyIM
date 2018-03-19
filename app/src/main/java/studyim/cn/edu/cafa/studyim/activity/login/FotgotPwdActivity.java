@@ -30,7 +30,6 @@ import studyim.cn.edu.cafa.studyim.model.ResultModel;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.downtime.DownTimer;
 import studyim.cn.edu.cafa.studyim.util.downtime.DownTimerListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.ui.ClearWriteEditText;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
@@ -87,7 +86,7 @@ public class FotgotPwdActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            TestLog.i("mob返回结果：" + msg);
+//                            TestLog.i("mob返回结果：" + msg);
                             if(model != null && !WuhunDataTool.isNullString(model.getDetail())) {
                                 Toast.makeText(mContext, model.getDetail(), Toast.LENGTH_SHORT).show();
                             }
@@ -98,28 +97,28 @@ public class FotgotPwdActivity extends BaseActivity {
                     if (result == SMSSDK.RESULT_COMPLETE) {
                         //验证码验证成功
                         if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
-                            Log.i("wuhun", "验证码验证成功");
+                            Log.i("wuhun", getString(R.string.code_success));
                             // TODO: 2018/1/31 修改密码
                             isCheckPhone = true;
                         } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                             // 这里是验证成功的回调，可以处理验证成功后您自己的逻辑，需要注意的是这里不是主线程
-                            Log.i("wuhun", "验证码已经发送");
+                            Log.i("wuhun", getString(R.string.send_code));
                             WuhunThread.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    WuhunToast.info("验证码已经发送").show();
+                                    WuhunToast.info(R.string.send_code).show();
                                 }
                             });
                         } else if(event == SMSSDK.RESULT_ERROR) {
                             WuhunThread.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    WuhunToast.error("验证码错误").show();
+                                    WuhunToast.error(R.string.code_error).show();
                                 }
                             });
                         }
                     } else {
-                        Log.i("wuhun", "获取验证码失败" + result);
+                        Log.i("wuhun", getString(R.string.get_code_fail) + result);
                     }
                 }
             }
@@ -136,27 +135,27 @@ public class FotgotPwdActivity extends BaseActivity {
         String mNewPwd = againNewPwd.getText().toString().trim();
 
         if(TextUtils.isEmpty(mStudentNum)) {
-            WuhunToast.error("请输入学号").show();
+            WuhunToast.error(R.string.input_study_num).show();
             LoadDialog.dismiss(mContext);
             return;
         }
         if(TextUtils.isEmpty(mPhoneNum)) {
-            WuhunToast.error("请输入电话号码").show();
+            WuhunToast.error(R.string.input_phone_num).show();
             LoadDialog.dismiss(mContext);
             return;
         }
         if(TextUtils.isEmpty(mPassword)) {
-            WuhunToast.error("请输入新密码").show();
+            WuhunToast.error(R.string.input_new_pwd).show();
             LoadDialog.dismiss(mContext);
             return;
         }
         if(!mPassword.equals(mNewPwd)) {
-            WuhunToast.error("两次密码不一致").show();
+            WuhunToast.error(R.string.again_pwd_fail).show();
             LoadDialog.dismiss(mContext);
             return;
         }
         if(!WuhunNetTools.isAvailable(mContext)) {
-            WuhunToast.error("请检查网络连接").show();
+            WuhunToast.error(R.string.net_fail).show();
             LoadDialog.dismiss(mContext);
             return;
         }
@@ -175,19 +174,28 @@ public class FotgotPwdActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                final ResultModel model = MyApplication.getGson().fromJson(result, ResultModel.class);
-                if (response.isSuccessful() && model != null) {
+                if (response.isSuccessful()) {
+                    final ResultModel model = MyApplication.getGson().fromJson(result, ResultModel.class);
+                    if (model != null) {
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (model.getCode() == 1) {
+                                    WuhunToast.error(R.string.update_success).show();
+                                    FotgotPwdActivity.this.finish();
+                                } else {
+                                    if(WuhunDataTool.isNullString(model.getMsg()))
+                                        WuhunToast.error(model.getMsg()).show();
+                                }
+                                LoadDialog.dismiss(mContext);
+                            }
+                        });
+                    }
+                } else {
                     WuhunThread.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (model.getCode() == 1) {
-                                WuhunToast.error("修改成功").show();
-                                FotgotPwdActivity.this.finish();
-                            } else {
-                                if(WuhunDataTool.isNullString(model.getMsg()))
-                                    WuhunToast.error(model.getMsg()).show();
-                            }
-                            LoadDialog.dismiss(mContext);
+                            WuhunToast.info(R.string.server_connection_error).show();
                         }
                     });
                 }
@@ -252,7 +260,7 @@ public class FotgotPwdActivity extends BaseActivity {
                     } else {
                         regGetcode.setClickable(false);
                         regGetcode.setBackgroundDrawable(getResources().getDrawable(R.drawable.rs_select_btn_gray));
-                        Toast.makeText(mContext, "非法手机号", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.phone_error, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     regGetcode.setClickable(false);
@@ -272,7 +280,7 @@ public class FotgotPwdActivity extends BaseActivity {
                 case R.id.reg_getcode:
                     if (TextUtils.isEmpty(phoneNum.getText().toString().trim())) {
                         phoneNum.setShakeAnimation();
-                        WuhunToast.info("请输入电话号码").show();
+                        WuhunToast.info(R.string.input_phone_num).show();
                     } else {
 //                        isRequestCode = true;
                         DownTimer downTimer = new DownTimer();
@@ -287,7 +295,7 @@ public class FotgotPwdActivity extends BaseActivity {
 
                             @Override
                             public void onFinish() {
-                                regGetcode.setText("获取验证码");
+                                regGetcode.setText(R.string.get_code);
                                 regGetcode.setClickable(true);
                                 regGetcode.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_red_normal));
 //                                isBright = true;
@@ -305,7 +313,7 @@ public class FotgotPwdActivity extends BaseActivity {
                         if(WuhunELUtil.isMobile(mPhoneNum)) {
                             submitCode("+86", mPhoneNum, mCode);
                         } else {
-                            WuhunToast.info("请先验证手机").show();
+                            WuhunToast.info(R.string.first_check_phone).show();
                             return;
                         }
                     }

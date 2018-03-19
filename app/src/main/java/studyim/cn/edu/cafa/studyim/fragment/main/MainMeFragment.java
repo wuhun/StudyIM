@@ -219,7 +219,7 @@ public class MainMeFragment extends BaseFragment {
 //                WuhunIOTool.mFileWrite(MyApplication.updateSettingFile(), result);
                 updateSetting(result);
             }else if(msg.what == VERSION_REQUEST_ERROR) {
-                WuhunToast.error("同步更新设置失败").show();
+                WuhunToast.error(R.string.refresh_fail).show();
             }
         }
     };
@@ -355,7 +355,7 @@ public class MainMeFragment extends BaseFragment {
 //        String json = WuhunIOTool.bufferInputRead(new File(MyApplication.updateSettingFile()));
         List<SettingModel> settings = DBManager.getmInstance().getSettings();
         if (settings == null) {
-            WuhunToast.error("数据解析错误").show();
+            WuhunToast.error(R.string.parsing_fail).show();
         } else {
             currentSettingVersion = getSPUtil().getSettingVersion();
             requestSetting(false);
@@ -371,7 +371,7 @@ public class MainMeFragment extends BaseFragment {
 //        }
         SettingBaseModel resultModel = getGson().fromJson(json, SettingBaseModel.class);
         if (resultModel == null) {
-            WuhunToast.error("数据解析错误").show();
+            WuhunToast.error(R.string.parsing_fail).show();
             addDefaultSetting();
         } else {
             requestSetting(false);
@@ -382,7 +382,7 @@ public class MainMeFragment extends BaseFragment {
             DBManager.getmInstance().saveSettingsList(settingsData);
             addDefaultSetting();
             currentSettingVersion = resultModel.getVersion();
-            WuhunToast.info("设置菜单同步成功").show();
+            WuhunToast.info(R.string.menu_refresh_success).show();
         }
 //        settingsData.add(new SettingBaseModel(R.drawable.sideicon, "我的", "http://www.cafa.com.cn/wapcafa/xs_wd_h.htm" ));
 //        settingsData.add(new SettingBaseModel(R.drawable.sideicon, "修改密码", "http://www.cafa.com.cn/wapcafa/xs_wd_h.htm" ));
@@ -391,8 +391,8 @@ public class MainMeFragment extends BaseFragment {
     }
 
     private void addDefaultSetting() {
-        settingsData.add(new SettingModel(R.drawable.sideicon, "同步", TONG_BU ));
-        settingsData.add(new SettingModel(R.drawable.sideicon, "退出登录", EXIT_APP ));
+        settingsData.add(new SettingModel(R.drawable.sideicon, getString(R.string.syn), TONG_BU ));
+        settingsData.add(new SettingModel(R.drawable.sideicon, getString(R.string.exit), EXIT_APP ));
         settingAdapter.setData(settingsData);
     }
 

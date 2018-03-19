@@ -95,7 +95,7 @@ public class GroupActiveFragment extends BaseFragment {
                     String result = response.body().string();
                     if (response.isSuccessful() && !WuhunDataTool.isNullString(result)) {
                         GroupActiveModel resultModel = MyApplication.getGson().fromJson(result, GroupActiveModel.class);
-                        TestLog.i("==> " + resultModel.toString());
+//                        TestLog.i("==> " + resultModel.toString());
 
                         if (resultModel != null && resultModel.getCode() == 1) {
                             beforeUri = resultModel.getBefore();
@@ -114,6 +114,8 @@ public class GroupActiveFragment extends BaseFragment {
                                 }
                             });
                         }
+                    } else {
+                        WuhunToast.info(R.string.server_connection_error).show();
                     }
                 }
             });

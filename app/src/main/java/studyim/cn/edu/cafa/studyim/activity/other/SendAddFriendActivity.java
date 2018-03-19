@@ -21,7 +21,6 @@ import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.model.ResultModel;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
@@ -91,7 +90,7 @@ public class SendAddFriendActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         String json = response.body().string();
-                        WuhunDebug.debug("==>" + json);
+//                        WuhunDebug.debug("==>" + json);
                         if (response.isSuccessful()) {
                             ResultModel model = getGson().fromJson(json, ResultModel.class);
                             Message msg = handler.obtainMessage(REQUEST_SUCCESS, model);

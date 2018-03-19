@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
@@ -36,7 +37,6 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemLongClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
@@ -56,6 +56,8 @@ public class FriendGetAddListActivity extends BaseActivity {
     TextView bodyTvTitle;
     @BindView(R.id.body_search)
     ImageView bodySearch;
+    @BindView(R.id.ll_hint)
+    LinearLayout ll_hint;
 
     private Context context;
     private List<FriendGetAddList> mData;
@@ -98,13 +100,18 @@ public class FriendGetAddListActivity extends BaseActivity {
         mData = new ArrayList<>();
         headBg.setImageResource(R.mipmap.main_bg);
         bodyImgMenu.setImageResource(R.drawable.icon_back);
-        bodyTvTitle.setText("新的朋友");
+        bodyTvTitle.setText(R.string.new_friends);
         bodySearch.setVisibility(View.VISIBLE);
         bodySearch.setImageResource(R.drawable.searchl);
 
         adapter = new LQRAdapterForRecyclerView<FriendGetAddList>(context, mData, R.layout.activity_friend_get_add_list_item) {
             @Override
             public void convert(LQRViewHolderForRecyclerView helper, FriendGetAddList item, final int position) {
+                if (mData.size() <= 0) {
+                    ll_hint.setVisibility(View.VISIBLE);
+                } else {
+                    ll_hint.setVisibility(View.GONE);
+                }
                 final FriendGetAddList friendAddList = mData.get(position);
                 helper.setText(R.id.tv_user_name, friendAddList.getNICKNAME());
                 helper.setText(R.id.tv_user_remark_msg, friendAddList.getREMARKNAME());
@@ -124,7 +131,6 @@ public class FriendGetAddListActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         //发送同意请求 - 成功后更新adapte
-                        WuhunDebug.debug("点击了button");
                         HttpUtil.friendAskaddmsg(friendAddList.getUSERID() + "", "A", new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
@@ -136,7 +142,7 @@ public class FriendGetAddListActivity extends BaseActivity {
                                 if (response.isSuccessful()) {
                                     String json = response.body().string();
                                     ResultModel model = getGson().fromJson(json, ResultModel.class);
-                                    WuhunDebug.debug("发送确认信息==>" + json);
+//                                    WuhunDebug.debug("发送确认信息==>" + json);
                                     Message msg = handler.obtainMessage(ASKADDMSG_A, model);
                                     handler.sendMessage(msg);
                                     initData();
@@ -170,7 +176,7 @@ public class FriendGetAddListActivity extends BaseActivity {
             FriendGetAddList getFriendItem = mData.get(position);
             String userid = getFriendItem.getUSERID() + "";
             if(!WuhunDataTool.isNullString(userid)) {
-                WuhunDebug.debug("查看详细信息" + getFriendItem.toString());
+//                WuhunDebug.debug("查看详细信息" + getFriendItem.toString());
                 Intent intent = new Intent(context, FriendGetinfoActivity.class);
                 intent.putExtra(FriendGetinfoActivity.GET_USERID, userid);
                 jumpToActivity(intent);
@@ -188,11 +194,10 @@ public class FriendGetAddListActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String json = response.body().string();
-                WuhunDebug.debug("FriendGetAddListActivity==>" + json);
-                BaseModel<FriendGetAddList> model =
-                        getGson().fromJson(json, new TypeToken<BaseModel<FriendGetAddList>>() {}.getType());
-
+//                WuhunDebug.debug("FriendGetAddListActivity==>" + json);
                 if (response.isSuccessful()) {
+                    BaseModel<FriendGetAddList> model =
+                            getGson().fromJson(json, new TypeToken<BaseModel<FriendGetAddList>>() {}.getType());
                     Message msg = handler.obtainMessage(GET_ADD_FRIEND_LIST_SUCCESS, model);
                     handler.sendMessage(msg);
                 } else {
@@ -221,13 +226,13 @@ public class FriendGetAddListActivity extends BaseActivity {
                 //同意
                 ResultModel model = ((ResultModel)msg.obj);
                 if (model.getCode() == 1) {
-                    WuhunToast.normal("添加成功").show();
+                    WuhunToast.normal(R.string.add_success).show();
                     BroadcastManager.getInstance(context).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
                 } else {
                     if (!WuhunDataTool.isNullString(model.getMsg())) {
                         WuhunToast.normal(model.getMsg()).show();
                     } else {
-                        WuhunToast.normal("添加失败").show();
+                        WuhunToast.normal(R.string.add_fail).show();
                     }
                 }
             }

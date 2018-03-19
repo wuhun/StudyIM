@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import butterknife.BindView;
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.base.BaseFragment;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.net.X5WebView;
 
 /**
@@ -26,7 +25,8 @@ public class MainHomeFragment extends BaseFragment {
 
     private String TAG = "MainHomeFragment";
 
-    private static String HOMEPATH = "file:///android_res/raw/home.htm";
+//    private static String HOMEPATH = "file:///android_res/raw/home.htm";
+    private static String HOMEPATH = "http://www.cafa.com.cn/wapcafa/js_sy_h.htm";
     private ViewGroup mViewParent;
     private X5WebView mWebView;
     @BindView(R.id.progressBar)
@@ -37,8 +37,6 @@ public class MainHomeFragment extends BaseFragment {
     private View.OnKeyListener myOnKeyListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            TestLog.i("点击了返回键");
-
             if ((keyCode == KeyEvent.KEYCODE_BACK) && mWebView.canGoBack()) {
                 mWebView.goBack();
                 mActivity.getSupportFragmentManager().popBackStack();
@@ -50,7 +48,7 @@ public class MainHomeFragment extends BaseFragment {
 
     @Override
     protected void initListener() {
-        TestLog.i(TAG + " - initListener()");
+//        TestLog.i(TAG + " - initListener()");
 //        mWebView.setOnKeyListener(myOnKeyListener);
         mWebView.setOnloding(new X5WebView.WebLoding() {
             @Override
@@ -73,13 +71,13 @@ public class MainHomeFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        TestLog.i(TAG + " - initData()");
+//        TestLog.i(TAG + " - initData()");
         mWebView.loadUrl(HOMEPATH);
     }
 
     @Override
     protected void initView() {
-        TestLog.i(TAG + " - initView()");
+//        TestLog.i(TAG + " - initView()");
         mViewParent = (ViewGroup) mRootView.findViewById(R.id.webView1);
         View childAt = mViewParent.getChildAt(0);
         int childId = childAt.getId();
@@ -94,7 +92,7 @@ public class MainHomeFragment extends BaseFragment {
 
     @Override
     protected void getIntentData(Bundle arguments) {
-        TestLog.i(TAG + " - getIntentData()");
+//        TestLog.i(TAG + " - getIntentData()");
     }
 
     @Override
@@ -103,14 +101,14 @@ public class MainHomeFragment extends BaseFragment {
     }
 
     public void backWebView() {
-        TestLog.i(TAG + " - backWebView()");
+//        TestLog.i(TAG + " - backWebView()");
         if (mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
         }
     }
 
     public boolean isGoBack() {
-        TestLog.i(TAG + " - isGoBack()");
+//        TestLog.i(TAG + " - isGoBack()");
         if (mWebView != null && mWebView.canGoBack()) {
             return true;
         } else {
@@ -132,7 +130,7 @@ public class MainHomeFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        TestLog.i(TAG + " - onDestroy()");
+//        TestLog.i(TAG + " - onDestroy()");
         if (mWebView != null) {
             mWebView.clearWebView();
         }

@@ -61,7 +61,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:padding="6dp"
-                    android:hint="请输入群名称(2-10字)"
+                    android:hint="@string/input_group_name"
                     android:maxLength="10"
                     android:lines="1"
                     android:singleLine="true"

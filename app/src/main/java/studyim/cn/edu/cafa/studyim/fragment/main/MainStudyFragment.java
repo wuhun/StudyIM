@@ -21,7 +21,6 @@ import studyim.cn.edu.cafa.studyim.fragment.study.StudyClassFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyCommonFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyLeadFragment;
 import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 /**
@@ -96,11 +95,11 @@ public class MainStudyFragment extends BaseFragment {
     /** 初始化聊天记录 */
     ConversationListFragment mConversationListFragment = null;
     private Fragment initConversationList() {
-        TestLog.i("initConversationList() - 聊天记录列表，融云提供的fragment，需要传入uri与adapter");
+//        TestLog.i("initConversationList() - 聊天记录列表，融云提供的fragment，需要传入uri与adapter");
         if (mConversationListFragment == null) {
             ConversationListFragment listFragment = new ConversationListFragment();
             //listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
-            TestLog.i("==>" + MyApplication.getContext().getApplicationInfo().packageName);
+//            TestLog.i("==>" + MyApplication.getContext().getApplicationInfo().packageName);
             Uri uri = Uri.parse("rong://" + MyApplication.getContext().getApplicationInfo().packageName).buildUpon()
                     .appendPath("conversationlist")
                     .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话, 聚合显示
@@ -146,7 +145,7 @@ public class MainStudyFragment extends BaseFragment {
                     jumpToActivity(StudyShearchActivity.class);
                     break;
                 default:
-                    WuhunToast.error("正在建设中，敬请期待").show();
+                    WuhunToast.error(R.string.kaifa).show();
                     break;
             }
         }

@@ -37,6 +37,7 @@ import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
+import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
@@ -79,7 +80,14 @@ public class GroupSelectFriendActivity extends BaseActivity {
         if (WuhunNetTools.isAvailable(mContext)) {
             HttpUtil.getFriendList(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) { /* 请求失败 */ }
+                public void onFailure(Call call, IOException e) {
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            WuhunToast.info(R.string.request_error_net).show();
+                        }
+                    });
+                }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {

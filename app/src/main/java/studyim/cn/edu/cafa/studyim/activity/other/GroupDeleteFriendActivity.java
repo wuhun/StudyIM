@@ -34,7 +34,6 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
@@ -91,86 +90,54 @@ public class GroupDeleteFriendActivity extends BaseActivity {
     private void initData() {
         HttpUtil.getGroupMemeberlist(grouid, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) { /* 请求失败 */ }
+            public void onFailure(Call call, IOException e) {
+                WuhunThread.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        WuhunToast.info(R.string.request_error_net).show();
+                    }
+                });
+            }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-//                    TestLog.i("查询群成员result: " + result);
-                final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
-                }.getType());
-                if (response.isSuccessful() && model != null && model.getCode() == 1) {
-//                    final List<GroupMemeberModel> Gmobel = new ArrayList<>();
 
-                    final List<GroupMemeberModel> memeber = model.getResult();
+                if (response.isSuccessful()) {
+                    final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
+                    }.getType());
+                    if (model != null && model.getCode() == 1) {
 
-                    for (int i=0; i<memeber.size(); i++) {
-                        TestLog.i("成员是否为自己？");
-                        if((memeber.get(i).getUSERID()+"").equals(getSPUtil().getUSERID())) {
-                            memeber.remove(i);
+                        final List<GroupMemeberModel> memeber = model.getResult();
+
+                        for (int i = 0; i < memeber.size(); i++) {
+//                        TestLog.i("成员是否为自己？");
+                            if ((memeber.get(i).getUSERID() + "").equals(getSPUtil().getUSERID())) {
+                                memeber.remove(i);
+                            }
                         }
+
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                friendList.clear();
+                                friendList = memeber;
+                                adapter.setData(friendList);
+                            }
+                        });
                     }
-
-//                    for (int i=0;i<memeber.size();i++) {
-//                        GroupMemeberModel memeberModel = memeber.get(i);
-//                        if(!WuhunDataTool.isNullString(groupMasterId) && (memeberModel.getUSERID()+"").equals(groupMasterId)) {
-//                            continue;
-//                        }
-//                        if(!WuhunDataTool.isNullString(groupManagerId) && (memeberModel.getUSERID()+"").equals(groupManagerId)) {
-//                            continue;
-//                        }
-//                        Gmobel.add(memeberModel);
-//                    }
-
-//                        TestLog.i("循环" + memeber);
+                } else {
                     WuhunThread.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            friendList.clear();
-                            friendList = memeber;
-                            adapter.setData(friendList);
+                            WuhunToast.info(R.string.server_connection_error).show();
                         }
                     });
                 }
+                
+
             }
         });
-//        HttpUtil.getFriendList(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                TestLog.i("FriendGroupCreteActivity - initData: 访问好友列表失败");
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                String result = response.body().string();
-//                FriendListModel dataList = null;
-//                if(result != null)
-//                    dataList = getGson().fromJson(result, FriendListModel.class);
-//                if (response.isSuccessful() && friendList != null && dataList.getCode() == 1) {
-//                    final FriendListModel finalDataList = dataList;
-//                    WuhunThread.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            friendList = finalDataList.getResult();
-//                            adapter.setData(friendList);
-//                            if (friendList.size() <= 0) {
-//                                tv_no_friend_hint.setVisibility(View.VISIBLE);
-//                                rvAddFriend.setVisibility(View.GONE);
-//                                mQib.setVisibility(View.GONE);
-//                                bodyOk.setVisibility(View.GONE);
-//                            } else {
-//                                tv_no_friend_hint.setVisibility(View.GONE);
-//                                rvAddFriend.setVisibility(View.VISIBLE);
-//                                mQib.setVisibility(View.VISIBLE);
-//                                bodyOk.setVisibility(View.VISIBLE);
-//                            }
-//                        }
-//                    });
-//                } else {
-//                    TestLog.i("FriendGroupCreteActivity - initData: 获取好友列表失败");
-//                }
-//            }
-//        });
     }
 
     /** 创建群组要添加的好友 */
@@ -195,7 +162,7 @@ public class GroupDeleteFriendActivity extends BaseActivity {
                     disSelect.setChecked(true);
                     groupList.add(friendList.get(position));
                 }
-                bodyOk.setText("删除(" + groupList.size() + ")");
+                bodyOk.setText(String.format(getString(R.string.delete_num), groupList.size()));
             }
         });
         bodyOk.setOnClickListener(mClickListener);
@@ -248,7 +215,7 @@ public class GroupDeleteFriendActivity extends BaseActivity {
 //                    intent.putExtra("groupFriends", (Serializable) groupList);
 //                    jumpToActivity(intent);
                     if(WuhunDataTool.isNullString(grouid)){
-                        WuhunToast.info("没有获取到群信息").show();
+                        WuhunToast.info(R.string.no_get_group_info).show();
                     } else{
                         deleteSelectfriendList();
                     }
@@ -264,7 +231,7 @@ public class GroupDeleteFriendActivity extends BaseActivity {
 
     private void deleteSelectfriendList() {
         if (groupList.size() <= 0) {
-            WuhunToast.info("请选择您要删除的好友").show();
+            WuhunToast.info(R.string.select_delete_friend).show();
         } else {
             for(GroupMemeberModel friend : groupList){
                 HttpUtil.groupQuit(grouid, friend.getUSERID()+"", new Callback() {
@@ -274,8 +241,8 @@ public class GroupDeleteFriendActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
-                        ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
                         if(response.isSuccessful()){
+                            ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
                             addFriendResultList.add(resultModel.getCode()+"");
                         }
                     }
@@ -283,11 +250,11 @@ public class GroupDeleteFriendActivity extends BaseActivity {
             }
 
             if(addFriendResultList.contains("0") && addFriendResultList.contains("1")) {
-                WuhunToast.info("部分删除成功").show();
+                WuhunToast.info(R.string.part_delete_success).show();
             }else if(!addFriendResultList.contains("0")) {
-                WuhunToast.info("删除成功").show();
+                WuhunToast.info(R.string.delete_success).show();
             }else if(!addFriendResultList.contains("1")) {
-                WuhunToast.info("删除失败").show();
+                WuhunToast.info(R.string.delete_fail).show();
             }
             BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_MEMEBER);
             setResult(RESULT_OK);
@@ -301,7 +268,7 @@ public class GroupDeleteFriendActivity extends BaseActivity {
         headBg.setImageResource(R.drawable.main_bg);
         headLeft.setImageResource(R.drawable.icon_back);
         bodyRight.setVisibility(View.GONE);
-        bodyOk.setText("删除");
+        bodyOk.setText(R.string.delete);
         bodyOk.setVisibility(View.VISIBLE);
 
         adapter = new LQRAdapterForRecyclerView<GroupMemeberModel>(mContext, friendList, R.layout.group_friend_list_item) {

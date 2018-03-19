@@ -47,14 +47,14 @@
                 android:textSize="14sp"
                 android:lines="1"
                 android:ellipsize="end"
-                android:hint="请输入"/>
+                android:hint="@string/input"/>
         </LinearLayout>
         <TextView
             android:id="@+id/btn_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:text="搜索"
+            android:text="@string/search"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/red2"/>
@@ -76,7 +76,7 @@
         android:paddingBottom="30dp"
         android:gravity="center"
         android:background="@color/white"
-        android:text="该用户不存在"
+        android:text="@string/no_user"
         android:visibility="gone"/>
 
     <RelativeLayout
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:layout_marginBottom="20dp"
-            android:text="搜索制定内容"
+            android:text="@string/shearch_content"
             android:layout_centerHorizontal="true"/>
         <LinearLayout
             android:id="@+id/ll_search_bottom"
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="联系人"
+                android:text="@string/title_contact"
                 android:padding="6dp"
                 android:textColor="@color/red2"/>
             <View style="@style/yLine" />
@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="联系人"
+                android:text="@string/user"
                 android:padding="6dp"
                 android:textColor="@color/red2"/>
         </LinearLayout>

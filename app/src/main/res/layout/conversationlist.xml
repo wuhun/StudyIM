@@ -27,7 +27,7 @@
                 android:layout_centerInParent="true"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="聊天"
+                android:text="@string/chat"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:textSize="14sp" />
@@ -47,7 +47,7 @@
                 android:layout_centerInParent="true"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="公告"
+                android:text="@string/bulletin"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:textSize="14sp" />
@@ -67,7 +67,7 @@
                 android:layout_centerInParent="true"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="活动"
+                android:text="@string/events"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:textSize="14sp" />

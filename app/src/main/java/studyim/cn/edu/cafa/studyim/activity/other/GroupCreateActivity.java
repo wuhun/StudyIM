@@ -53,7 +53,6 @@ import studyim.cn.edu.cafa.studyim.ui.BottomMenuDialog;
 import studyim.cn.edu.cafa.studyim.ui.GlideRoundTransform;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import tools.com.lvliangliang.wuhuntools.app.WuhunAppTool;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
@@ -61,6 +60,7 @@ import tools.com.lvliangliang.wuhuntools.permission.PermissionsUtil;
 import tools.com.lvliangliang.wuhuntools.util.WuhunFileTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunImgTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunState;
+import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.loadDialog.LoadDialog;
 
@@ -132,9 +132,9 @@ public class GroupCreateActivity extends BaseActivity {
                     imgClearGroupname.setVisibility(View.GONE);
                 }
                 if(s.length()>=10) {
-                    WuhunToast.info("最多输入10个字符").show();
+                    WuhunToast.info(R.string.string_lt_10).show();
                 } else if (s.length() < 2) {
-                    WuhunToast.info("最少输入2个字符").show();
+                    WuhunToast.info(R.string.string_gt_2).show();
                 }
             }
 
@@ -144,9 +144,9 @@ public class GroupCreateActivity extends BaseActivity {
         spinnerStyle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(groupTypeList.get(position).equals("普通群")) {
+                if(groupTypeList.get(position).equals(getString(R.string.common_group))) {
                     groupType = "P";
-                } else if (groupTypeList.get(position).equals("班级群")) {
+                } else if (groupTypeList.get(position).equals(getString(R.string.class_group))) {
                     groupType = "G";
                 } else {
                     groupType = "P";
@@ -175,7 +175,7 @@ public class GroupCreateActivity extends BaseActivity {
                         createGroup(groupName);//创建群组
                         LoadDialog.show(mContext);
                     } else {
-                        WuhunToast.info("群名称不符合要求").show();
+                        WuhunToast.info(R.string.group_name_error).show();
                     }
                     break;
                 case R.id.img_clear_groupname:
@@ -190,15 +190,15 @@ public class GroupCreateActivity extends BaseActivity {
     /** 创建 */
     private void createGroup(String groupname) {
         if (cropUri == null || cropUri.getPath() == null) {
-            WuhunToast.info("请上传群头像").show();
+            WuhunToast.info(R.string.upload_avatar).show();
             LoadDialog.dismiss(mContext);
             return;
         }
 //        TestLog.i("群名称：" + groupname + " - 头像：" + picUri.getPath() + " - 类型：" + groupType);
         if(!WuhunNetTools.isAvailable(mContext)) {
             new AlertDialog.Builder(mContext)
-                    .setMessage("当前无网络连接，请检查网络状态")
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    .setMessage(R.string.nonet_check_please)
+                    .setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             GroupCreateActivity.this.finish();
@@ -218,32 +218,42 @@ public class GroupCreateActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                TestLog.i("result: " + result);
+//                TestLog.i("result: " + result);
                 if (result != null && response.isSuccessful()) {
-                    GroupCreateModel model = MyApplication.getGson().fromJson(result, GroupCreateModel.class);
-                    if (model.getCode() == 1) {
-                        if (RongContext.getInstance() != null && model != null) {
-                            // TODO: 2018/1/9 更新群列表信息
-                            BroadcastManager.getInstance(getContext()).sendBroadcast(Constant.UPDATE_GROUP_LIST);
-                            // 跳转到群聊界面
-                            String rcid = model.getResult().getGroupRCID();
-                            Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
-                                    .appendPath("conversation")
-                                    .appendPath(Conversation.ConversationType.GROUP.getName().toLowerCase())
-                                    .appendQueryParameter("targetId", rcid)
-                                    .appendQueryParameter("title", model.getResult().getGroupName())
-                                    .appendQueryParameter("groupId", rcid.substring(rcid.indexOf("group") + 5))
-                                    .build();
-                            startActivity(new Intent("android.intent.action.VIEW", uri));
-                            LoadDialog.dismiss(mContext);
-                            GroupCreateActivity.this.finish();
+                    final GroupCreateModel model = MyApplication.getGson().fromJson(result, GroupCreateModel.class);
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (model.getCode() == 1) {
+                                if (RongContext.getInstance() != null && model != null) {
+                                    // TODO: 2018/1/9 更新群列表信息
+                                    BroadcastManager.getInstance(getContext()).sendBroadcast(Constant.UPDATE_GROUP_LIST);
+                                    // 跳转到群聊界面
+                                    String rcid = model.getResult().getGroupRCID();
+                                    Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
+                                            .appendPath("conversation")
+                                            .appendPath(Conversation.ConversationType.GROUP.getName().toLowerCase())
+                                            .appendQueryParameter("targetId", rcid)
+                                            .appendQueryParameter("title", model.getResult().getGroupName())
+                                            .appendQueryParameter("groupId", rcid.substring(rcid.indexOf("group") + 5))
+                                            .build();
+                                    startActivity(new Intent("android.intent.action.VIEW", uri));
+                                    LoadDialog.dismiss(mContext);
+                                    GroupCreateActivity.this.finish();
+                                }
+                            } else {
+                                LoadDialog.dismiss(mContext);
+                            }
                         }
-                    } else {
-                        LoadDialog.dismiss(mContext);
-                    }
+                    });
                 } else {
-                    WuhunToast.info(R.string.request_error_net).show();
-                    LoadDialog.dismiss(mContext);
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            WuhunToast.info(R.string.server_connection_error).show();
+                            LoadDialog.dismiss(mContext);
+                        }
+                    });
                 }
             }
         });
@@ -265,17 +275,17 @@ public class GroupCreateActivity extends BaseActivity {
         mContext = this;
         headBg.setImageResource(R.drawable.main_bg);
         bodyLeft.setImageResource(R.drawable.icon_back);
-        bodyTvTitle.setText("创建群组");
+        bodyTvTitle.setText(R.string.create_group);
         bodyRight.setVisibility(View.GONE);
         bodyOk.setVisibility(View.GONE);
 
-        groupTypeList.add("普通群");
-        groupTypeList.add("班级群");
+        groupTypeList.add(getString(R.string.common_group));
+        groupTypeList.add(getString(R.string.class_group));
         spinner_adapter = new ArrayAdapter<String>(this, R.layout.shearch_spinner_item, groupTypeList);
         spinnerStyle.setAdapter(spinner_adapter);
 
         int roletype = MyApplication.getSPUtil().getRoletype();
-        TestLog.i("权限管理：" + roletype + "  =  " + (roletype == 5));
+//        TestLog.i("权限管理：" + roletype + "  =  " + (roletype == 5));
         if(roletype == Constant.TEACHER) {
             spinnerStyle.setVisibility(View.VISIBLE);
         }else if(roletype == Constant.STUDENT) {
@@ -320,7 +330,7 @@ public class GroupCreateActivity extends BaseActivity {
 
                         @Override
                         public void permissionDenied(@NonNull String[] permission) {
-                            WuhunToast.info("您拒绝了拍照权限").show();
+                            WuhunToast.info(R.string.refused_camera_permission).show();
                         }
                     }, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, false, null);
                 }
@@ -342,7 +352,7 @@ public class GroupCreateActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        TestLog.i("数据回调:" + requestCode);
+//        TestLog.i("数据回调:" + requestCode);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CODE_CAMERA_REQUEST://相机回调
@@ -354,7 +364,7 @@ public class GroupCreateActivity extends BaseActivity {
                 case CODE_CROP_RESULT://剪裁
 //                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), cropUri);
                         String pathForUri = WuhunImgTool.getPathForUri(mContext, cropUri);
-                        TestLog.i("cropUri: " + pathForUri);
+//                        TestLog.i("cropUri: " + pathForUri);
                         showImg(pathForUri);
                     break;
                 case CODE_SELECT_IMG://相册

@@ -32,7 +32,6 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
@@ -89,38 +88,58 @@ public class GroupAddFriendActivity extends BaseActivity {
         HttpUtil.getFriendList(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                TestLog.i("FriendGroupCreteActivity - initData: 访问好友列表失败");
+                WuhunThread.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        WuhunToast.normal(R.string.request_error_net).show();
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                FriendListModel dataList = null;
-                if(result != null)
-                    dataList = getGson().fromJson(result, FriendListModel.class);
-                if (response.isSuccessful() && friendList != null && dataList.getCode() == 1) {
-                    final FriendListModel finalDataList = dataList;
+                if (response.isSuccessful()) {
+                    FriendListModel dataList = null;
+                    if (result != null)
+                        dataList = getGson().fromJson(result, FriendListModel.class);
+                    if (friendList != null && dataList.getCode() == 1) {
+                        final FriendListModel finalDataList = dataList;
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                friendList = finalDataList.getResult();
+                                adapter.setData(friendList);
+                                if (friendList.size() <= 0) {
+                                    tv_no_friend_hint.setVisibility(View.VISIBLE);
+                                    rvAddFriend.setVisibility(View.GONE);
+                                    mQib.setVisibility(View.GONE);
+                                    bodyOk.setVisibility(View.GONE);
+                                } else {
+                                    tv_no_friend_hint.setVisibility(View.GONE);
+                                    rvAddFriend.setVisibility(View.VISIBLE);
+                                    mQib.setVisibility(View.VISIBLE);
+                                    bodyOk.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+                    } else {
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                WuhunToast.info(R.string.getFail).show();
+                            }
+                        });
+                    }
+                } else {
                     WuhunThread.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            friendList = finalDataList.getResult();
-                            adapter.setData(friendList);
-                            if (friendList.size() <= 0) {
-                                tv_no_friend_hint.setVisibility(View.VISIBLE);
-                                rvAddFriend.setVisibility(View.GONE);
-                                mQib.setVisibility(View.GONE);
-                                bodyOk.setVisibility(View.GONE);
-                            } else {
-                                tv_no_friend_hint.setVisibility(View.GONE);
-                                rvAddFriend.setVisibility(View.VISIBLE);
-                                mQib.setVisibility(View.VISIBLE);
-                                bodyOk.setVisibility(View.VISIBLE);
-                            }
+                            WuhunToast.info(R.string.server_connection_error).show();
                         }
                     });
-                } else {
-                    TestLog.i("FriendGroupCreteActivity - initData: 获取好友列表失败");
                 }
+
             }
         });
     }
@@ -217,15 +236,27 @@ public class GroupAddFriendActivity extends BaseActivity {
                 HttpUtil.groupJoin(grouid, friend.getUSERBUDDYID(), new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                WuhunToast.normal(R.string.request_error_net).show();
+                            }
+                        });
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
-                        ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                        if(response.isSuccessful()){
-                            addFriendResultList.add(resultModel.getCode()+"");
+                        if (response.isSuccessful()) {
+                            ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                            addFriendResultList.add(resultModel.getCode() + "");
+                        } else {
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    WuhunToast.normal(R.string.server_connection_error).show();
+                                }
+                            });
                         }
                     }
                 });

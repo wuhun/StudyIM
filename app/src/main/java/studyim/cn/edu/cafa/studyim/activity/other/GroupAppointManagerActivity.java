@@ -36,7 +36,6 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunPingyinTool;
@@ -107,36 +106,52 @@ public class GroupAppointManagerActivity extends BaseActivity {
         if (WuhunNetTools.isAvailable(mContext)) {
             HttpUtil.getGroupMemeberlist(groupId, new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) { /* 请求失败 */ }
+                public void onFailure(Call call, IOException e) {
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            WuhunToast.normal(R.string.request_error_net).show();
+                        }
+                    });
+                }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String result = response.body().string();
 //                    TestLog.i("查询群成员result: " + result);
-                    final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
-                    }.getType());
-                    if (response.isSuccessful() && model != null && model.getCode() == 1) {
-                        final List<GroupMemeberModel> Gmobel = new ArrayList<>();
+                    if (response.isSuccessful()) {
+                        final BaseModel<GroupMemeberModel> model = getGson().fromJson(result, new TypeToken<BaseModel<GroupMemeberModel>>() {
+                        }.getType());
+                        if ( model != null && model.getCode() == 1) {
+                            final List<GroupMemeberModel> Gmobel = new ArrayList<>();
 
-                        List<GroupMemeberModel> memeber = model.getResult();
-                        for (int i=0;i<memeber.size();i++) {
-                            GroupMemeberModel memeberModel = memeber.get(i);
-                            if(!WuhunDataTool.isNullString(groupMasterId) && (memeberModel.getUSERID()+"").equals(groupMasterId)) {
-                                continue;
+                            List<GroupMemeberModel> memeber = model.getResult();
+                            for (int i=0;i<memeber.size();i++) {
+                                GroupMemeberModel memeberModel = memeber.get(i);
+                                if(!WuhunDataTool.isNullString(groupMasterId) && (memeberModel.getUSERID()+"").equals(groupMasterId)) {
+                                    continue;
+                                }
+                                if(!WuhunDataTool.isNullString(groupManagerId) && (memeberModel.getUSERID()+"").equals(groupManagerId)) {
+                                    continue;
+                                }
+                                Gmobel.add(memeberModel);
                             }
-                            if(!WuhunDataTool.isNullString(groupManagerId) && (memeberModel.getUSERID()+"").equals(groupManagerId)) {
-                                continue;
-                            }
-                            Gmobel.add(memeberModel);
-                        }
 
 //                        TestLog.i("循环" + memeber);
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dataList.clear();
+                                    dataList = Gmobel;
+                                    adapter.setData(dataList);
+                                }
+                            });
+                        }
+                    } else {
                         WuhunThread.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                dataList.clear();
-                                dataList = Gmobel;
-                                adapter.setData(dataList);
+                                WuhunToast.normal(R.string.server_connection_error).show();
                             }
                         });
                     }
@@ -209,25 +224,34 @@ public class GroupAppointManagerActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String result = response.body().string();
-                    TestLog.i("设置管理员：" + result);
-                    final ResultModel model = getGson().fromJson(result, ResultModel.class);
-                    if (response.isSuccessful() && model.getCode() == 1) {
-                        WuhunThread.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                WuhunToast.info("设置成功").show();
-                                GroupAppointManagerActivity.this.finish();
-                            }
-                        });
+//                    TestLog.i("设置管理员：" + result);
+                    if (response.isSuccessful()) {
+                        final ResultModel model = getGson().fromJson(result, ResultModel.class);
+                        if (model.getCode() == 1) {
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    WuhunToast.info(R.string.setting_success).show();
+                                    GroupAppointManagerActivity.this.finish();
+                                }
+                            });
+                        } else {
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!WuhunDataTool.isNullString(model.getMsg())) {
+                                        WuhunToast.info(model.getMsg()).show();
+                                    } else {
+                                        WuhunToast.info("接口访问失败").show();
+                                    }
+                                }
+                            });
+                        }
                     } else {
                         WuhunThread.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (!WuhunDataTool.isNullString(model.getMsg())) {
-                                    WuhunToast.info(model.getMsg()).show();
-                                } else {
-                                    WuhunToast.info("接口访问失败").show();
-                                }
+                                WuhunToast.info(R.string.server_connection_error).show();
                             }
                         });
                     }

@@ -78,7 +78,7 @@
                         android:background="@null"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:hint="@string/phone_number"
+                        android:hint="@string/input_num_or_phone"
                         android:inputType="phone"
                         android:maxLength="20"
                         android:maxLines="1"
@@ -183,7 +183,7 @@
         android:layout_marginTop="@dimen/dp_40"
         android:layout_centerHorizontal="true"
         android:padding="15dp"
-        android:text="以游客身份访问"
+        android:text="@string/preview_app"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_2" />
 

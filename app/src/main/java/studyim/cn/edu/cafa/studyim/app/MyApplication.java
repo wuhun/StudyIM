@@ -45,7 +45,7 @@ public class MyApplication extends RongApplication {
     private void init() {
         this.mContext = getApplicationContext();
         WuhunTools.init(this);
-        WuhunDebug.getInstence(true);
+        WuhunDebug.getInstence(false);
         initData();
     }
 

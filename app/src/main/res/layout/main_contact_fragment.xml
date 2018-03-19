@@ -36,7 +36,7 @@
             android:layout_centerInParent="true"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:text="通讯录"/>
+            android:text="@string/title_contact"/>
         <!--<ImageView-->
             <!--android:id="@+id/body_img_add"-->
             <!--android:layout_width="@dimen/dp_40"-->

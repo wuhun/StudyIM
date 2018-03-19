@@ -214,47 +214,57 @@ public class GroupDetailMenuActivity extends BaseActivity {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String result = response.body().string();
-                            ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                            if (response.isSuccessful() && resultModel != null && (resultModel.getCode() == 1)) {
+                            if (response.isSuccessful()) {
+                                ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                                if (resultModel != null && (resultModel.getCode() == 1)) {
+                                    WuhunThread.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            RongIM.getInstance().getConversation(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Conversation>() {
+                                                @Override
+                                                public void onSuccess(Conversation conversation) {
+                                                    RongIM.getInstance().clearMessages(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Boolean>() {
+                                                        @Override
+                                                        public void onSuccess(Boolean aBoolean) {
+                                                            RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, targetid, null);
+                                                        }
+
+                                                        @Override
+                                                        public void onError(RongIMClient.ErrorCode e) {
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void onError(RongIMClient.ErrorCode e) {
+                                                }
+                                            });
+                                            RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Boolean>() {
+                                                @Override
+                                                public void onSuccess(Boolean aBoolean) {
+                                                }
+
+                                                @Override
+                                                public void onError(RongIMClient.ErrorCode errorCode) {
+                                                }
+                                            });
+                                            WuhunToast.info("退出成功").show();
+                                            DBManager.getmInstance().deleteGroupsById(groupid);
+                                            setResult(501, new Intent());
+                                            LoadDialog.dismiss(mContext);
+                                            GroupDetailMenuActivity.this.finish();
+                                        }
+                                    });
+                                }
+                            } else {
                                 WuhunThread.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        RongIM.getInstance().getConversation(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Conversation>() {
-                                            @Override
-                                            public void onSuccess(Conversation conversation) {
-                                                RongIM.getInstance().clearMessages(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Boolean>() {
-                                                    @Override
-                                                    public void onSuccess(Boolean aBoolean) {
-                                                        RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, targetid, null);
-                                                    }
-
-                                                    @Override
-                                                    public void onError(RongIMClient.ErrorCode e) {
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onError(RongIMClient.ErrorCode e) {
-                                            }
-                                        });
-                                        RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Boolean>() {
-                                            @Override
-                                            public void onSuccess(Boolean aBoolean) {
-                                            }
-
-                                            @Override
-                                            public void onError(RongIMClient.ErrorCode errorCode) {
-                                            }
-                                        });
-                                        WuhunToast.info("退出成功").show();
-                                        DBManager.getmInstance().deleteGroupsById(groupid);
-                                        setResult(501, new Intent());
-                                        GroupDetailMenuActivity.this.finish();
+                                        WuhunToast.info(R.string.server_connection_error).show();
+                                        LoadDialog.dismiss(mContext);
                                     }
                                 });
                             }
-                            LoadDialog.dismiss(mContext);
                         }
                     });
                     break;
@@ -275,47 +285,49 @@ public class GroupDetailMenuActivity extends BaseActivity {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String result = response.body().string();
-                            ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                            if (response.isSuccessful() && resultModel != null && (resultModel.getCode() == 1)) {
-                                WuhunThread.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        RongIM.getInstance().getConversation(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Conversation>() {
-                                            @Override
-                                            public void onSuccess(Conversation conversation) {
-                                                RongIM.getInstance().clearMessages(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Boolean>() {
-                                                    @Override
-                                                    public void onSuccess(Boolean aBoolean) {
-                                                        RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, targetid, null);
-                                                    }
+                            if(response.isSuccessful()) {
+                                ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                                if (resultModel != null && (resultModel.getCode() == 1)) {
+                                    WuhunThread.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            RongIM.getInstance().getConversation(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Conversation>() {
+                                                @Override
+                                                public void onSuccess(Conversation conversation) {
+                                                    RongIM.getInstance().clearMessages(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Boolean>() {
+                                                        @Override
+                                                        public void onSuccess(Boolean aBoolean) {
+                                                            RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, targetid, null);
+                                                        }
 
-                                                    @Override
-                                                    public void onError(RongIMClient.ErrorCode e) {
-                                                    }
-                                                });
-                                            }
+                                                        @Override
+                                                        public void onError(RongIMClient.ErrorCode e) {
+                                                        }
+                                                    });
+                                                }
 
-                                            @Override
-                                            public void onError(RongIMClient.ErrorCode e) {
-                                            }
-                                        });
-                                        RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Boolean>() {
-                                            @Override
-                                            public void onSuccess(Boolean aBoolean) {
-                                            }
+                                                @Override
+                                                public void onError(RongIMClient.ErrorCode e) {
+                                                }
+                                            });
+                                            RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, targetid, new RongIMClient.ResultCallback<Boolean>() {
+                                                @Override
+                                                public void onSuccess(Boolean aBoolean) {
+                                                }
 
-                                            @Override
-                                            public void onError(RongIMClient.ErrorCode errorCode) {
-                                            }
-                                        });
-                                        WuhunToast.info("退出成功").show();
-                                        DBManager.getmInstance().deleteGroupsById(groupid);
-                                        setResult(501, new Intent());
-                                        GroupDetailMenuActivity.this.finish();
-                                    }
-                                });
+                                                @Override
+                                                public void onError(RongIMClient.ErrorCode errorCode) {
+                                                }
+                                            });
+                                            WuhunToast.info("退出成功").show();
+                                            DBManager.getmInstance().deleteGroupsById(groupid);
+                                            setResult(501, new Intent());
+                                            LoadDialog.dismiss(mContext);
+                                            GroupDetailMenuActivity.this.finish();
+                                        }
+                                    });
+                                }
                             }
-                            LoadDialog.dismiss(mContext);
                         }
                     });
                     break;
@@ -364,23 +376,25 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                             @Override
                                             public void onResponse(Call call, Response response) throws IOException {
                                                 String result = response.body().string();
-                                                ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                                                if (response.isSuccessful() && resultModel.getCode() == 1) {
-                                                    WuhunThread.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_LIST);
-                                                            updateGroupInfo();
-                                                            WuhunToast.info("修改成功").show();
-                                                        }
-                                                    });
-                                                } else {
-                                                    WuhunThread.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            WuhunToast.info("修改失败").show();
-                                                        }
-                                                    });
+                                                if(response.isSuccessful()) {
+                                                    ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                                                    if (resultModel.getCode() == 1) {
+                                                        WuhunThread.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_LIST);
+                                                                updateGroupInfo();
+                                                                WuhunToast.info("修改成功").show();
+                                                            }
+                                                        });
+                                                    } else {
+                                                        WuhunThread.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                WuhunToast.info("修改失败").show();
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                             }
                                         });
@@ -416,23 +430,25 @@ public class GroupDetailMenuActivity extends BaseActivity {
                                             @Override
                                             public void onResponse(Call call, Response response) throws IOException {
                                                 String result = response.body().string();
-                                                ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                                                if (response.isSuccessful() && resultModel.getCode() == 1) {
-                                                    WuhunThread.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_LIST);
-                                                            updateGroupInfo();
-                                                            WuhunToast.info("修改成功").show();
-                                                        }
-                                                    });
-                                                } else {
-                                                    WuhunThread.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            WuhunToast.info("修改失败").show();
-                                                        }
-                                                    });
+                                                if(response.isSuccessful()) {
+                                                    ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                                                    if (resultModel.getCode() == 1) {
+                                                        WuhunThread.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_LIST);
+                                                                updateGroupInfo();
+                                                                WuhunToast.info("修改成功").show();
+                                                            }
+                                                        });
+                                                    } else {
+                                                        WuhunThread.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                WuhunToast.info("修改失败").show();
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                             }
                                         });
@@ -484,7 +500,7 @@ public class GroupDetailMenuActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                TestLog.i("群详情信息=>" + result);
+//                TestLog.i("群详情信息=>" + result);
 
                 if (response.isSuccessful()) {
                     final GroupInfoModel groupInfoModel = getGson().fromJson(result, GroupInfoModel.class);
@@ -941,23 +957,25 @@ public class GroupDetailMenuActivity extends BaseActivity {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String result = response.body().string();
-                            ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
-                            if (response.isSuccessful() && resultModel.getCode() == 1) {
-                                WuhunThread.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_LIST);
-                                        updateGroupInfo();
-                                        WuhunToast.info("修改成功").show();
-                                    }
-                                });
-                            } else {
-                                WuhunThread.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        WuhunToast.info("修改失败").show();
-                                    }
-                                });
+                            if(response.isSuccessful()) {
+                                ResultModel resultModel = getGson().fromJson(result, ResultModel.class);
+                                if (resultModel.getCode() == 1) {
+                                    WuhunThread.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_GROUP_LIST);
+                                            updateGroupInfo();
+                                            WuhunToast.info("修改成功").show();
+                                        }
+                                    });
+                                } else {
+                                    WuhunThread.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            WuhunToast.info("修改失败").show();
+                                        }
+                                    });
+                                }
                             }
                         }
                     });

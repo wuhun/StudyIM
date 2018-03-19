@@ -39,7 +39,6 @@ import studyim.cn.edu.cafa.studyim.model.LoginUserModel;
 import studyim.cn.edu.cafa.studyim.model.RolesModel;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import tools.com.lvliangliang.wuhuntools.exception.TestLog;
-import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionsUtil;
@@ -116,7 +115,7 @@ public class LoginActivity extends BaseActivity {
     @OnClick({R.id.btn_login_sign, R.id.tv_login_query_pwd, R.id.tv_login_register, R.id.tv_browse})
     public void onClick(View view) {
         if (!WuhunNetTools.isAvailable(getContext())) {
-            WuhunToast.error("网络无法访问，请检查网络连接").show();
+            WuhunToast.error(R.string.nonet_check_please).show();
             return;
         }
         switch (view.getId()) {
@@ -129,7 +128,7 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.tv_login_register:
                 // TODO: 2017/11/8 注册
-                jumpToActivity(RegistActivity.class);
+//                jumpToActivity(RegistActivity.class);
                 break;
             case R.id.tv_browse:
 //                WuhunToast.info("游客方式浏览").show();
@@ -142,7 +141,7 @@ public class LoginActivity extends BaseActivity {
                 handler.sendEmptyMessageDelayed(BROWSE, 500);
                 break;
             default:
-                WuhunToast.info("没有找到内容");
+                WuhunToast.info(R.string.no_content).show();
                 break;
         }
     }
@@ -171,12 +170,12 @@ public class LoginActivity extends BaseActivity {
 
 //      非空校验
         if (TextUtils.isEmpty(username)) {
-            WuhunToast.normal("请输入学号或手机号").show();
+            WuhunToast.normal(R.string.input_num_or_phone).show();
             etLoginNum.setShakeAnimation();
             return;
         }
         if (TextUtils.isEmpty(password)) {
-            WuhunToast.normal("请输入密码").show();
+            WuhunToast.normal(R.string.password).show();
             etLoginPwd.setShakeAnimation();
             return;
         }
@@ -203,7 +202,7 @@ public class LoginActivity extends BaseActivity {
                         }
 
                         if (loginModel.getCode() == 1) {//成功
-                            WuhunDebug.debug("登录成功=>" + result);
+//                            WuhunDebug.debug("登录成功=>" + result);
                             getSPUtil().setUSERID(loginModel.getResult().getUserId());
                             getSPUtil().setTokens(loginModel.getResult().getTokens());
                             getSPUtil().setRctoken(loginModel.getResult().getToken());
@@ -242,10 +241,10 @@ public class LoginActivity extends BaseActivity {
                 if (null != model.getMsg()) {
                     WuhunToast.normal(model.getMsg()).show();
                 } else {
-                    WuhunToast.normal("用户名或密码错误").show();
+                    WuhunToast.normal(R.string.login_error).show();
                 }
             } else if (msg.what == LOGIN_ERROR) {
-                WuhunToast.normal(getResources().getString(R.string.request_error)).show();
+                WuhunToast.normal(R.string.server_connection_error).show();
             } else if (msg.what == BROWSE) {
                 jumpToActivity(MainActivity.class);
 //            }else if(msg.what == FIND_GROUP_MEMEBERLIST) {
@@ -303,21 +302,23 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>() {
-                }.getType());
-                if (model != null && model.getCode() == 1 && response.isSuccessful()) {
-                    List<GroupModel> groups = model.getResult();
-                    String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
-                    DBManager.getmInstance().saveGroups(groups, before);
+                if(response.isSuccessful()) {
+                    BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>() {
+                    }.getType());
+                    if (model != null && model.getCode() == 1 && response.isSuccessful()) {
+                        List<GroupModel> groups = model.getResult();
+                        String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
+                        DBManager.getmInstance().saveGroups(groups, before);
 
-                    handler.sendEmptyMessageDelayed(GO_TO_MAIN, 1000);
+                        handler.sendEmptyMessageDelayed(GO_TO_MAIN, 1000);
+                    }
                 }
             }
         });
     }
 
     private void showLoadDialog() {
-        ld = new LoadDialog(mContext, false, "正在加载中……");
+        ld = new LoadDialog(mContext, false, getString(R.string.loding));
         ld.show();
     }
 

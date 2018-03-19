@@ -182,17 +182,25 @@ public class MainContactFragment extends BaseFragment {
 
                 @Override
                 public void onResponse(Call call, final Response response) throws IOException {
-                    String result = response.body().string();
-                    final FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
-                    WuhunThread.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (response.isSuccessful()) {
-                                if (null == friendList || null == friendList.getResult()) {
+                    final String result = response.body().string();
+
+                    if (response.isSuccessful()) {
+                        final FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
+                        if (null == friendList || null == friendList.getResult()) {
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
                                     updateBottom(null);
-//                                  handler.sendEmptyMessage(REQUEST_FAIL);
+                                    if(!TextUtils.isEmpty(friendList.getMsg())) {
+                                        WuhunToast.info(friendList.getMsg()).show();
+                                    }
                                     return;
-                                } else {
+                                }
+                            });
+                        } else {
+                            WuhunThread.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
                                     if (friendList.getResult().size() == friends.size()) {
                                         updateBottom(friends);
 //                                        TestLog.i("==> 网络获取： " + friends.toString());
@@ -201,17 +209,20 @@ public class MainContactFragment extends BaseFragment {
                                         handler.sendMessage(msg);
                                     }
                                 }
-                            } else {
-                                if(!TextUtils.isEmpty(friendList.getMsg())) {
-                                    WuhunToast.info(friendList.getMsg()).show();
-                                }
-                            }
+                            });
                         }
-                    });
+                    } else {
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                WuhunToast.info(R.string.server_connection_error).show();
+                            }
+                        });
+                    }
                 }
             });
         } else {
-            TestLog.i("==> 本地数据库： " + friends.toString());
+//            TestLog.i("==> 本地数据库： " + friends.toString());
             if (friends != null)
                 updateBottom(friends);
         }
@@ -236,7 +247,7 @@ public class MainContactFragment extends BaseFragment {
         BroadcastManager.getInstance(getActivity()).register(Constant.UPDATE_CONSTACT_LIST, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                TestLog.i("收到广播更新列表………………");
+//                TestLog.i("收到广播更新列表………………");
                 loadData(); //更新列表
             }
         });
@@ -265,7 +276,7 @@ public class MainContactFragment extends BaseFragment {
                     if (!WuhunDataTool.isNullString(model.getMsg())) {
                         WuhunToast.normal(model.getMsg()).show();
                     } else {
-                        WuhunToast.normal("获取失败").show();
+                        WuhunToast.normal(R.string.get_fail).show();
                     }
                 }
             }
@@ -282,12 +293,12 @@ public class MainContactFragment extends BaseFragment {
             TestLog.i("MainContactFragment - updateBottom:" + mData.size());
 
             footerView.setVisibility(View.VISIBLE);
-            footerView.setText("联系人：" + mData.size());
+            footerView.setText(String.format(getString(R.string.constact), mData.size()));
             //整理排序
             mData = SortUtils.sortContacts(mData);
         } else {
             footerView.setVisibility(View.VISIBLE);
-            footerView.setText("您还没有联系人，去添加吧！");
+            footerView.setText(R.string.no_contact);
             mData.clear();
         }
         if (mAdapter != null)

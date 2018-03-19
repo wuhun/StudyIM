@@ -24,7 +24,6 @@ import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.model.UserInfo;
 import studyim.cn.edu.cafa.studyim.ui.OptionItemView;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 public class DetailUserInfoActivity extends BaseActivity {
@@ -192,7 +191,7 @@ public class DetailUserInfoActivity extends BaseActivity {
         mContext = this;
         headBg.setImageResource(R.mipmap.main_bg);
         bodyImgMenu.setImageResource(R.drawable.icon_back);
-        bodyTvTitle.setText("详细资料");
+        bodyTvTitle.setText(R.string.detail_info);
 //        bodySearch.setVisibility(View.GONE);
         bodySearch.setImageResource(R.mipmap.head_menu_more);
     }
@@ -221,7 +220,7 @@ public class DetailUserInfoActivity extends BaseActivity {
 //        if(userInfo.getUSERID() >=0 && String.valueOf(userInfo.getUSERID()).equals(getSPUtil().getUSERID())) {
 //            return;
 //        }
-        TestLog.i("当前用户id：" + MyApplication.getSPUtil().getUSERID() + " = " + userInfo.getUSERID());
+//        TestLog.i("当前用户id：" + MyApplication.getSPUtil().getUSERID() + " = " + userInfo.getUSERID());
 
         if ( MyApplication.getSPUtil().getUSERID().equals(userInfo.getUSERID()) ) {
             btnSendMsg.setVisibility(View.GONE);
@@ -245,7 +244,7 @@ public class DetailUserInfoActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == REQUEST_ERROR) {
-                WuhunToast.normal("获取失败").show();
+                WuhunToast.normal(R.string.get_fail).show();
             }else if(msg.what == REQUEST_FAIL) {
                 WuhunToast.normal(getResources().getString(R.string.request_fail)).show();
             }

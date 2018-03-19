@@ -3,6 +3,8 @@ package studyim.cn.edu.cafa.studyim.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import tools.com.lvliangliang.wuhuntools.util.WuhunLanguageTool;
+
 /**
  * ================================================
  * 作    者：悟魂(了解自己，感悟灵魂，做最好的自己)
@@ -55,6 +57,16 @@ public class SPUtil {
     public static final String SETTING_VERSION = "settingVersion";
 
     public static final String ROLE_TYPE = "roleType";//角色类型
+
+    public static final String DEFAULT_LANGUAGE = "language";//语言
+
+    public static String getDefaultLanguage(){
+        return settings.getString(DEFAULT_LANGUAGE, WuhunLanguageTool.CHINESE);
+    }
+
+    public void setDefaultLanguage(String language){
+        settings.edit().putString(DEFAULT_LANGUAGE, language);
+    }
 
     public static int getRoletype() {
         return settings.getInt(ROLE_TYPE, 4);

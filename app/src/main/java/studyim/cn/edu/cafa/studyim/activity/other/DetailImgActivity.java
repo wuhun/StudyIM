@@ -14,7 +14,6 @@ import java.util.List;
 
 import studyim.cn.edu.cafa.studyim.R;
 import studyim.cn.edu.cafa.studyim.fragment.other.DetailImgFragment;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 public class DetailImgActivity extends AppCompatActivity {
 
@@ -47,7 +46,7 @@ public class DetailImgActivity extends AppCompatActivity {
         String[] imgurls = getIntent().getStringArrayExtra(ICON);
         iIndex = getIntent().getIntExtra(PAGE,0);
 
-        TestLog.i("===>pictrue:" + imgurls[0]);
+//        TestLog.i("===>pictrue:" + imgurls[0]);
 
         // 数组 --> List集合
         for(String url:imgurls){

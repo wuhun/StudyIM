@@ -52,7 +52,6 @@ import studyim.cn.edu.cafa.studyim.model.BaseModel;
 import studyim.cn.edu.cafa.studyim.model.GroupMemeberModel;
 import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
 
@@ -129,8 +128,8 @@ public class ConversationListActivity extends BaseActivity {
         return activeFragment;
     }
 
-    private final String TextTypingTitle = "对方正在输入...";
-    private final String VoiceTypingTitle = "对方正在讲话...";
+    private final String TextTypingTitle = getString(R.string.persion_typing);
+    private final String VoiceTypingTitle = getString(R.string.persion_talking);
 
     public static final int SET_TEXT_TYPING_TITLE = 1;
     public static final int SET_VOICE_TYPING_TITLE = 2;
@@ -367,7 +366,7 @@ public class ConversationListActivity extends BaseActivity {
         ll_sub_title.setVisibility(View.GONE);
         if (conversationType.equals(Conversation.ConversationType.PRIVATE)) {
             setPrivateActionBar(targetId);
-            TestLog.i("设置私聊界面");
+//            TestLog.i("设置私聊界面");
         } else if (conversationType.equals(Conversation.ConversationType.GROUP)) {
             setGroupActionBar(targetId);
 
@@ -377,28 +376,28 @@ public class ConversationListActivity extends BaseActivity {
                 if (groupByRCID != null)
                     mGroupId = groupByRCID.getGROUPID() + "";
             }
-            TestLog.i("设置群聊界面");
+//            TestLog.i("设置群聊界面");
         } else if (conversationType.equals(Conversation.ConversationType.DISCUSSION)) {
             setDiscussionActionBar(targetId);
-            TestLog.i("设置讨论组界面");
+//            TestLog.i("设置讨论组界面");
         } else if (conversationType.equals(Conversation.ConversationType.CHATROOM)) {
             setTitle(mTitle);
-            TestLog.i("设置聊天室界面");
+//            TestLog.i("设置聊天室界面");
         } else if (conversationType.equals(Conversation.ConversationType.SYSTEM)) {
-            setTitle("聊天室");
-            TestLog.i("设置系统消息界面");
+            setTitle(getString(R.string.chat_room));
+//            TestLog.i("设置系统消息界面");
         } else if (conversationType.equals(Conversation.ConversationType.APP_PUBLIC_SERVICE)) {
             setAppPublicServiceActionBar(targetId);
-            TestLog.i("设置应用公众服务界面");
+//            TestLog.i("设置应用公众服务界面");
         } else if (conversationType.equals(Conversation.ConversationType.PUBLIC_SERVICE)) {
             setPublicServiceActionBar(targetId);
-            TestLog.i("设置公众服务号界面");
+//            TestLog.i("设置公众服务号界面");
         } else if (conversationType.equals(Conversation.ConversationType.CUSTOMER_SERVICE)) {
-            setTitle("意见反馈");
-            TestLog.i("意见反馈");
+            setTitle(getString(R.string.feedback));
+//            TestLog.i("意见反馈");
         } else {
-            setTitle("聊天");
-            TestLog.i("一对一聊天");
+            setTitle(getString(R.string.chat));
+//            TestLog.i("一对一聊天");
         }
     }
 
@@ -453,13 +452,13 @@ public class ConversationListActivity extends BaseActivity {
                         @Override
                         public void onError(RongIMClient.ErrorCode e) {
                             if (e.equals(RongIMClient.ErrorCode.NOT_IN_DISCUSSION)) {
-                                setTitle("不在讨论组中");
+                                setTitle(getString(R.string.no_discussion));
                                 supportInvalidateOptionsMenu();
                             }
                         }
                     });
         } else {
-            setTitle("讨论组");
+            setTitle(getString(R.string.Discussion));
         }
     }
 

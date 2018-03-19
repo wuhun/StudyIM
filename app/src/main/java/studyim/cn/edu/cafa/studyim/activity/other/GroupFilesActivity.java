@@ -209,21 +209,28 @@ public class GroupFilesActivity extends BaseActivity {
                 HttpUtil.GroupUploadFile(groupid, file, type, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        TestLog.i("失败");
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                WuhunToast.info(R.string.request_error_net).show();
+                            }
+                        });
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         final String result = response.body().string();
-                        ResultModel model = MyApplication.getGson().fromJson(result, ResultModel.class);
-                        if (response.isSuccessful() && model != null && model.getCode() == 1) {
-                            WuhunThread.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    WuhunToast.info(file.getName() + "上传成功").show();
-                                    loadData();
-                                }
-                            });
+                        if(response.isSuccessful() ) {
+                            ResultModel model = MyApplication.getGson().fromJson(result, ResultModel.class);
+                            if (model != null && model.getCode() == 1) {
+                                WuhunThread.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        WuhunToast.info(file.getName() + "上传成功").show();
+                                        loadData();
+                                    }
+                                });
+                            }
                         }
                     }
                 });
@@ -241,31 +248,39 @@ public class GroupFilesActivity extends BaseActivity {
             HttpUtil.getGroupFiles(groupid, fileTypes[position], new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            WuhunToast.info(R.string.request_error_net).show();
+                        }
+                    });
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String result = response.body().string();
-                    final BaseModel<GroupFile> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupFile>>() {
-                    }.getType());
-                    before = model.getBefore();
-                    WuhunThread.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (model != null) {
-                                mdata.clear();
-                                mdata = model.getResult();
-                                adapter.setData(mdata);
-                                if (mdata.size() > 0) {
-                                    rvGroupFile.setVisibility(View.VISIBLE);
-                                    tvEnptyHint.setVisibility(View.GONE);
-                                } else {
-                                    rvGroupFile.setVisibility(View.GONE);
-                                    tvEnptyHint.setVisibility(View.VISIBLE);
+                    if(response.isSuccessful()) {
+                        final BaseModel<GroupFile> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupFile>>() {
+                        }.getType());
+                        before = model.getBefore();
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (model != null) {
+                                    mdata.clear();
+                                    mdata = model.getResult();
+                                    adapter.setData(mdata);
+                                    if (mdata.size() > 0) {
+                                        rvGroupFile.setVisibility(View.VISIBLE);
+                                        tvEnptyHint.setVisibility(View.GONE);
+                                    } else {
+                                        rvGroupFile.setVisibility(View.GONE);
+                                        tvEnptyHint.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
         }
@@ -435,20 +450,22 @@ public class GroupFilesActivity extends BaseActivity {
                                         @Override
                                         public void onResponse(Call call, final Response response) throws IOException {
                                             String result = response.body().string();
-                                            final ResultModel resultModel = MyApplication.getGson().fromJson(result, ResultModel.class);
-                                            WuhunThread.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    if (response.isSuccessful() && resultModel.getCode() == 1) {
-                                                        WuhunToast.info("删除成功").show();
-                                                        loadData();
-                                                    } else {
-                                                        if (!WuhunDataTool.isNullString(resultModel.getMsg())) {
-                                                            WuhunToast.info(resultModel.getMsg()).show();
+                                            if (response.isSuccessful()) {
+                                                final ResultModel resultModel = MyApplication.getGson().fromJson(result, ResultModel.class);
+                                                WuhunThread.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if (response.isSuccessful() && resultModel.getCode() == 1) {
+                                                            WuhunToast.info("删除成功").show();
+                                                            loadData();
+                                                        } else {
+                                                            if (!WuhunDataTool.isNullString(resultModel.getMsg())) {
+                                                                WuhunToast.info(resultModel.getMsg()).show();
+                                                            }
                                                         }
                                                     }
-                                                }
-                                            });
+                                                });
+                                            }
                                         }
                                     });
                                 }

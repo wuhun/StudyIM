@@ -35,6 +35,8 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     private void init() {
+//        WuhunLanguageTool.shiftLanguage(getBaseContext(), WuhunLanguageTool.ENGLISE);
+
         if (!TextUtils.isEmpty(getSPUtil().getTokens())) {
             goToMain();
         } else {
@@ -57,11 +59,13 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
-                if(model != null && model.getCode() == 1 && response.isSuccessful()) {
-                    List<GroupModel> groups = model.getResult();
-                    String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
-                    DBManager.getmInstance().saveGroups(groups, before);
+                if(response.isSuccessful()) {
+                    BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
+                    if(model != null && model.getCode() == 1) {
+                        List<GroupModel> groups = model.getResult();
+                        String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
+                        DBManager.getmInstance().saveGroups(groups, before);
+                    }
                 }
             }
         });

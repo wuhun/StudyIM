@@ -37,7 +37,6 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
@@ -65,10 +64,10 @@ public class StudyShearchActivity extends BaseActivity {
     private Context mContext;
     ArrayAdapter<String> spinner_adapter;
     List<String> search_style;
-    private String[] spinners = new String[]{"学号","电话","昵称"};
+    private String[] spinners = new String[3];
+//            new String[]{getString(R.string.study_num),
+// getString(R.string.phone),getString(R.string.nickname)};
     private int currentPosition;
-
-
 
     public static final int REQUEST_SUCCESS = 0x01;
     public static final int REQUEST_FAIL = 0x02;
@@ -87,6 +86,9 @@ public class StudyShearchActivity extends BaseActivity {
 
     private void initView() {
         mContext = this;
+        spinners[0] = getString(R.string.study_num);
+        spinners[1] = getString(R.string.phone);
+        spinners[2] = getString(R.string.nickname);
 
         adapter = new LQRAdapterForRecyclerView<UserInfo>(mContext, userinfos, R.layout.search_user_info_item) {
             @Override
@@ -178,7 +180,7 @@ public class StudyShearchActivity extends BaseActivity {
     //                    llDefaultContent.setVisibility(View.GONE);
                     String content = etSearchContent.getText().toString();
                     if(WuhunDataTool.isNullString(content)) {
-                        WuhunToast.info("请输入" + spinners[currentPosition]).show();
+                        WuhunToast.info(getString(R.string.input) + spinners[currentPosition]).show();
                         return;
                     }
                     if (spinners[currentPosition].equals("学号")) {
@@ -202,23 +204,32 @@ public class StudyShearchActivity extends BaseActivity {
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String json = response.body().string();
-            final BaseModel<UserInfo> model = getGson().fromJson(json, new TypeToken<BaseModel<UserInfo>>(){}.getType());
-            if (response.isSuccessful() && model != null && model.getCode() == 1) {
-                before = model.getBefore();
+            if (response.isSuccessful()) {
+                final BaseModel<UserInfo> model = getGson().fromJson(json, new TypeToken<BaseModel<UserInfo>>(){}.getType());
+                if (model != null && model.getCode() == 1) {
+                    before = model.getBefore();
 
-                TestLog.i("查询好友： " + model.getResult().toString());
+//                TestLog.i("查询好友： " + model.getResult().toString());
 
-                Message msg = handler.obtainMessage(REQUEST_SUCCESS, model.getResult());
-                handler.sendMessage(msg);
+                    Message msg = handler.obtainMessage(REQUEST_SUCCESS, model.getResult());
+                    handler.sendMessage(msg);
+                } else {
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!WuhunDataTool.isNullString(model.getMsg())) {
+                                WuhunToast.normal(model.getMsg()).show();
+                            } else {
+                                WuhunToast.normal(R.string.request_error_net).show();
+                            }
+                        }
+                    });
+                }
             } else {
                 WuhunThread.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (!WuhunDataTool.isNullString(model.getMsg())) {
-                            WuhunToast.normal(model.getMsg()).show();
-                        } else {
-                            WuhunToast.normal(R.string.request_error_net).show();
-                        }
+                        WuhunToast.info(R.string.server_connection_error).show();
                     }
                 });
             }

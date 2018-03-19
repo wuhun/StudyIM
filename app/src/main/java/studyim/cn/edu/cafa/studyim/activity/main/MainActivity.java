@@ -14,7 +14,6 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +57,6 @@ import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
 import tools.com.lvliangliang.wuhuntools.adapter.lazyViewPgaerAdapter.LazyFragmentPagerAdapter;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
@@ -80,7 +78,14 @@ public class MainActivity extends BaseActivity {
     private Class mClass[] = {
             MainStudyFragment.class, MainResourceFragment.class, MainContactFragment.class, MainHomeFragment.class, MainMeFragment.class
     };
-    private String mTitles[] = {"学习", "资源", "通讯录", "官网", "我的"};
+
+    private String mTitles[] = new String[5];
+//    = {
+//            getResources().getString(R.string.tag_study),
+//            getResources().getString(R.string.tag_resource),
+//            getResources().getString(R.string.tag_contact),
+//            getResources().getString(R.string.tag_index),
+//            getResources().getString(R.string.tag_me)};
     private BaseFragment[] mFragment;
 //    = {
 //            FragmentFactory.getInstance().getMainStudyFragment(),
@@ -113,7 +118,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void init() {
-        TestLog.i(TAG + " - init()");
+//        TestLog.i(TAG + " - init()");
         initConnect();
         initView();
         initEvent(); //选中位置
@@ -122,7 +127,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initData() {
-        TestLog.i(TAG + " - initData()");
+//        TestLog.i(TAG + " - initData()");
         // TODO: 2017/12/25 我的广播加载我的提醒红点
         BroadcastManager.getInstance(getContext()).register(Constant.ME_SHOW_RED, new BroadcastReceiver() {
             @Override
@@ -169,7 +174,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                TestLog.i("获取更新群列表:" + result);
+//                TestLog.i("获取更新群列表:" + result);
                 if(response.isSuccessful()) {
                     if(result == null) return;
                     BaseModel<GroupModel> model = MyApplication.getGson().fromJson(result, new TypeToken<BaseModel<GroupModel>>(){}.getType());
@@ -194,11 +199,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initConnect() {
-        TestLog.i(TAG + " - initConnect()");
+//        TestLog.i(TAG + " - initConnect()");
         RongIMClient.connect(getSPUtil().getRctoken(), new RongIMClient.ConnectCallback() {
             @Override
             public void onTokenIncorrect() {
-                WuhunToast.normal("Token 错误，请重新登录").show();
+                WuhunToast.normal(R.string.login_timeout).show();
             }
 
             @Override
@@ -210,7 +215,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onError(RongIMClient.ErrorCode errorCode) {
-                WuhunToast.normal("连接融云服务器失败").show();
+                WuhunToast.normal(R.string.connect_rong_fail).show();
             }
         });
     }
@@ -225,28 +230,41 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                if (WuhunDataTool.isNullString(result))
-                    WuhunToast.normal(R.string.request_error).show();
-                UserGetInfo userGetInfo = getGson().fromJson(result, UserGetInfo.class);
-                if (response.isSuccessful() && userGetInfo != null) {
-                    if (userGetInfo.getCode() == 1) {
+                if (response.isSuccessful()) {
+                    UserGetInfo userGetInfo = getGson().fromJson(result, UserGetInfo.class);
+                    if (userGetInfo != null) {
+                        if (userGetInfo.getCode() == 1) {
 //                        Message message = handler.obtainMessage(REQUEST_SUCCESS, userGetInfo);
 //                        handler.sendMessage(message);
-                        UserGetInfo.ResultBean user = userGetInfo.getResult();
-                        if (user != null) {
-                            Uri parse = Uri.parse(UserAvatarUtil.getAvatarUri(user.getUserId() + "", user.getNickName(), user.getAvatar()));
-                            if (parse != null) {
-                                UserInfo info = new UserInfo(token, user.getNickName(), parse);
-                                RongIM.getInstance().refreshUserInfoCache(info);
+                            UserGetInfo.ResultBean user = userGetInfo.getResult();
+                            if (user != null) {
+                                Uri parse = Uri.parse(UserAvatarUtil.getAvatarUri(user.getUserId() + "", user.getNickName(), user.getAvatar()));
+                                if (parse != null) {
+                                    UserInfo info = new UserInfo(token, user.getNickName(), parse);
+                                    RongIM.getInstance().refreshUserInfoCache(info);
+                                }
                             }
+                        } else {
+                            Message message = handler.obtainMessage(REQUEST_FAIL, userGetInfo);
+                            handler.sendMessage(message);
                         }
                     } else {
-                        Message message = handler.obtainMessage(REQUEST_FAIL, userGetInfo);
-                        handler.sendMessage(message);
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                WuhunToast.normal(R.string.request_error).show();
+                            }
+                        });
                     }
                 } else {
-                    WuhunToast.normal(R.string.request_error).show();
+                    WuhunThread.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            WuhunToast.normal(R.string.request_error).show();
+                        }
+                    });
                 }
+
             }
         });
     }
@@ -268,8 +286,14 @@ public class MainActivity extends BaseActivity {
     };
 
     private void initView() {
-        TestLog.i(TAG + " - initView()");
+//        TestLog.i(TAG + " - initView()");
         context = this;
+        mTitles[0] = getResources().getString(R.string.tag_study);
+        mTitles[1] = getResources().getString(R.string.tag_resource);
+        mTitles[2] = getResources().getString(R.string.tag_contact);
+        mTitles[3] = getResources().getString(R.string.tag_index);
+        mTitles[4] = getResources().getString(R.string.tag_me);
+
         mFragment = new BaseFragment[]{
                 FragmentFactory.getInstance().getMainStudyFragment(),
                 FragmentFactory.getInstance().getMainResourceFragment(),
@@ -326,7 +350,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initEvent() {
-        TestLog.i(TAG + " - initEvent()");
+//        TestLog.i(TAG + " - initEvent()");
         mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
@@ -350,15 +374,15 @@ public class MainActivity extends BaseActivity {
                     //聊天列表
                     if(WuhunDataTool.isNullString(getSPUtil().getTokens())) {
                         new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("提示")
-                                .setMessage("游客无法预览，是否登录？")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                .setTitle(R.string.hint)
+                                .setMessage(R.string.is_login)
+                                .setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         jumpToActivity(LoginActivity.class);
                                         MainActivity.this.finish();
                                     }
-                                }).setNegativeButton("取消", null)
+                                }).setNegativeButton(R.string.negative, null)
                                 .show();
 //                        mTabHost.setCurrentTab(3);
                     }
@@ -366,15 +390,15 @@ public class MainActivity extends BaseActivity {
                     //通讯录
                     if(WuhunDataTool.isNullString(getSPUtil().getTokens())) {
                         new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("提示")
-                                .setMessage("游客无法预览，是否登录？")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                .setTitle(R.string.hint)
+                                .setMessage(R.string.is_login)
+                                .setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         jumpToActivity(LoginActivity.class);
                                         MainActivity.this.finish();
                                     }
-                                }).setNegativeButton("取消", null)
+                                }).setNegativeButton(R.string.negative, null)
                                 .show();
                     }
                 }
@@ -418,7 +442,7 @@ public class MainActivity extends BaseActivity {
                 MainActivity.this.finish();
 //                moveTaskToBack(false);
 //                closeActivity();
-                TestLog.i("关闭" + TAG);
+//                TestLog.i("关闭" + TAG);
             }
             return true;
         }
@@ -448,8 +472,8 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                CheckVersionModel model = getGson().fromJson(result, CheckVersionModel.class);
                 if(response.isSuccessful()) {
+                    CheckVersionModel model = getGson().fromJson(result, CheckVersionModel.class);
                     final CheckVersionModel.ResultBean versionModel = model.getResult();
                     if(versionModel != null) {
                         String serviceCode = versionModel.getVersionCode();
@@ -475,14 +499,14 @@ public class MainActivity extends BaseActivity {
     private void updateDialog(final CheckVersionModel.ResultBean versionModel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(versionModel.getVersionDesc());
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
         });
 
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //进入下一步，去确定是WiFi还是流量
@@ -500,19 +524,19 @@ public class MainActivity extends BaseActivity {
             Intent intent = new Intent(MainActivity.this, UpdateService.class);
             intent.putExtra(UpdateService.SERVICE_VERSION_INFO, versionModel);
             startService(intent);
-            Log.i("wuhun","开始下载");
+//            Log.i("wuhun","开始下载");
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("提示");
-            builder.setMessage("是否要用流量进行下载更新");
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            builder.setTitle(R.string.hint);
+            builder.setMessage(R.string.is_download_nowifi);
+            builder.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.dismiss();
                 }
             });
 
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     if (WuhunNetTools.isAvailable(context)) {
@@ -520,7 +544,7 @@ public class MainActivity extends BaseActivity {
                         intent.putExtra(UpdateService.SERVICE_VERSION_INFO, versionModel);
                         startService(intent);
                     } else {
-                        WuhunToast.info("请检查网络状态").show();
+                        WuhunToast.info(R.string.nonet_check_please).show();
                     }
                 }
             });

@@ -58,13 +58,13 @@
                     android:drawablePadding="4dp"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:hint="学号"
+                    android:hint="@string/study_num"
                     android:inputType="text"
                     android:maxLines="1"
                     android:padding="5dp"
                     android:textColor="#FFFFFF"
                     android:textColorHint="#CCFFFFFF"
-                    android:textSize="@dimen/text_size_2" />
+                    android:textSize="14sp" />
 
                 <tools.com.lvliangliang.wuhuntools.ui.ClearWriteEditText
                     android:id="@+id/phone_num"
@@ -75,14 +75,14 @@
                     android:drawablePadding="4dp"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:hint="手机号"
+                    android:hint="@string/phone_num"
                     android:maxLength="11"
                     android:inputType="phone"
                     android:maxLines="1"
                     android:padding="5dp"
                     android:textColor="#FFFFFF"
                     android:textColorHint="#CCFFFFFF"
-                    android:textSize="@dimen/text_size_2" />
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -99,7 +99,7 @@
                         android:layout_weight="7"
                         android:background="@color/et_bg_normal"
                         android:drawablePadding="5dip"
-                        android:hint="短信验证码"
+                        android:hint="@string/sms_code"
                         android:inputType="number"
                         android:maxLength="6"
                         android:maxLines="1"
@@ -120,7 +120,7 @@
                         android:minWidth="1dp"
                         android:paddingBottom="10dp"
                         android:paddingTop="10dp"
-                        android:text="发送验证码"
+                        android:text="@string/to_send_code"
                         android:textColor="#FFF"
                         android:textSize="12sp" />
 
@@ -135,13 +135,13 @@
                     android:drawablePadding="@dimen/dp_4"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:hint="新密码"
+                    android:hint="@string/new_pwd"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:padding="@dimen/dp_5"
                     android:textColor="#FFFFFF"
                     android:textColorHint="#CCFFFFFF"
-                    android:textSize="@dimen/text_size_2" />
+                    android:textSize="14sp" />
 
                 <tools.com.lvliangliang.wuhuntools.ui.ClearWriteEditText
                     android:id="@+id/again_new_pwd"
@@ -152,13 +152,13 @@
                     android:drawablePadding="@dimen/dp_4"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:hint="确认密码"
+                    android:hint="@string/Confirm_pwd"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:padding="@dimen/dp_5"
                     android:textColor="#FFFFFF"
                     android:textColorHint="#CCFFFFFF"
-                    android:textSize="@dimen/text_size_2" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -168,7 +168,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dip"
                 android:background="@drawable/btn_red_selector"
-                android:text="确认"
+                android:text="@string/positive"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp" />
 
