@@ -116,7 +116,7 @@ public class StudyCommonFragment extends BaseFragment {
             @Override
             public void convert(LQRViewHolderForRecyclerView helper, Object item, int position) {
                 GroupModel model = groupList.get(position);
-                String before = WuhunDataTool.isNullString(beforeUri) ? Constant.HOME_URL : beforeUri;
+                String before = WuhunDataTool.isNullString(model.getBefore()) ? Constant.HOME_URL : model.getBefore();
                 ImageView groupuri = (ImageView) helper.getView(R.id.groupuri);
                 UserAvatarUtil.showAvatar(mActivity, groupList.get(position), before, groupuri);
                 helper.setText(R.id.groupname, model.getNAME());

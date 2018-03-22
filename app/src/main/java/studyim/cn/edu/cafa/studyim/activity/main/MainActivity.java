@@ -189,8 +189,8 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    //未读消息
     private void unreadMsg(int count) {
-//        TestLog.i("MainActivity: 未读消息：" + count);
         if (count == 0) {
             mDotimg[0].setVisibility(View.GONE);
         } else {
@@ -198,19 +198,22 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /** 连接融云服务 */
     private void initConnect() {
-//        TestLog.i(TAG + " - initConnect()");
         RongIMClient.connect(getSPUtil().getRctoken(), new RongIMClient.ConnectCallback() {
             @Override
             public void onTokenIncorrect() {
-                WuhunToast.normal(R.string.login_timeout).show();
+                WuhunThread.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        WuhunToast.normal(R.string.login_timeout).show();
+                    }
+                });
             }
 
             @Override
             public void onSuccess(String s) {
-//                TestLog.i("success" + s);
                 initUserInfo(s);
-//                WuhunToast.normal("连接成功").show);
             }
 
             @Override

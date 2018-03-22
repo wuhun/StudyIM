@@ -22,7 +22,6 @@ import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRAdapterForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.exception.WuhunDebug;
-import tools.com.lvliangliang.wuhuntools.util.WuhunDateTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunFileMediaTool;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
 
@@ -50,16 +49,16 @@ public class StudyAllFragment extends BaseFragment {
         RongIMClient.getInstance().getConversationList(new RongIMClient.ResultCallback<List<Conversation>>() {
             @Override
             public void onSuccess(List<Conversation> conversations) {
-                WuhunDebug.debug("返回" + conversations.size());
-                for (Conversation con : conversations) {
-                    WuhunDebug.debug("类型:" + con.getConversationType() +
-                            "\n对方id" + con.getTargetId() +
-                            "\n时间：" + WuhunDateTool.getDateFormat(con.getReceivedTime(), WuhunDateTool.DATE1) +
-                            "\n是否置顶" + con.isTop() +
-                            "\n未读消息数" + con.getUnreadMessageCount() +
-                            "\n文字消息草稿" + con.getDraft() +
-                            "\n最后消息类型是否为图片" + (con.getLatestMessage() instanceof ImageMessage));
-                }
+//                WuhunDebug.debug("返回" + conversations.size());
+//                for (Conversation con : conversations) {
+//                    WuhunDebug.debug("类型:" + con.getConversationType() +
+//                            "\n对方id" + con.getTargetId() +
+//                            "\n时间：" + WuhunDateTool.getDateFormat(con.getReceivedTime(), WuhunDateTool.DATE1) +
+//                            "\n是否置顶" + con.isTop() +
+//                            "\n未读消息数" + con.getUnreadMessageCount() +
+//                            "\n文字消息草稿" + con.getDraft() +
+//                            "\n最后消息类型是否为图片" + (con.getLatestMessage() instanceof ImageMessage));
+//                }
                 mData = conversations;
                 mAdapter.setData(mData);
             }

@@ -183,9 +183,11 @@ public class MainContactFragment extends BaseFragment {
                 @Override
                 public void onResponse(Call call, final Response response) throws IOException {
                     final String result = response.body().string();
+                    TestLog.i("好友列表===>" + result);
 
                     if (response.isSuccessful()) {
                         final FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
+                        HOME_URL = friendList.getBefore();
                         if (null == friendList || null == friendList.getResult()) {
                             WuhunThread.runOnUiThread(new Runnable() {
                                 @Override
@@ -265,7 +267,6 @@ public class MainContactFragment extends BaseFragment {
                     WuhunToast.error(getResources().getString(R.string.request_error_net)).show();
             } else if (msg.what == FRIEND_LIST_SUCCESS) {
                 FriendListModel model = (FriendListModel) msg.obj;
-                HOME_URL = model.getBefore();
 //                WuhunDebug.debug("=success-获取好友列表=>" + model.getResult());
                 if (model.getCode() == 1) {
                     List<Friend> friends = new ArrayList<>();
@@ -333,7 +334,12 @@ public class MainContactFragment extends BaseFragment {
 
                     ImageView imgAvatar = helper.getView(R.id.img_contact_avater_item);
                     TestLog.i("friend: " + item);
-                    UserAvatarUtil.showAvatar(mActivity, item, HOME_URL, imgAvatar);//头像
+
+                    String uri = UserAvatarUtil.initUri(HOME_URL, item.getAVATAR());
+                    final String avatarUri = UserAvatarUtil.getAvatarUri(
+                            item.getUSERBUDDYID() + "", item.getREMARKNAME(), uri);
+                    TestLog.i("avatarUri==>" + avatarUri);
+                    UserAvatarUtil.showImage(mActivity, avatarUri, imgAvatar);
 
                     String str = "";
                     //得到当前字母

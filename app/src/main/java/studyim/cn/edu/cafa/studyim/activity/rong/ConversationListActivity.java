@@ -128,9 +128,6 @@ public class ConversationListActivity extends BaseActivity {
         return activeFragment;
     }
 
-    private final String TextTypingTitle = getString(R.string.persion_typing);
-    private final String VoiceTypingTitle = getString(R.string.persion_talking);
-
     public static final int SET_TEXT_TYPING_TITLE = 1;
     public static final int SET_VOICE_TYPING_TITLE = 2;
     public static final int SET_TARGET_ID_TITLE = 0;
@@ -140,10 +137,10 @@ public class ConversationListActivity extends BaseActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case SET_TEXT_TYPING_TITLE:
-                    setTitle(TextTypingTitle);
+                    setTitle(R.string.persion_typing);
                     break;
                 case SET_VOICE_TYPING_TITLE:
-                    setTitle(VoiceTypingTitle);
+                    setTitle(R.string.persion_talking);
                     break;
                 case SET_TARGET_ID_TITLE:
                     setActionBarTitle(mConversationType, mTargetId);

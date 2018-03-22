@@ -11,7 +11,6 @@ import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.MessageContent;
 import io.rong.message.ContactNotificationMessage;
-import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 import static tools.com.lvliangliang.wuhuntools.app.WuhunApplication.getCurProcessName;
 
@@ -61,25 +60,15 @@ public class RongApplication extends Application implements RongIMClient.OnRecei
             RongIM.init(this);
         }
         //监听
-//        RongIMClient.setOnRecallMessageListener(this);//撤回
         RongIM.setOnReceiveMessageListener(this); // 接收消息的监听器
     }
 
     @Override
     public boolean onReceived(Message message, int i) {
         MessageContent messageContent = message.getContent();
-        TestLog.i("onMessageRecalled _ 消息监听");
+//        TestLog.i("onMessageRecalled _ 消息监听");
         if (messageContent instanceof ContactNotificationMessage) {
             ContactNotificationMessage contactNotificationMessage = (ContactNotificationMessage) messageContent;
-
-//            if (contactNotificationMessage.getOperation().equals(ContactNotificationMessage.CONTACT_OPERATION_REQUEST)) {
-//                //对方发来好友邀请
-//                WuhunDebug.debug("对方发来好友邀请");
-//                BroadcastManager.getInstance(getApplicationContext()).sendBroadcast(Constant.ADD_FRIEND_RED_DOT);
-//            } else {
-//                WuhunDebug.debug("对方同意我的好友请求" + contactNotificationMessage.getExtra());
-//                TestLog.i("请求监听==>" + contactNotificationMessage.getExtra());
-//            }
         }
         return false;
     }

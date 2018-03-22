@@ -119,6 +119,7 @@ public class DBManager {
         if(groups == null) return;
         for(GroupModel model : groups){
             if(model == null) return;
+            model.setBefore(beforeUri);
             String uri = UserAvatarUtil.initUri(beforeUri, model.getGROUPIMAGE());
             String portrait = UserAvatarUtil.getAvatarUri(model.getGROUPRCID(), model.getNAME(), uri);
             Group group = new Group(model.getGROUPRCID(), model.getNAME(), Uri.parse(portrait));

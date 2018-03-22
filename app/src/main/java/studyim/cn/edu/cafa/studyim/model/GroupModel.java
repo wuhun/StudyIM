@@ -26,6 +26,7 @@ public class GroupModel extends DataSupport implements Serializable {
     private String GROUPRCID;
     private String GROUPTYPE;
     private String NAME;
+    private String before;
 
     public int getGROUPID() {
         return GROUPID;
@@ -67,6 +68,14 @@ public class GroupModel extends DataSupport implements Serializable {
         this.NAME = NAME;
     }
 
+    public String getBefore() {
+        return before;
+    }
+
+    public void setBefore(String before) {
+        this.before = before;
+    }
+
     @Override
     public String toString() {
         return "GroupModel{" +
@@ -75,6 +84,7 @@ public class GroupModel extends DataSupport implements Serializable {
                 ", GROUPRCID='" + GROUPRCID + '\'' +
                 ", GROUPTYPE='" + GROUPTYPE + '\'' +
                 ", NAME='" + NAME + '\'' +
+                ", before='" + before + '\'' +
                 '}';
     }
 }
