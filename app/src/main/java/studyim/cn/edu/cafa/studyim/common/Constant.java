@@ -16,9 +16,9 @@ public class Constant {
     public static final String indexUrl = HOME_URL+"ios/";
 
     /** 我的界面侧滑菜单-同步设置 下载地址 */
-    public static final String ME_FRAGMENT_UPDATE_SETTINGS = "http://10.10.10.107:8080/test/mySettingList.json";
+    public static final String ME_FRAGMENT_UPDATE_SETTINGS = "http://10.10.10.104:8080/test/mySettingList.json";
     /** 检查版本更新地址 */
-    public static final String CHECK_SERVICE_VERSION = "http://10.10.10.107:8080/test/checkServiceVersion.json";
+    public static final String CHECK_SERVICE_VERSION = "http://10.10.10.104:8080/test/checkServiceVersion.json";
 
     /////////////////////////////////////////////////////////////////////////////////
     /**  */
@@ -33,6 +33,8 @@ public class Constant {
     public static String UPDATE_GROUP_MEMEBER = "update_group_memeber";
     /** 主页 我的提示点 */
     public static final String ME_SHOW_RED = "show_red";
+    /** 修改注备后详情界面 */
+    public static final String UPDATE_REMARK_FRINED = "update_remark_frined";
 
     /////////////////////////////////////////////////////////////////////////////////
     /** 权限 - 老师 */

@@ -109,7 +109,7 @@ public class GroupSelectFriendActivity extends BaseActivity {
                                 });
                             } else {
                                 List<Friend> friends1 = resultModel.getResult();
-                                DBManager.getmInstance().setAllUserInfo(friends1);
+                                DBManager.getmInstance().setAllUserInfo(friends1, resultModel.getBefore());
                                 updateFriens(friends1);
                             }
                         }

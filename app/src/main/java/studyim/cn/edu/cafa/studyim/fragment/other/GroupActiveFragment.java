@@ -76,7 +76,8 @@ public class GroupActiveFragment extends BaseFragment {
         ConversationListActivity conversation = (ConversationListActivity) this.mActivity;
         TestLog.i("班级fragment： id" + conversation.mTargetId +
                 " - title:" + conversation.mTitle +
-                " - groupId:" + conversation.mGroupId);
+                " - groupId:" + conversation.mGroupId +
+        " - friendId:" + conversation.mFriendId);
 
         if (conversation.mGroupId != null) {
             HttpUtil.getActivityList(conversation.mGroupId, new Callback() {
@@ -146,7 +147,7 @@ public class GroupActiveFragment extends BaseFragment {
                     String resultUri = resultBean.getIMAGE();
                     if (resultUri != null && WuhunImgTool.isImage(resultUri) && WuhunImgTool.isImage(resultUri)) {
                         String uri = UserAvatarUtil.initUri(beforeUri, resultUri);
-                        UserAvatarUtil.showImage(mActivity, uri, image);
+                        UserAvatarUtil.showImage(GroupActiveFragment.this, uri, image);
                     } else {
                         image.setVisibility(View.GONE);
                     }

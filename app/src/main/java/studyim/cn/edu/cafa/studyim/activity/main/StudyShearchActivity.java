@@ -38,6 +38,7 @@ import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolder;
 import tools.com.lvliangliang.wuhuntools.adapter.LQRViewHolderForRecyclerView;
 import tools.com.lvliangliang.wuhuntools.adapter.OnItemClickListener;
 import tools.com.lvliangliang.wuhuntools.util.WuhunDataTool;
+import tools.com.lvliangliang.wuhuntools.util.WuhunSoftTool;
 import tools.com.lvliangliang.wuhuntools.util.WuhunThread;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 import tools.com.lvliangliang.wuhuntools.widget.recyclerview.WuhunRecyclerView;
@@ -178,6 +179,7 @@ public class StudyShearchActivity extends BaseActivity {
 //                    WuhunToast.info("您搜索的内容为：" + etSearchContent.getText().toString()).show();
     //                    HttpUtil.userInfoSearch();
     //                    llDefaultContent.setVisibility(View.GONE);
+                    WuhunSoftTool.hideSoft(StudyShearchActivity.this);
                     String content = etSearchContent.getText().toString();
                     if(WuhunDataTool.isNullString(content)) {
                         WuhunToast.info(getString(R.string.input) + spinners[currentPosition]).show();

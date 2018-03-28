@@ -2,9 +2,11 @@ package studyim.cn.edu.cafa.studyim.activity.other;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,7 +24,8 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.rong.imkit.RongIM;
+import io.rong.imkit.RongContext;
+import io.rong.imlib.model.Conversation;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -37,6 +40,7 @@ import studyim.cn.edu.cafa.studyim.model.ResultModel;
 import studyim.cn.edu.cafa.studyim.ui.OptionItemView;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
 import studyim.cn.edu.cafa.studyim.util.UserAvatarUtil;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 import tools.com.lvliangliang.wuhuntools.manager.BroadcastManager;
 import tools.com.lvliangliang.wuhuntools.net.WuhunNetTools;
 import tools.com.lvliangliang.wuhuntools.permission.PermissionListener;
@@ -119,8 +123,18 @@ public class FriendGetinfoActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         initView();
+        initData();
         getIntentData();
         initeListener();
+    }
+
+    private void initData() {
+        BroadcastManager.getInstance(mContext).register(Constant.UPDATE_REMARK_FRINED, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                getUserInfo();
+            }
+        });
     }
 
     private void initeListener() {
@@ -219,12 +233,22 @@ public class FriendGetinfoActivity extends BaseActivity {
                 if (WuhunDataTool.isNullString(displayName)) {
                     displayName = friendInfo.getResult().getNickName();
                 }
-//                RongIM.getInstance().startPrivateChat(mContext, friendInfo.getResult().getRCID(), displayName);
-                if (RongIM.getInstance() != null)
-                    RongIM.getInstance().startPrivateChat(
-                            mContext, friendInfo.getResult().getRCID(), displayName);
+//                if (RongIM.getInstance() != null)
+//                    RongIM.getInstance().startPrivateChat(
+//                            mContext, friendInfo.getResult().getRCID(), displayName);
 //                WuhunDebug.debug("与" + displayName + "聊天：" + friendInfo.getResult().getRCID());
-//                RongIM.getInstance().startPrivateChat(mContext, extraUserId, displayName);
+                TestLog.i("发送消息：" + friendInfo.getResult().getUserId()+"");
+                if(RongContext.getInstance() != null) {
+                    Uri uri = Uri.parse("rong://" + mContext.getApplicationInfo().packageName).buildUpon()
+                            .appendPath("conversation")
+                            .appendPath(Conversation.ConversationType.PRIVATE.getName().toLowerCase())
+                            .appendQueryParameter("targetId", friendInfo.getResult().getRCID())
+                            .appendQueryParameter("title", displayName)
+                            .build();
+//                    .appendQueryParameter("friendId", friendInfo.getResult().getUserId()+"")
+                    mContext.startActivity(new Intent("android.intent.action.VIEW", uri));
+                }
+
                 finish();
             }else if(v.getId() == R.id.img_call_phone) {
                 // TODO: 2018/1/2 呼叫电话
@@ -294,11 +318,7 @@ public class FriendGetinfoActivity extends BaseActivity {
         headBg.setImageResource(R.mipmap.main_bg);
         bodyImgMenu.setImageResource(R.drawable.icon_back);
         bodyTvTitle.setText(R.string.detail_info);
-//        bodySearch.setVisibility(View.GONE);
         bodySearch.setImageResource(R.mipmap.head_menu_more);
-//        if(!TextUtils.isEmpty(extraIsFriend) && extraIsFriend.toLowerCase().equals("n")) {
-//            bodySearch.setVisibility(View.GONE);
-//        }
     }
 
     public void getIntentData() {
@@ -450,9 +470,13 @@ public class FriendGetinfoActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BroadcastManager.getInstance(mContext).unregister(Constant.UPDATE_REMARK_FRINED);
+    }
 
-
-//    private void showAddFriendDialog(){
+    //    private void showAddFriendDialog(){
 //        View dialogView = this.getLayoutInflater().inflate(R.layout.add_friend_dialog, null);
 //        AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
 //                .setView(dialogView)

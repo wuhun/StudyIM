@@ -286,7 +286,7 @@ public class GroupDeleteFriendActivity extends BaseActivity {
 
                 String uri = UserAvatarUtil.initUri(null, item.getAVATAR());
                 String avatarUri = UserAvatarUtil.getAvatarUri(item.getUSERID() + "", item.getNICKNAME(), uri);
-                UserAvatarUtil.showImage(mContext, avatarUri, imgAvatar);
+                UserAvatarUtil.showImage(GroupDeleteFriendActivity.this, avatarUri, imgAvatar);
                 //UserAvatarUtil.showAvatar(mContext, item, Constant.HOME_URL, imgAvatar);//头像
 
                 String str = "";

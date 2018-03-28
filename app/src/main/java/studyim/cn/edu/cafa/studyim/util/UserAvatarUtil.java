@@ -1,6 +1,7 @@
 package studyim.cn.edu.cafa.studyim.util;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -175,12 +176,24 @@ public class UserAvatarUtil {
     }
 
     public static void showImage(Context context, String uri, ImageView imageView){
-        Glide.with(MyApplication.getContext()).load(uri)
+        Glide.with(context).load(uri)
+                .asBitmap()
                 .error(R.mipmap.default_useravatar)
                 .placeholder(R.mipmap.default_useravatar)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .skipMemoryCache(true)
                 .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .skipMemoryCache(true)
+                .centerCrop()
+                .into(imageView);
+    }
+    public static void showImage(Fragment context, String uri, ImageView imageView){
+        Glide.with(context).load(uri)
+                .asBitmap()
+                .error(R.mipmap.default_useravatar)
+                .placeholder(R.mipmap.default_useravatar)
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .skipMemoryCache(true)
                 .centerCrop()
                 .into(imageView);
     }

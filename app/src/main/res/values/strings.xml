@@ -109,6 +109,17 @@
     <string name="events">活动</string>
     <string name="server_connection_error">服务器连接失败，请稍候再试</string>
     <string name="setting_success">设置成功</string>
+    <string name="remark_name">备注信息</string>
+    <string name="update_fail">修改失败</string>
+    <string name="quit_group">退出群组</string>
+    <string name="exit_and_dismiss">解散并退出</string>
+    <string name="group_img">群头像</string>
+    <string name="group_name">群名称</string>
+    <string name="group_description">群描述</string>
+    <string name="group_file_list">群文件列表</string>
+    <string name="setting_manager">设置管理</string>
+    <string name="detail_history">查看历史记录</string>
+    <string name="get_contact_fail">获取联系人失败！</string>
 
 
 </resources>

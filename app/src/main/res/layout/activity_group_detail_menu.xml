@@ -45,7 +45,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="群头像"
+                        android:text="@string/group_img"
                         android:layout_centerVertical="true"
                         style="@style/tag_text" />
                     <ImageView
@@ -67,7 +67,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="群名称"
+                        android:text="@string/group_name"
                         style="@style/tag_text"
                         android:layout_centerVertical="true"/>
                     <TextView
@@ -90,7 +90,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="群描述"
+                        android:text="@string/group_description"
                         style="@style/tag_text"
                         android:layout_centerVertical="true"/>
                     <TextView
@@ -126,7 +126,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="群文件列表"
+                        android:text="@string/group_file_list"
                         style="@style/tag_text"
                         android:layout_centerVertical="true"/>
                     <TextView
@@ -152,7 +152,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="设置管理"
+                        android:text="@string/setting_manager"
                         style="@style/tag_text"
                         android:layout_centerVertical="true"/>
                 </RelativeLayout>
@@ -167,7 +167,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="查看历史记录"
+                        android:text="@string/detail_history"
                         style="@style/tag_text"
                         android:layout_centerVertical="true"/>
                 </RelativeLayout>
@@ -179,6 +179,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
+                android:layout_marginBottom="40dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:orientation="vertical">
@@ -187,7 +188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_red_selector"
-                    android:text="退出群组"
+                    android:text="@string/quit_group"
                     android:textColor="@color/white"
                     android:textStyle="bold"/>
                 <Button
@@ -196,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/btn_red_selector"
-                    android:text="解散并退出"
+                    android:text="@string/exit_and_dismiss"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:visibility="gone"/>

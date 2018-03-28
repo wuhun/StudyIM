@@ -20,7 +20,6 @@ import studyim.cn.edu.cafa.studyim.base.BaseFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyClassFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyCommonFragment;
 import studyim.cn.edu.cafa.studyim.fragment.study.StudyLeadFragment;
-import studyim.cn.edu.cafa.studyim.util.Manager.FragmentFactory;
 import tools.com.lvliangliang.wuhuntools.widget.WuhunToast;
 
 /**
@@ -76,27 +75,30 @@ public class MainStudyFragment extends BaseFragment {
 
     StudyCommonFragment mStudyCommonFragment;
     private Fragment initCommonList() {
-        mStudyCommonFragment = FragmentFactory.getInstance().getStudyCommonFragment();
+//        mStudyCommonFragment = FragmentFactory.getInstance().getStudyCommonFragment();
+        mStudyCommonFragment = new StudyCommonFragment();
         return mStudyCommonFragment;
     }
 
     StudyLeadFragment mStudyLeadFragment;
     private Fragment initLearList() {
-        mStudyLeadFragment = FragmentFactory.getInstance().getStudyLeadFragment();
+//        mStudyLeadFragment = FragmentFactory.getInstance().getStudyLeadFragment();
+        mStudyLeadFragment = new StudyLeadFragment();
         return mStudyLeadFragment;
     }
 
     StudyClassFragment mStudyClassFragment = null;
     private Fragment initClassList() {
-        mStudyClassFragment = FragmentFactory.getInstance().getStudyClassFragment();
+//        mStudyClassFragment = FragmentFactory.getInstance().getStudyClassFragment();
+        mStudyClassFragment = new StudyClassFragment();
         return mStudyClassFragment;
     }
 
     /** 初始化聊天记录 */
-    ConversationListFragment mConversationListFragment = null;
+//    ConversationListFragment mConversationListFragment = null;
     private Fragment initConversationList() {
 //        TestLog.i("initConversationList() - 聊天记录列表，融云提供的fragment，需要传入uri与adapter");
-        if (mConversationListFragment == null) {
+//        if (mConversationListFragment == null) {
             ConversationListFragment listFragment = new ConversationListFragment();
             //listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
 //            TestLog.i("==>" + MyApplication.getContext().getApplicationInfo().packageName);
@@ -110,11 +112,12 @@ public class MainStudyFragment extends BaseFragment {
 //                    .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "false")//讨论组, 聚合显示
                     .build();
             listFragment.setUri(uri);
-            mConversationListFragment = listFragment;
-            return listFragment;
-        } else {
-            return mConversationListFragment;
-        }
+//            mConversationListFragment = listFragment;
+//            return listFragment;
+        return listFragment;
+//        } else {
+//            return mConversationListFragment;
+//        }
     }
 
     private View.OnClickListener mOnClick = new View.OnClickListener() {
@@ -169,7 +172,11 @@ public class MainStudyFragment extends BaseFragment {
 
     private void showFragment() {
         ft = getChildFragmentManager().beginTransaction();
-        ft.replace(R.id.fl_friend_list, mFragment[position]).commit();
+        for(int i=0;i<mFragment.length;i++){
+            ft.hide(mFragment[i]);
+        }
+        ft.show(mFragment[position]).commit();
+//        ft.replace(R.id.fl_friend_list, mFragment[position]).commit();
     }
 
     @Override
@@ -188,7 +195,15 @@ public class MainStudyFragment extends BaseFragment {
     protected void initView() {
 //        ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft = getChildFragmentManager().beginTransaction();
-        ft.replace(R.id.fl_friend_list, mFragment[0]).commit();
+        for (int i = 0; i < mFragment.length; i++) {
+            if(!mFragment[i].isAdded()) {
+                ft.add(R.id.fl_friend_list, mFragment[i], String.valueOf(i))
+                        .hide(mFragment[i]);
+            }
+
+        }
+        ft.show(mFragment[0]).commit();
+//        ft.replace(R.id.fl_friend_list, mFragment[0]).commit();
         setTabBackColor();
     }
 

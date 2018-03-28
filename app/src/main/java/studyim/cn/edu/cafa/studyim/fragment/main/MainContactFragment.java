@@ -95,7 +95,6 @@ public class MainContactFragment extends BaseFragment {
 
     private static String HOME_URL;
 
-
     /**
      * 适配快速导航条
      */
@@ -187,32 +186,26 @@ public class MainContactFragment extends BaseFragment {
 
                     if (response.isSuccessful()) {
                         final FriendListModel friendList = getGson().fromJson(result, FriendListModel.class);
-                        HOME_URL = friendList.getBefore();
-                        if (null == friendList || null == friendList.getResult()) {
-                            WuhunThread.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    updateBottom(null);
-                                    if(!TextUtils.isEmpty(friendList.getMsg())) {
-                                        WuhunToast.info(friendList.getMsg()).show();
-                                    }
-                                    return;
-                                }
-                            });
-                        } else {
-                            WuhunThread.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (friendList.getResult().size() == friends.size()) {
-                                        updateBottom(friends);
-//                                        TestLog.i("==> 网络获取： " + friends.toString());
+                        WuhunThread.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (friendList != null && friendList.getCode() == 1) {
+                                    HOME_URL = friendList.getBefore();
+                                    if (friendList.getResult() != null) {
+                                        updateBottom(friendList.getResult());
                                     } else {
-                                        Message msg = handler.obtainMessage(FRIEND_LIST_SUCCESS, friendList);
-                                        handler.sendMessage(msg);
+                                        WuhunToast.info(R.string.get_contact_fail).show();
+                                    }
+                                } else {
+                                    updateBottom(null);
+                                    if (!WuhunDataTool.isNullString(friendList.getMsg())) {
+                                        WuhunToast.normal(friendList.getMsg()).show();
+                                    } else {
+                                        WuhunToast.normal(R.string.get_fail).show();
                                     }
                                 }
-                            });
-                        }
+                            }
+                        });
                     } else {
                         WuhunThread.runOnUiThread(new Runnable() {
                             @Override
@@ -255,7 +248,6 @@ public class MainContactFragment extends BaseFragment {
         });
     }
 
-    public static final int FRIEND_LIST_SUCCESS = 0x01;
     public static final int REQUEST_ERROR = 0x03;
 
 
@@ -265,21 +257,6 @@ public class MainContactFragment extends BaseFragment {
             if (msg.what == REQUEST_ERROR) {
                 if(MainContactFragment.this.isAdded())
                     WuhunToast.error(getResources().getString(R.string.request_error_net)).show();
-            } else if (msg.what == FRIEND_LIST_SUCCESS) {
-                FriendListModel model = (FriendListModel) msg.obj;
-//                WuhunDebug.debug("=success-获取好友列表=>" + model.getResult());
-                if (model.getCode() == 1) {
-                    List<Friend> friends = new ArrayList<>();
-                    friends.addAll(model.getResult());
-                    updateBottom(friends);
-                    DBManager.getmInstance().setAllUserInfo(friends);
-                } else {
-                    if (!WuhunDataTool.isNullString(model.getMsg())) {
-                        WuhunToast.normal(model.getMsg()).show();
-                    } else {
-                        WuhunToast.normal(R.string.get_fail).show();
-                    }
-                }
             }
             super.handleMessage(msg);
         }
@@ -288,10 +265,9 @@ public class MainContactFragment extends BaseFragment {
 
     private void updateBottom(List<Friend> friends) {
         if (friends != null && friends.size() > 0) {
+            DBManager.getmInstance().setAllUserInfo(friends, HOME_URL);
             mData.clear();
             mData.addAll(friends);
-
-            TestLog.i("MainContactFragment - updateBottom:" + mData.size());
 
             footerView.setVisibility(View.VISIBLE);
             footerView.setText(String.format(getString(R.string.constact), mData.size()));
@@ -303,8 +279,8 @@ public class MainContactFragment extends BaseFragment {
             mData.clear();
         }
         if (mAdapter != null)
-            mAdapter.notifyDataSetChanged();
             adapter.setData(mData);
+//        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -333,13 +309,12 @@ public class MainContactFragment extends BaseFragment {
                     helper.setText(R.id.tvName, item.getREMARKNAME());
 
                     ImageView imgAvatar = helper.getView(R.id.img_contact_avater_item);
-                    TestLog.i("friend: " + item);
 
                     String uri = UserAvatarUtil.initUri(HOME_URL, item.getAVATAR());
                     final String avatarUri = UserAvatarUtil.getAvatarUri(
                             item.getUSERBUDDYID() + "", item.getREMARKNAME(), uri);
-                    TestLog.i("avatarUri==>" + avatarUri);
-                    UserAvatarUtil.showImage(mActivity, avatarUri, imgAvatar);
+                    UserAvatarUtil.showImage(MainContactFragment.this, avatarUri, imgAvatar);
+
 
                     String str = "";
                     //得到当前字母

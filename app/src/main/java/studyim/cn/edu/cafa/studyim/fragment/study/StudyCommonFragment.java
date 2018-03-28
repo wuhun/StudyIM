@@ -217,6 +217,8 @@ public class StudyCommonFragment extends BaseFragment {
         }
     };
 
+
+
     @Override
     protected int setLayoutResouceId() {
         return R.layout.study_lead_fragment;

@@ -46,7 +46,7 @@ public class DBManager {
     }
 
     public void saveFriendUserInfo(FriendUserInfo friendInfo){
-        TestLog.i("saveFriendUserInfo:" + friendInfo);
+//        TestLog.i("saveFriendUserInfo:" + friendInfo);
         FriendUserInfo info = DataSupport.find(FriendUserInfo.class, friendInfo.getUserId());
         if(info != null) {
             DataSupport.delete(FriendUserInfo.class, friendInfo.getUserId());
@@ -55,9 +55,9 @@ public class DBManager {
     }
 
     /** 同步好友详情信息 */
-    public void setAllUserInfo(List<Friend> friends){
+    public void setAllUserInfo(List<Friend> friends, String before){
         deleteFriends();
-        saveFriends(friends);
+        saveFriends(friends, before);
     }
 
     /** 查询数据库中好友详情信息 */
@@ -65,22 +65,29 @@ public class DBManager {
         return DataSupport.find(FriendUserInfo.class, userId);
     }
 
-    /** 保存获取的好友信息 */
-    private void saveFriends(List<Friend> friends) {
+    /** 保存获取的好友信息到本地数据库列表 */
+    private void saveFriends(List<Friend> friends, String before) {
         List<Friend> list = new ArrayList<>();
         for (Friend entity : friends) {
             String name = WuhunDataTool.isNullString(entity.getREMARKNAME()) ? entity.getNICKNAME() : entity.getREMARKNAME();
-            String uri = UserAvatarUtil.initUri(Constant.HOME_URL, entity.getAVATAR());
+            String uri = UserAvatarUtil.initUri(before, entity.getAVATAR());
             String avatarUri = UserAvatarUtil.getAvatarUri(
-                    entity.getUSERBUDDYID(),
-                    name,
-                    uri);
+                    entity.getUSERBUDDYID(), name, uri);
+            TestLog.i("saveFrined=>" + avatarUri + " before:" + before);
             UserInfo userinfo = new UserInfo(entity.getRCID(), name, Uri.parse(avatarUri));
             RongIM.getInstance().refreshUserInfoCache(userinfo);
             list.add(entity);
         }
-        TestLog.i("DBManager - saveFriends: 保存好友到本地数据库列表");
         DataSupport.saveAll(list);
+    }
+
+    public String findFriendIdByRCID(String RCID){
+        List<Friend> friendModels = DataSupport.where("RCID = ?", RCID).find(Friend.class);
+        if (friendModels != null && friendModels.size() > 0) {
+            return friendModels.get(0).getUSERBUDDYID();
+        } else {
+            return null;
+        }
     }
 
     private void deleteFriends() {

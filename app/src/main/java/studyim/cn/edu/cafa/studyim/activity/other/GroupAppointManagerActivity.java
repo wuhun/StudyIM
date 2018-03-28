@@ -337,7 +337,7 @@ public class GroupAppointManagerActivity extends BaseActivity {
                 ImageView imgAvatar = helper.getView(R.id.dis_frienduri);
                 String uri = UserAvatarUtil.initUri(Constant.HOME_URL, model.getAVATAR());
                 String avatarUri = UserAvatarUtil.getAvatarUri(model.getUSERID() + "", name, uri);
-                UserAvatarUtil.showImage(mContext, avatarUri, imgAvatar);
+                UserAvatarUtil.showImage(GroupAppointManagerActivity.this, avatarUri, imgAvatar);
 
                 //根据str是否为空决定字母栏是否显示
                 helper.setViewVisibility(R.id.dis_catalog, View.GONE);

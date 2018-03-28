@@ -283,7 +283,7 @@ public class LoginActivity extends BaseActivity {
                     if (friendList != null && friendList.getCode() == 1 && friendList.getResult() != null) {
                         String HOME_URL = friendList.getBefore();
                         List<Friend> friends = friendList.getResult();
-                        DBManager.getmInstance().setAllUserInfo(friends);
+                        DBManager.getmInstance().setAllUserInfo(friends, HOME_URL);
                     }
                 }
             }

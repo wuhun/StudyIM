@@ -6,6 +6,7 @@ import android.support.multidex.MultiDex;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mob.MobSDK;
+import com.tencent.smtt.sdk.QbSdk;
 
 import java.io.File;
 
@@ -46,7 +47,22 @@ public class MyApplication extends RongApplication {
         this.mContext = getApplicationContext();
         WuhunTools.init(this);
         WuhunDebug.getInstence(false);
+        initX5webview();
         initData();
+    }
+
+    private void initX5webview() {
+        //搜集本地tbs内核信息并上报服务器，服务器返回结果决定使用哪个内核。
+        QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
+            //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
+            @Override
+            public void onViewInitFinished(boolean arg0) {}
+
+            @Override
+            public void onCoreInitFinished() {}
+        };
+        //x5内核初始化接口
+        QbSdk.initX5Environment(getApplicationContext(), cb);
     }
 
     private void initData() {

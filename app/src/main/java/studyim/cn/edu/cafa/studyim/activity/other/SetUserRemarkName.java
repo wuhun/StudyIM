@@ -186,18 +186,23 @@ public class SetUserRemarkName extends BaseActivity {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String result = response.body().string();
-//                            TestLog.i("修改注备==>" + result);
                             if (response.isSuccessful()) {
-                                ResultModel resultModel = MyApplication.getGson().fromJson(result, ResultModel.class);
-                                if (resultModel.getCode() == 1) {
-                                    WuhunToast.normal("修改备注成功").show();
-                                    UserInfo info = new UserInfo(friendinfo.getUserId() + "", etAlias.getText().toString(), Uri.parse(friendinfo.getAvatar()));
-                                    BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
-                                    RongIM.getInstance().refreshUserInfoCache(info);
-                                    SetUserRemarkName.this.finish();
-                                } else {
-                                    WuhunToast.normal("修改备注失败").show();
-                                }
+                                final ResultModel resultModel = MyApplication.getGson().fromJson(result, ResultModel.class);
+                                WuhunThread.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (resultModel.getCode() == 1) {
+                                            WuhunToast.normal("修改备注成功").show();
+                                            UserInfo info = new UserInfo(friendinfo.getUserId() + "", etAlias.getText().toString(), Uri.parse(friendinfo.getAvatar()));
+                                            BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_CONSTACT_LIST);
+                                            BroadcastManager.getInstance(mContext).sendBroadcast(Constant.UPDATE_REMARK_FRINED);
+                                            RongIM.getInstance().refreshUserInfoCache(info);
+                                            SetUserRemarkName.this.finish();
+                                        } else {
+                                            WuhunToast.normal("修改备注失败").show();
+                                        }
+                                    }
+                                });
                             }
                         }
                     });
@@ -210,7 +215,7 @@ public class SetUserRemarkName extends BaseActivity {
         mContext = this;
         headBg.setImageResource(R.drawable.main_bg);
         bodyImgMenu.setImageResource(R.drawable.icon_back);
-        bodyTvTitle.setText("注备信息");
+        bodyTvTitle.setText(R.string.remark_name);
         bodySearch.setVisibility(View.GONE);
         bodyOk.setVisibility(View.VISIBLE);
     }

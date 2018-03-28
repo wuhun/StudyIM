@@ -43,6 +43,8 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import studyim.cn.edu.cafa.studyim.R;
+import studyim.cn.edu.cafa.studyim.activity.other.FriendDetailActivity;
+import studyim.cn.edu.cafa.studyim.activity.other.FriendGetinfoActivity;
 import studyim.cn.edu.cafa.studyim.activity.other.GroupDetailMenuActivity;
 import studyim.cn.edu.cafa.studyim.base.BaseActivity;
 import studyim.cn.edu.cafa.studyim.db.DBManager;
@@ -52,6 +54,7 @@ import studyim.cn.edu.cafa.studyim.model.BaseModel;
 import studyim.cn.edu.cafa.studyim.model.GroupMemeberModel;
 import studyim.cn.edu.cafa.studyim.model.GroupModel;
 import studyim.cn.edu.cafa.studyim.util.HttpUtil;
+import tools.com.lvliangliang.wuhuntools.exception.TestLog;
 
 import static studyim.cn.edu.cafa.studyim.app.MyApplication.getGson;
 
@@ -166,7 +169,7 @@ public class ConversationListActivity extends BaseActivity {
     }
 
     private void initCallKit() {
-        //CallKit start 2
+        //CallKit start 2 群组成员列表
         RongCallKit.setGroupMemberProvider(new RongCallKit.GroupMembersProvider() {
             @Override
             public ArrayList<String> getMemberList(String groupId, final RongCallKit.OnGroupMembersResult result) {
@@ -264,6 +267,13 @@ public class ConversationListActivity extends BaseActivity {
                     intent.putExtra(GroupDetailMenuActivity.TARGETID, mTargetId);
                     intent.putExtra(GroupDetailMenuActivity.CONVERSTATIONTYPE, mConversationType);
                     startActivityForResult(intent, 500);
+                }else{
+                    // 详细id
+                    TestLog.i("==>"+ mFriendId);
+                    Intent intent = new Intent(mContext, FriendDetailActivity.class);
+                    intent.putExtra(FriendGetinfoActivity.GET_USERID, mFriendId);
+//                intent.putExtra(FriendGetinfoActivity.GET_USERID, userid);
+                    jumpToActivity(intent);
                 }
             } else if (v.getId() == R.id.rl_tab_chat) {
                 position = 0;
@@ -278,11 +288,19 @@ public class ConversationListActivity extends BaseActivity {
         }
     };
 
+    public static String UPDATE_TITLE = "update_title";
+    public static int RESULT_TITLE_CODE = 502;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == 501) {
             closeActivity();
             ConversationListActivity.this.finish();
+        }else if(resultCode == RESULT_TITLE_CODE) {
+            Bundle extras = data.getExtras();
+            String new_title = extras.getString(UPDATE_TITLE);
+            TestLog.i("==>" + new_title);
+            bodyTvTitle.setText(new_title);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -332,6 +350,7 @@ public class ConversationListActivity extends BaseActivity {
     public String mTitle;
     public String mTargetId;
     public String mGroupId;
+    public String mFriendId;
     //    /** 刚刚创建完讨论组后获得讨论组的id 为targetIds，需要根据 为targetIds 获取 targetId */
 //    private String mTargetIds;
     private Conversation.ConversationType mConversationType;//会话类型
@@ -341,13 +360,15 @@ public class ConversationListActivity extends BaseActivity {
         mTargetId = intent.getData().getQueryParameter("targetId");
         mTitle = intent.getData().getQueryParameter("title");
         mGroupId = intent.getData().getQueryParameter("groupId");
-//        TestLog.i("对话界面ConversationListActivity： id:" + mTargetId + " - title:" + mTitle);
+
+//        mFriendId = intent.getData().getQueryParameter("friendId");
+
 //        mTargetIds = intent.getData().getQueryParameter("targetIds");
         mConversationType = Conversation.ConversationType.valueOf(intent.getData().getLastPathSegment().toUpperCase(Locale.getDefault()));
 
         setActionBarTitle(mConversationType, mTargetId);
+        TestLog.i("对话界面ConversationListActivity： id:" + mTargetId + " - title:" + mTitle + " - friendId:" + mFriendId);
         bodyTvTitle.setText(mTitle);
-
     }
 
     /**
@@ -364,6 +385,9 @@ public class ConversationListActivity extends BaseActivity {
         if (conversationType.equals(Conversation.ConversationType.PRIVATE)) {
             setPrivateActionBar(targetId);
 //            TestLog.i("设置私聊界面");
+            if(mFriendId == null) {
+                mFriendId = DBManager.getmInstance().findFriendIdByRCID(mTargetId);
+            }
         } else if (conversationType.equals(Conversation.ConversationType.GROUP)) {
             setGroupActionBar(targetId);
 
@@ -507,6 +531,7 @@ public class ConversationListActivity extends BaseActivity {
         //CallKit end 3
         RongIMClient.setTypingStatusListener(null);
     }
+
 
 
     //

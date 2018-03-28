@@ -27,7 +27,7 @@
     <string name="input_new_pwd">Please enter a new password</string>
     <string name="again_pwd_fail">The password entered twice is inconsistent</string>
     <string name="net_fail">Please check the network connection</string>
-    <string name="update_success">Amend the success</string>
+    <string name="update_success">modification success</string>
     <string name="phone_error">Illegal phone number</string>
     <string name="get_code">Get Authenticode</string>
     <string name="first_check_phone">Please verify your phone first</string>
@@ -110,5 +110,16 @@
     <string name="events">Events</string>
     <string name="server_connection_error">Server connection failed, please try again later</string>
     <string name="setting_success">Setting success</string>
+    <string name="remark_name">remarks</string>
+    <string name="update_fail">Modification failure</string>
+    <string name="quit_group">Exit group</string>
+    <string name="exit_and_dismiss">Dismiss and Exit</string>
+    <string name="group_img">Group head portrait</string>
+    <string name="group_name">Group name</string>
+    <string name="group_description">Group description</string>
+    <string name="group_file_list">Group file list</string>
+    <string name="setting_manager">Setting management</string>
+    <string name="detail_history">View the history</string>
+    <string name="get_contact_fail">Failed to get contact！</string>
 
 </resources>
